@@ -1,0 +1,12 @@
+#include <QMessageBox>
+#include <QPainter>
+#include <QInputDialog>
+#include <QDebug>
+#include <QApplication>
+#include <QMainWindow>
+#include <QVBoxLayout>
+#include <QMenu>
+#include <QMouseEvent> 
+#include <QPointF>
+#include <QPoint>
+#include <QMessageBox>
