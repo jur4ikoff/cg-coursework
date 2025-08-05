@@ -1,45 +1,35 @@
-// #include "main_window.h"
-// #include "ui_main_window.h"
+#include "main_window.h"
+#include "ui_main_window.h"
 
-// #include <iostream>
-// #include <QHBoxLayout>
-// #include <QLabel>
-// #include <QPixmap>
-// #include <QWidget>
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    ui->graphicsView->viewport()->setMinimumSize(MIN_SCENE_WIDTH, MIN_SCENE_HEIGHT);
 
-// MainWindow::MainWindow(QWidget *parent)
-//     : QMainWindow(parent), ui(new Ui::MainWindow)
-// {
-//     ui->setupUi(this);
+    setWindowTitle("Фиксированный QPixmap слева (C++)");
 
+    QGraphicsScene *scene = new QGraphicsScene(this);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // Отключаем скроллбары
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-//     // this->setFixedSize(WINDOWS_X, WINDOWS_Y);
-//     // create_scene()
-// }
+    QPixmap pixmap(ui->graphicsView->viewport()->size());
+    pixmap.fill(Qt::red);
 
-// // void MainWindow::create_scene()
-// // {
-// //     scene = new QGraphicsScene(ui->graphic_widget);
+    scene->setSceneRect(pixmap.rect());
+    ui->graphicsView->setScene(scene);
 
-// //     ui->graphic_widget->setScene(scene);
-// //     ui->graphic_widget->setSceneRect(0, 0, SCENE_SIZE, SCENE_SIZE);
-// //     ui->graphic_widget->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
-// //     ui->graphic_widget->setRenderHint(QPainter::Antialiasing);
-// //     ui->graphic_widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-// //     ui->graphic_widget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    QGraphicsPixmapItem *pixmapItem = scene->addPixmap(pixmap);
+}
 
-// //     ui->graphic_widget->setAttribute(Qt::WA_TransparentForMouseEvents);
-// //     ui->graphic_widget->installEventFilter(this);
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
 
-// //     // Устанавливаем значения оффсета зоны для рисования
-// //     QPoint pos_relative_to_window = ui->graphic_widget->mapTo(this, QPoint(0, 0));
-// //     offset_x = pos_relative_to_window.x();
-// //     offset_y = pos_relative_to_window.y();
-
-// //     update_scene();
-// // }
-
-// MainWindow::~MainWindow(void)
-// {
-//     delete ui;
-// }
+    if (ui->graphicsView->scene() && !ui->graphicsView->scene()->items().isEmpty())
+    {
+        ui->graphicsView->fitInView(
+            ui->graphicsView->scene()->items().first(),
+            Qt::IgnoreAspectRatio);
+    }
+}

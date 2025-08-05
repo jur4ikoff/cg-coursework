@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>697</height>
+    <width>907</width>
+    <height>683</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,21 +24,12 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="imageLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QGraphicsView" name="graphicsView">
         <property name="minimumSize">
          <size>
           <width>600</width>
           <height>600</height>
          </size>
-        </property>
-        <property name="text">
-         <string/>
         </property>
        </widget>
       </item>
@@ -115,7 +106,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>834</width>
+     <width>907</width>
      <height>23</height>
     </rect>
    </property>
