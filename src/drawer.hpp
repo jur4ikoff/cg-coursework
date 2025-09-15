@@ -10,13 +10,7 @@ public:
     {
     }
 
-    void draw(QColor color)
-    {
-        // qDebug() << _pixmap.size();
-        // for int(j = 0; j < )
-        _pixmap.fill(color);
-        qDebug() << &_pixmap;
-    }
+    void draw();
 
     ~Drawer()
     {

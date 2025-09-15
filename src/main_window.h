@@ -32,7 +32,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
-    void test(void);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -40,7 +39,7 @@ protected:
 private:
     std::shared_ptr<Drawer> _drawer;
     std::shared_ptr<QGraphicsScene> _scene;
-    QPixmap _pixmap;
+    std::shared_ptr<QPixmap> _pixmap;
     Ui::MainWindow *ui;
 
     void set_scene();

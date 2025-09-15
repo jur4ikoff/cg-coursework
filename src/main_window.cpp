@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     _scene = std::make_shared<QGraphicsScene>(this);
-    _pixmap = QPixmap(ui->graphicsView->viewport()->size());
-    _drawer = std::make_shared<Drawer>(_pixmap);
+    _pixmap = std::make_shared<QPixmap>(ui->graphicsView->viewport()->size());
+    _drawer = std::make_shared<Drawer>(*_pixmap.get());
 
     set_scene();
 }
@@ -22,20 +22,24 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
 
+    QSize new_size = ui->graphicsView->viewport()->size();
+    _pixmap = std::make_shared<QPixmap>(new_size);
+    _drawer = std::make_shared<Drawer>(*_pixmap.get());
+
     if (ui->graphicsView->scene() && !ui->graphicsView->scene()->items().isEmpty())
     {
         ui->graphicsView->fitInView(
             ui->graphicsView->scene()->items().first(),
             Qt::IgnoreAspectRatio);
-        _drawer->draw(Qt::red);
+        _drawer->draw();
         set_scene();
     }
 }
 
 void MainWindow::set_scene()
 {
-    _scene->setSceneRect(_pixmap.rect());
+    _scene->setSceneRect(_pixmap.get()->rect());
     ui->graphicsView->setScene(_scene.get());
 
-    QGraphicsPixmapItem *pixmapItem = _scene->addPixmap(_pixmap);
+    QGraphicsPixmapItem *pixmapItem = _scene->addPixmap(*_pixmap.get());
 }
