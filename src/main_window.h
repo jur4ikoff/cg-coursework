@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ui_main_window.h"
+#include "drawer.hpp"
 
 #include <QApplication>
 #include <QGraphicsPixmapItem>
@@ -20,7 +21,7 @@ QT_BEGIN_NAMESPACE
 
 namespace Ui
 {
-class MainWindow;
+    class MainWindow;
 }
 
 QT_END_NAMESPACE
@@ -31,10 +32,16 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
+    void test(void);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
+    std::shared_ptr<Drawer> _drawer;
+    std::shared_ptr<QGraphicsScene> _scene;
+    QPixmap _pixmap;
     Ui::MainWindow *ui;
+
+    void set_scene();
 };

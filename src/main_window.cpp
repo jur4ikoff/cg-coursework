@@ -4,22 +4,18 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    setWindowTitle("Рейтрейсинг");
+
     ui->setupUi(this);
     ui->graphicsView->viewport()->setMinimumSize(MIN_SCENE_WIDTH, MIN_SCENE_HEIGHT);
-
-    setWindowTitle("Фиксированный QPixmap слева (C++)");
-
-    QGraphicsScene *scene = new QGraphicsScene(this);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // Отключаем скроллбары
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QPixmap pixmap(ui->graphicsView->viewport()->size());
-    pixmap.fill(Qt::red);
+    _scene = std::make_shared<QGraphicsScene>(this);
+    _pixmap = QPixmap(ui->graphicsView->viewport()->size());
+    _drawer = std::make_shared<Drawer>(_pixmap);
 
-    scene->setSceneRect(pixmap.rect());
-    ui->graphicsView->setScene(scene);
-
-    QGraphicsPixmapItem *pixmapItem = scene->addPixmap(pixmap);
+    set_scene();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -31,5 +27,15 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         ui->graphicsView->fitInView(
             ui->graphicsView->scene()->items().first(),
             Qt::IgnoreAspectRatio);
+        _drawer->draw(Qt::red);
+        set_scene();
     }
+}
+
+void MainWindow::set_scene()
+{
+    _scene->setSceneRect(_pixmap.rect());
+    ui->graphicsView->setScene(_scene.get());
+
+    QGraphicsPixmapItem *pixmapItem = _scene->addPixmap(_pixmap);
 }
