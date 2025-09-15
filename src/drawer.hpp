@@ -11,6 +11,7 @@ public:
     }
 
     void draw();
+    void main();
 
     ~Drawer()
     {

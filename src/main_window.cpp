@@ -31,7 +31,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         ui->graphicsView->fitInView(
             ui->graphicsView->scene()->items().first(),
             Qt::IgnoreAspectRatio);
-        _drawer->draw();
+        _drawer->main();
         set_scene();
     }
 }
