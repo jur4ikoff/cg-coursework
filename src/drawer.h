@@ -1,5 +1,7 @@
 #pragma once
 
+#include "color_matrix.h"
+
 #include <iostream>
 #include <QPixmap>
 
@@ -10,8 +12,7 @@ public:
     {
     }
 
-    void draw();
-    void main();
+    ColorMatrix draw();
 
     ~Drawer()
     {

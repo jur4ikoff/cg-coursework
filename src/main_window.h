@@ -1,9 +1,12 @@
 #pragma once
 
 #include "ui_main_window.h"
-#include "drawer.hpp"
+#include "drawer.h"
+#include "qt_drawer.h"
+#include "color_matrix.h"
 
 #include <QApplication>
+
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QLabel>
@@ -37,10 +40,13 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
+    std::shared_ptr<QtDrawer> _graphic_scene;
     std::shared_ptr<Drawer> _drawer;
     std::shared_ptr<QGraphicsScene> _scene;
     std::shared_ptr<QPixmap> _pixmap;
     Ui::MainWindow *ui;
+
+    // QTimer _resize_timer;
 
     void set_scene();
 };

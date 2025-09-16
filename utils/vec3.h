@@ -100,9 +100,10 @@ inline Vec3 cross(const Vec3 &u, const Vec3 &other)
                 u.vector[0] * other.vector[1] - u.vector[1] * other.vector[0]);
 }
 
-inline Vec3 unit_vector(const Vec3 &other)
+// Приведение к едничному вектору
+inline Vec3 unit_vector(const Vec3 &vector)
 {
-    return other / other.length();
+    return vector / vector.length();
 }
 
 using Point3 = Vec3;
