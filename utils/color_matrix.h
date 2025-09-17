@@ -5,21 +5,7 @@
 
 #include <vector>
 #include <stdexcept>
-
-// class ColorMatrix : public BaseMatrix
-// {
-//     ColorMatrix()
-//     {
-//         _rows_count = 0;
-//         _columns_count = 0;
-//     }
-
-//     ColorMatrix(size_type rows_count, size_type columns_count)
-//     {
-//         _rows_count = rows_count;
-//         _columns_count = columns_count;
-//     }
-// };
+#include <QImage>
 
 class ColorMatrix : public BaseMatrix
 {
@@ -126,6 +112,32 @@ public:
     const std::vector<Color> &operator[](size_type row) const
     {
         return _data[row];
+    }
+
+    QImage to_QImage() const
+    {
+        if (empty())
+            return QImage();
+
+        QImage image(_columns_count, _rows_count, QImage::Format_RGB32);
+
+        for (size_type y = 0; y < _rows_count; ++y)
+        {
+            for (size_type x = 0; x < _columns_count; ++x)
+            {
+                const Color &color = _data[y][x];
+                const QColor q_color = get_QColor(color);
+                image.setPixelColor(x, y, q_color);
+            }
+        }
+
+        return image;
+    }
+
+    // Преобразование в QPixmap
+    QPixmap toQPixmap() const
+    {
+        return QPixmap::fromImage(to_QImage());
     }
 
     // Итераторы для range-based for

@@ -5,8 +5,7 @@
 
 ColorMatrix Drawer::draw(QSize size)
 {
-    // QSize size = _pixmap.size();
-    ColorMatrix color_matrix;
+    ColorMatrix color_matrix(size.width(), size.height());
 
     // потом проверить определение размеров на всякий случай
     double aspect_ratio = static_cast<double>(size.width()) / size.height();
@@ -36,8 +35,7 @@ ColorMatrix Drawer::draw(QSize size)
             Ray r(camera_center, ray_direction);
 
             Color pixel_color = ray_color(r);
-            QColor write_color = get_QColor(pixel_color);
-            // image.setPixelColor(j, i, write_color);
+            color_matrix.at(i, j) = pixel_color;
         }
     }
 

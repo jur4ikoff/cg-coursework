@@ -85,6 +85,7 @@
         "__hash_table": "cpp",
         "__node_handle": "cpp",
         "__split_buffer": "cpp",
-        "execution": "cpp"
+        "execution": "cpp",
+        "__tree": "cpp"
     }
 }

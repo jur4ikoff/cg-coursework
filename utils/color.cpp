@@ -7,7 +7,7 @@ void write_color(std::ostream &out, const Color &pixel_color)
     auto b = pixel_color.z();
 
     int rbyte = int(255.999 * r);
-    int gbyte = int(255.999 * g);
+    int gbyte = int(255.999 * g); 
     int bbyte = int(255.999 * b);
 
     out << rbyte << ' ' << gbyte << ' ' << bbyte << "\n";
@@ -27,4 +27,10 @@ QColor get_QColor(const Color &pixel_color)
     int bbyte = int(255.999 * b);
 
     return QColor(rbyte, gbyte, bbyte);
+}
+
+QRgb get_QRgb(const Color &color)
+{
+    QRgb q_rgb_color = qRgb(color.x(), color.y(), color.z());
+    return q_rgb_color;
 }

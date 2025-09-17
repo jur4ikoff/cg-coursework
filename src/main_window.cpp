@@ -32,8 +32,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         ui->graphicsView->fitInView(
             ui->graphicsView->scene()->items().first(),
             Qt::IgnoreAspectRatio);
-        _pixmap->fill(Qt::black);
-        ColorMatrix color_matrix = _drawer->draw(_pixmap->size());
+
+        ColorMatrix color_matrix = _drawer->draw(new_size);
         _graphic_scene->draw(color_matrix);
         set_scene();
     }

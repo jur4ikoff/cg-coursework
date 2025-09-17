@@ -14,8 +14,8 @@ public:
 
     void draw(const ColorMatrix &matrix)
     {
-        QImage image = _pixmap.toImage();
-        qDebug() << 1;
+
+        QImage image = matrix.to_QImage();
         _pixmap = QPixmap::fromImage(image);
     }
 
