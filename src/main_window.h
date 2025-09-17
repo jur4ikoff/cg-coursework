@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui_main_window.h"
-#include "drawer.h"
+#include "raytraicer.h"
 #include "qt_drawer.h"
 #include "color_matrix.h"
 
@@ -41,7 +41,7 @@ protected:
 
 private:
     std::shared_ptr<QtDrawer> _graphic_scene;
-    std::shared_ptr<Drawer> _drawer;
+    std::shared_ptr<RayTraicer> _raytraicer;
     std::shared_ptr<QGraphicsScene> _scene;
     std::shared_ptr<QPixmap> _pixmap;
     Ui::MainWindow *ui;

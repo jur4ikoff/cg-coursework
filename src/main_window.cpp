@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     _scene = std::make_shared<QGraphicsScene>(this);
     _pixmap = std::make_shared<QPixmap>(ui->graphicsView->viewport()->size());
     _graphic_scene = std::make_shared<QtDrawer>(*_pixmap.get());
-    _drawer = std::make_shared<Drawer>();
+    _raytraicer = std::make_shared<RayTraicer>();
 
     set_scene();
 }
@@ -33,7 +33,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
             ui->graphicsView->scene()->items().first(),
             Qt::IgnoreAspectRatio);
 
-        ColorMatrix color_matrix = _drawer->draw(new_size);
+        ColorMatrix color_matrix = _raytraicer->draw(new_size);
         _graphic_scene->draw(color_matrix);
         set_scene();
     }

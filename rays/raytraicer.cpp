@@ -1,9 +1,9 @@
-#include "drawer.h"
+#include "raytraicer.h"
 #include "color.h"
 #include "vec3.h"
 #include "ray.h"
 
-ColorMatrix Drawer::draw(QSize size)
+ColorMatrix RayTraicer::draw(QSize size)
 {
     ColorMatrix color_matrix(size.width(), size.height());
 
