@@ -5,7 +5,7 @@
 
 ColorMatrix RayTraicer::draw(QSize size)
 {
-    ColorMatrix color_matrix(size.width(), size.height());
+    ColorMatrix color_matrix(size.height(), size.width());
 
     // потом проверить определение размеров на всякий случай
     double aspect_ratio = static_cast<double>(size.width()) / size.height();
@@ -35,7 +35,7 @@ ColorMatrix RayTraicer::draw(QSize size)
             Ray r(camera_center, ray_direction);
 
             Color pixel_color = ray_color(r);
-            color_matrix.at(i, j) = pixel_color;
+            color_matrix.at(j, i) = pixel_color;
         }
     }
 
