@@ -3,21 +3,16 @@
 #include "color_matrix.h"
 
 #include <iostream>
-#include <QPixmap>
+#include <QSize>
 
 class Drawer
 {
 public:
-    Drawer(QPixmap &pixmap) : _pixmap(pixmap)
-    {
-    }
+    Drawer() {}
 
-    ColorMatrix draw();
+    ColorMatrix draw(QSize size);
 
     ~Drawer()
     {
     }
-
-private:
-    QPixmap &_pixmap;
 };

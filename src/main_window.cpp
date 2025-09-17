@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     _scene = std::make_shared<QGraphicsScene>(this);
     _pixmap = std::make_shared<QPixmap>(ui->graphicsView->viewport()->size());
     _graphic_scene = std::make_shared<QtDrawer>(*_pixmap.get());
-    _drawer = std::make_shared<Drawer>(*_pixmap.get());
+    _drawer = std::make_shared<Drawer>();
 
     set_scene();
 }
@@ -25,7 +25,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
     QSize new_size = ui->graphicsView->viewport()->size();
     _pixmap = std::make_shared<QPixmap>(new_size);
-    _drawer = std::make_shared<Drawer>(*_pixmap.get());
+    _graphic_scene = std::make_shared<QtDrawer>(*_pixmap.get());
 
     if (ui->graphicsView->scene() && !ui->graphicsView->scene()->items().isEmpty())
     {
@@ -33,7 +33,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
             ui->graphicsView->scene()->items().first(),
             Qt::IgnoreAspectRatio);
         _pixmap->fill(Qt::black);
-        ColorMatrix color_matrix = _drawer->draw();
+        ColorMatrix color_matrix = _drawer->draw(_pixmap->size());
         _graphic_scene->draw(color_matrix);
         set_scene();
     }

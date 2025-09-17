@@ -12,7 +12,7 @@ public:
     {
     }
 
-    void draw(ColorMatrix matrix)
+    void draw(const ColorMatrix &matrix)
     {
         QImage image = _pixmap.toImage();
         qDebug() << 1;

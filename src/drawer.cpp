@@ -3,9 +3,9 @@
 #include "vec3.h"
 #include "ray.h"
 
-ColorMatrix Drawer::draw()
+ColorMatrix Drawer::draw(QSize size)
 {
-    QSize size = _pixmap.size();
+    // QSize size = _pixmap.size();
     ColorMatrix color_matrix;
 
     // потом проверить определение размеров на всякий случай
