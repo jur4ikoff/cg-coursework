@@ -34,26 +34,36 @@ Color sky(Ray r)
     return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
 }
 
-bool hit_sphere(const Point3 &center, double radius, const Ray &r)
+double hit_sphere(const Point3 &center, double radius, const Ray &r)
 {
     // Решаем квадраное уравнение t^2 * d - 2td * (C - Q) + (C - Q) * (C - Q) - r^2 =0
     // Вектор между началом луча и центром окруност
     Vec3 oc = center - r.origin();
 
-    // Скалряное проивзедения направления вектора на самого себя
-    double a = dot(r.direction(), r.direction());
-    double b = -2.0 * dot(r.direction(), oc);
-    double c = dot(oc, oc) - radius * radius;
+    double a = r.direction().lenght_squared();
+    double h = dot(r.direction(), oc);
+    double c = oc.lenght_squared() - radius * radius;
 
-    double discriminant = b * b - 4 * a * c;
-    return (discriminant >= 0);
+    double discriminant = h * h - a * c;
+
+    if (discriminant < 0)
+    {
+        return -1.0;
+    }
+    else
+    {
+        return (h - std::sqrt(discriminant)) / a;
+    }
 }
 
 Color ray_color(Ray r)
 {
-    if (hit_sphere(Point3(0, 0, 1), 0.5, r))
+    Point3 center(0, 0, -1);
+    double t = hit_sphere(center, 0.5, r);
+    if (t > 0.0)
     {
-        return Color(1, 0, 0);
+        Vec3 N = unit_vector(r.at(t) - center);
+        return 0.5 * Color(N.x() + 1, N.y() + 1, N.z() + 1);
     }
 
     return sky(r);
