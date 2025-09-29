@@ -2,18 +2,29 @@
 
 #include "ray.h"
 
-class hit_record
+class HitRecord
 {
 public:
-    Point3 _point;
-    Vec3 _normal;
-    double _t;
+    Point3 point;
+    Vec3 normal;
+    double t;
+    bool front_face;
+
+    /**
+     * @brief Устанавливает вектор нормали
+     * @note Параметр outward_normal должен быть нормализован
+     */
+    void set_face_normal(const Ray &r, const Vec3 &outward_normal)
+    {
+        front_face = dot(r.direction(), outward_normal) < 0;
+        normal = front_face ? outward_normal : -outward_normal;
+    }
 };
 
-class Hitable
+class Hittable
 {
 public:
     virtual ~Hittable() = default;
 
-    Virtual bool hit(const Ray &ray, double ray_tmin, double ray_tmax, hit_record &rec);
+    virtual bool hit(const Ray &ray, double ray_tmin, double ray_tmax, HitRecord &rec) const = 0;
 };

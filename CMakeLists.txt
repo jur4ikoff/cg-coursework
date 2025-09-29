@@ -50,10 +50,10 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 qt_standard_project_setup()
 
-file(GLOB_RECURSE SOURCES "src/*.cpp" "utils/*.cpp" "rays/*.cpp" "qt_drawers/*.cpp" "main.cpp")
+file(GLOB_RECURSE SOURCES "src/*.cpp" "utils/*.cpp" "rays/*.cpp" "qt_drawers/*.cpp" "main.cpp" "dev/*/cpp")
 qt_add_executable(app.exe ${SOURCES})
 
-target_include_directories(app.exe PRIVATE src utils rays qt_drawers)
+target_include_directories(app.exe PRIVATE src utils rays qt_drawers dev)
 target_precompile_headers(app.exe PRIVATE "pch.hxx")
 target_link_libraries(app.exe PRIVATE Qt6::Core Qt6::Widgets Qt6::Gui)
 
