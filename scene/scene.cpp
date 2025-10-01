@@ -1,4 +1,4 @@
-#include "raytraicer.h"
+#include "scene.h"
 #include "hittable.h"
 #include "hittable_list.h"
 #include "sphere.h"
@@ -18,7 +18,7 @@
 //     return sky(ray);
 // }
 
-ColorMatrix RayTraicer::draw(QSize size)
+ColorMatrix Scene::draw(QSize size)
 {
     ColorMatrix color_matrix(size.height(), size.width());
 

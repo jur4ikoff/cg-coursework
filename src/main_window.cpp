@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // Отключаем скроллбары
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    _scene = std::make_shared<QGraphicsScene>(this);
+    _qt_scene = std::make_shared<QGraphicsScene>(this);
     _pixmap = std::make_shared<QPixmap>(ui->graphicsView->viewport()->size());
     _graphic_scene = std::make_shared<QtDrawer>(*_pixmap.get());
-    _raytraicer = std::make_shared<RayTraicer>();
+    _scene = std::make_shared<Scene>();
 
     set_scene();
 }
@@ -33,7 +33,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
             ui->graphicsView->scene()->items().first(),
             Qt::IgnoreAspectRatio);
 
-        ColorMatrix color_matrix = _raytraicer->draw(new_size);
+        ColorMatrix color_matrix = _scene->draw(new_size);
         _graphic_scene->draw(color_matrix);
         set_scene();
     }
@@ -41,8 +41,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::set_scene()
 {
-    _scene->setSceneRect(_pixmap.get()->rect());
-    ui->graphicsView->setScene(_scene.get());
+    _qt_scene->setSceneRect(_pixmap.get()->rect());
+    ui->graphicsView->setScene(_qt_scene.get());
 
-    QGraphicsPixmapItem *pixmapItem = _scene->addPixmap(*_pixmap.get());
+    QGraphicsPixmapItem *pixmapItem = _qt_scene->addPixmap(*_pixmap.get());
 }

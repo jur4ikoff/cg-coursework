@@ -5,14 +5,14 @@
 #include <iostream>
 #include <QSize>
 
-class RayTraicer
+class Scene
 {
 public:
-    RayTraicer() {}
+    Scene() {}
 
     ColorMatrix draw(QSize size);
 
-    ~RayTraicer()
+    ~Scene()
     {
     }
 };
