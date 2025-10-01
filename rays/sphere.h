@@ -1,15 +1,15 @@
 #pragma once
 
 #include "hittable.h"
+#include "constants.h"
 #include "vec3.h"
-
 
 class Sphere : public Hittable
 {
 public:
     Sphere(const Point3 &center, double radius) : _center(center), _radius(std::fmax(0, radius)) {}
 
-    bool hit(const Ray &ray, double ray_tmin, double ray_tmax, HitRecord &rec) const override
+    bool hit(const Ray &ray, Interval ray_t, HitRecord &rec) const override
     {
         Vec3 oc = _center - ray.origin();
         double a = ray.direction().lenght_squared();
@@ -17,16 +17,21 @@ public:
         double c = oc.lenght_squared() - _radius * _radius;
 
         double discriminant = h * h - a * c;
-        if (discriminant < 0){
+        if (discriminant < 0)
+        {
             return false;
         }
 
         double sqrtd = std::sqrt(discriminant);
 
         double root = (h - sqrtd) / a;
-        if (root <= ray_tmin || ray_tmax <= root)
+        if (!ray_t.surrounds(root))
         {
-            return false;
+            root = (h + sqrtd) / a;
+            if (!ray_t.surrounds(root))
+            {
+                return false;
+            }
         }
 
         rec.t = root;

@@ -42,7 +42,7 @@ double hit_sphere(const Point3 &center, double radius, const Ray &r)
 Color ray_color(const Ray &ray, const Hittable &world)
 {
     HitRecord rec;
-    if (world.hit(ray, 0, INF, rec))
+    if (world.hit(ray, Interval(0, INF), rec))
     {
         return 0.5 * (rec.normal + Color(1, 1, 1));
     }
