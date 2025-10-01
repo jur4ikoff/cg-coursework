@@ -107,3 +107,4 @@ inline Vec3 unit_vector(const Vec3 &vector)
 }
 
 using Point3 = Vec3;
+using Size = Vec3;
