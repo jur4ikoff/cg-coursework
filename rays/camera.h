@@ -12,6 +12,7 @@ public:
     Size _size;
     double aspect_ratio;
     int samples_per_pixel = 10;
+    int max_depth = 10;
 
     void render(const Hittable &world, ColorMatrix &color_matrix, Size size)
     {
@@ -27,7 +28,7 @@ public:
                 for (int sample = 0; sample < samples_per_pixel; sample++)
                 {
                     Ray ray = get_ray(i, j);
-                    pixel_color += ray_color(ray, world);
+                    pixel_color += ray_color(ray, max_depth, world);
                 }
                 color_matrix.at(j, i) = pixel_samples_scale * pixel_color;
             }
@@ -83,12 +84,18 @@ private:
         return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
     }
 
-    Color ray_color(const Ray &ray, const Hittable &world) const
+    Color ray_color(const Ray &ray, int depth, const Hittable &world) const
     {
-        HitRecord rec;
-        if (world.hit(ray, Interval(0, INF), rec))
+        if (depth <= 0)
         {
-            return 0.5 * (rec.normal + Color(1, 1, 1));
+            return Color(0, 0, 0);
+        }
+
+        HitRecord rec;
+        if (world.hit(ray, Interval(0.000001, INF), rec))
+        {
+            Vec3 direction = Vec3::random_on_hemisphere(rec.normal);
+            return 0.5 * ray_color(Ray(rec.point, direction), depth - 1, world);
         }
 
         return sky(ray);
@@ -96,8 +103,8 @@ private:
 
     Ray get_ray(int i, int j) const
     {
-        // MyVec3 offset = sample_square();
-        Vec3 offset(0, 0, 0); 
+        Vec3 offset = sample_square();
+        // Vec3 offset(0, 0, 0);
 
         Vec3 pixel_sample = pixel00_loc + ((i * (offset.x() + pixel_delta_u)) + (j * (offset.y() + pixel_delta_v)));
 
@@ -108,7 +115,6 @@ private:
 
     Vec3 sample_square() const
     {
-        // return MyVec3(random_double_2(-0.1, 0,1) - 0.5, random_double_2() - 0.5, 0);
-        return Vec3(random_double(-0.0001, 0.0001), random_double(-0.0001, 0.0001), 0);
+        return Vec3(random_double(-0.000001, 0.000001), random_double(-0.000001, 0.000001), 0);
     }
 };

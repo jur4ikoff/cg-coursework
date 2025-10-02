@@ -12,9 +12,9 @@ public:
     bool hit(const Ray &ray, Interval ray_t, HitRecord &rec) const override
     {
         Vec3 oc = _center - ray.origin();
-        double a = ray.direction().lenght_squared();
-        double h = dot(ray.direction(), oc);
-        double c = oc.lenght_squared() - _radius * _radius;
+        double a = ray.direction().length_squared();
+        double h = Vec3::dot(ray.direction(), oc);
+        double c = oc.length_squared() - _radius * _radius;
 
         double discriminant = h * h - a * c;
         if (discriminant < 0)
