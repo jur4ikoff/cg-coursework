@@ -8,17 +8,17 @@ class Ray
 public:
     Ray() {}
 
-    Ray(const MyPoint3 &origin, const MyVec3 &direction) : _origin(origin), _direction(direction) {}
+    Ray(const Point3 &origin, const Vec3 &direction) : _origin(origin), _direction(direction) {}
 
-    const MyPoint3 &origin() const { return _origin; }
-    const MyVec3 &direction() const { return _direction; }
+    const Point3 &origin() const { return _origin; }
+    const Vec3 &direction() const { return _direction; }
 
-    MyPoint3 at(double t) const
+    Point3 at(double t) const
     {
         return _origin + t * _direction;
     }
 
 private:
-    MyPoint3 _origin;
-    MyVec3 _direction;
+    Point3 _origin;
+    Vec3 _direction;
 };

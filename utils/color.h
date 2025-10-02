@@ -3,7 +3,7 @@
 
 #include <QColor>
 
-using Color = MyVec3;
+using Color = Vec3;
 
 void write_color(std::ostream &out, const Color &pixel_color);
 QColor get_QColor(const Color &color);

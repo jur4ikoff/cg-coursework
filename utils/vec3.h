@@ -3,23 +3,23 @@
 #include <cmath>
 #include <iostream>
 
-class MyVec3
+class Vec3
 {
 public:
     double vector[3];
 
-    MyVec3() : vector{0, 0, 0} {}
-    MyVec3(double e0, double e1, double e2) : vector{e0, e1, e2} {}
+    Vec3() : vector{0, 0, 0} {}
+    Vec3(double e0, double e1, double e2) : vector{e0, e1, e2} {}
 
     double x() const { return vector[0]; }
     double y() const { return vector[1]; }
     double z() const { return vector[2]; }
 
-    MyVec3 operator-() const { return MyVec3(-vector[0], -vector[1], -vector[2]); }
+    Vec3 operator-() const { return Vec3(-vector[0], -vector[1], -vector[2]); }
     double operator[](int i) const { return vector[i]; }
     double &operator[](int i) { return vector[i]; }
 
-    MyVec3 &operator+=(const MyVec3 &other)
+    Vec3 &operator+=(const Vec3 &other)
     {
         vector[0] += other.vector[0];
         vector[1] += other.vector[1];
@@ -28,7 +28,7 @@ public:
         return *this;
     }
 
-    MyVec3 &operator+=(const int &n)
+    Vec3 &operator+=(const int &n)
     {
         vector[0] += n;
         vector[1] += n;
@@ -37,7 +37,7 @@ public:
         return *this;
     }
 
-    MyVec3 &operator*=(double k)
+    Vec3 &operator*=(double k)
     {
         vector[0] *= k;
         vector[1] *= k;
@@ -46,7 +46,7 @@ public:
         return *this;
     }
 
-    MyVec3 &operator/=(double k)
+    Vec3 &operator/=(double k)
     {
         return *this *= 1 / k;
     }
@@ -62,14 +62,14 @@ public:
     }
 };
 
-inline std::ostream &operator<<(std::ostream &out, const MyVec3 &other)
+inline std::ostream &operator<<(std::ostream &out, const Vec3 &other)
 {
     return out << other.vector[0] << ' ' << other.vector[1] << ' ' << other.vector[2];
 }
 
-inline MyVec3 operator+(const MyVec3 &u, const MyVec3 &other)
+inline Vec3 operator+(const Vec3 &u, const Vec3 &other)
 {
-    return MyVec3(u.vector[0] + other.vector[0], u.vector[1] + other.vector[1], u.vector[2] + other.vector[2]);
+    return Vec3(u.vector[0] + other.vector[0], u.vector[1] + other.vector[1], u.vector[2] + other.vector[2]);
 }
 
 // inline Vec3 operator+(int n, const Vec3 &u)
@@ -77,60 +77,60 @@ inline MyVec3 operator+(const MyVec3 &u, const MyVec3 &other)
 //     return Vec3(u.vector[0] + n, u.vector[1] + n, u.vector[2] + n);
 // }
 
-inline MyVec3 operator+(const MyVec3 &u, double n)
+inline Vec3 operator+(const Vec3 &u, double n)
 {
-    return MyVec3(u.vector[0] + n, u.vector[1] + n, u.vector[2] + n);
+    return Vec3(u.vector[0] + n, u.vector[1] + n, u.vector[2] + n);
 }
 
-inline MyVec3 operator+(double n, const MyVec3 &u)
+inline Vec3 operator+(double n, const Vec3 &u)
 {
-    return MyVec3(u.vector[0] + n, u.vector[1] + n, u.vector[2] + n);
+    return Vec3(u.vector[0] + n, u.vector[1] + n, u.vector[2] + n);
 }
 
 
 
-inline MyVec3 operator-(const MyVec3 &u, const MyVec3 &other)
+inline Vec3 operator-(const Vec3 &u, const Vec3 &other)
 {
-    return MyVec3(u.vector[0] - other.vector[0], u.vector[1] - other.vector[1], u.vector[2] - other.vector[2]);
+    return Vec3(u.vector[0] - other.vector[0], u.vector[1] - other.vector[1], u.vector[2] - other.vector[2]);
 }
 
-inline MyVec3 operator*(const MyVec3 &u, const MyVec3 &other)
+inline Vec3 operator*(const Vec3 &u, const Vec3 &other)
 {
-    return MyVec3(u.vector[0] * other.vector[0], u.vector[1] * other.vector[1], u.vector[2] * other.vector[2]);
+    return Vec3(u.vector[0] * other.vector[0], u.vector[1] * other.vector[1], u.vector[2] * other.vector[2]);
 }
 
-inline MyVec3 operator*(double k, const MyVec3 &other)
+inline Vec3 operator*(double k, const Vec3 &other)
 {
-    return MyVec3(k * other.vector[0], k * other.vector[1], k * other.vector[2]);
+    return Vec3(k * other.vector[0], k * other.vector[1], k * other.vector[2]);
 }
 
-inline MyVec3 operator*(const MyVec3 &other, double k)
+inline Vec3 operator*(const Vec3 &other, double k)
 {
     return k * other;
 }
 
-inline MyVec3 operator/(const MyVec3 &other, double k)
+inline Vec3 operator/(const Vec3 &other, double k)
 {
     return (1 / k) * other;
 }
 
-inline double dot(const MyVec3 &u, const MyVec3 &other)
+inline double dot(const Vec3 &u, const Vec3 &other)
 {
     return u.vector[0] * other.vector[0] + u.vector[1] * other.vector[1] + u.vector[2] * other.vector[2];
 }
 
-inline MyVec3 cross(const MyVec3 &u, const MyVec3 &other)
+inline Vec3 cross(const Vec3 &u, const Vec3 &other)
 {
-    return MyVec3(u.vector[1] * other.vector[2] - u.vector[2] * other.vector[1],
+    return Vec3(u.vector[1] * other.vector[2] - u.vector[2] * other.vector[1],
                 u.vector[2] * other.vector[0] - u.vector[0] * other.vector[2],
                 u.vector[0] * other.vector[1] - u.vector[1] * other.vector[0]);
 }
 
 // Приведение к едничному вектору
-inline MyVec3 unit_vector(const MyVec3 &vector)
+inline Vec3 unit_vector(const Vec3 &vector)
 {
     return vector / vector.length();
 }
 
-using MyPoint3 = MyVec3;
-using Size = MyVec3;
+using Point3 = Vec3;
+using Size = Vec3;
