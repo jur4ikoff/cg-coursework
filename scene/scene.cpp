@@ -26,7 +26,7 @@ ColorMatrix Scene::draw(QSize size)
     HittableList world;
     world.add(make_shared<Sphere>(Point3(0, 0, -1), 0.5));
     world.add(make_shared<Sphere>(Point3(0, -100.5, -1), 100));
-    world.add(make_shared<Sphere>(Point3(0, 15, -10), 5));
+    world.add(make_shared<Sphere>(Point3(20, 25, -30), 8));
 
     Camera camera;
     camera.samples_per_pixel = 50;

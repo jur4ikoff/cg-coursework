@@ -94,8 +94,9 @@ private:
         HitRecord rec;
         if (world.hit(ray, Interval(0.000001, INF), rec))
         {
-            Vec3 direction = Vec3::random_on_hemisphere(rec.normal);
-            return 0.5 * ray_color(Ray(rec.point, direction), depth - 1, world);
+            Vec3 direction = rec.normal + Vec3::random_unit_vector();
+            // Vec3 direction = Vec3::random_on_hemisphere(rec.normal)
+            return 0.6 * ray_color(Ray(rec.point, direction), depth - 1, world);
         }
 
         return sky(ray);
