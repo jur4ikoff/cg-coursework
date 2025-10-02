@@ -7,11 +7,11 @@
 class Sphere : public Hittable
 {
 public:
-    Sphere(const Point3 &center, double radius) : _center(center), _radius(std::fmax(0, radius)) {}
+    Sphere(const MyPoint3 &center, double radius) : _center(center), _radius(std::fmax(0, radius)) {}
 
     bool hit(const Ray &ray, Interval ray_t, HitRecord &rec) const override
     {
-        Vec3 oc = _center - ray.origin();
+        MyVec3 oc = _center - ray.origin();
         double a = ray.direction().lenght_squared();
         double h = dot(ray.direction(), oc);
         double c = oc.lenght_squared() - _radius * _radius;
@@ -36,13 +36,13 @@ public:
 
         rec.t = root;
         rec.point = ray.at(rec.t);
-        Vec3 outward_normal = (rec.point - _center) / _radius;
+        MyVec3 outward_normal = (rec.point - _center) / _radius;
         rec.set_face_normal(ray, outward_normal);
 
         return true;
     }
 
 private:
-    Point3 _center;
+    MyPoint3 _center;
     double _radius;
 };
