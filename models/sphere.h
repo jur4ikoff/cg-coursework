@@ -3,12 +3,13 @@
 #include "hittable.h"
 #include "constants.h"
 #include "vec3.h"
+#include "material.h"
 
 class Sphere : public Hittable
 {
 public:
-    Sphere(const Point3 &center, double radius) : _center(center), _radius(std::fmax(0, radius)) {
-        // TODO Initialize the material pointer `mat`
+    Sphere(const Point3 &center, double radius, shared_ptr<Material> mat) : _center(center), _radius(std::fmax(0, radius)), _material(mat)
+    {
     }
 
     bool hit(const Ray &ray, Interval ray_t, HitRecord &rec) const override

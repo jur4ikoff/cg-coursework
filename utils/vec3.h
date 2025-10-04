@@ -40,15 +40,6 @@ public:
         return *this;
     }
 
-    Vec3 &operator*=(double k)
-    {
-        vector[0] *= k;
-        vector[1] *= k;
-        vector[2] *= k;
-
-        return *this;
-    }
-
     Vec3 &operator/=(double k)
     {
         return *this *= 1 / k;
@@ -63,6 +54,28 @@ public:
     Vec3 operator/(const Vec3 &other) const
     {
         return Vec3(this->vector[0] / other.vector[0], this->vector[1] / other.vector[1], this->vector[2] / other.vector[2]);
+    }
+
+    Vec3 operator*(const Vec3 &other)
+    {
+        return Vec3(this->vector[0] * other.vector[0], this->vector[1] * other.vector[1], this->vector[2] * other.vector[2]);
+    }
+
+    Vec3 &operator*=(double k)
+    {
+        vector[0] *= k;
+        vector[1] *= k;
+        vector[2] *= k;
+
+        return *this;
+    }
+
+    Vec3 operator*(double k)
+    {
+        Vec3 res(*this);
+        res *= k;
+
+        return res;
     }
 
     double length() const
@@ -110,6 +123,12 @@ public:
     {
         return u.vector[0] * other.vector[0] + u.vector[1] * other.vector[1] + u.vector[2] * other.vector[2];
     }
+
+    bool near_zero() const
+    {
+        auto s = 1e-8;
+        return (std::fabs(vector[0]) < s) && (std::fabs(vector[1]) < s) && (std::fabs(vector[2]) < s);
+    }
 };
 
 inline std::ostream &operator<<(std::ostream &out, const Vec3 &other)
@@ -137,11 +156,6 @@ inline Vec3 operator-(const Vec3 &u, const Vec3 &other)
     return Vec3(u.vector[0] - other.vector[0], u.vector[1] - other.vector[1], u.vector[2] - other.vector[2]);
 }
 
-inline Vec3 operator*(const Vec3 &u, const Vec3 &other)
-{
-    return Vec3(u.vector[0] * other.vector[0], u.vector[1] * other.vector[1], u.vector[2] * other.vector[2]);
-}
-
 inline Vec3 operator*(double k, const Vec3 &other)
 {
     return Vec3(k * other.vector[0], k * other.vector[1], k * other.vector[2]);
@@ -164,6 +178,13 @@ inline Vec3 unit_vector(const Vec3 &vector)
 {
     return vector / vector.length();
 }
+
+inline Vec3 reflect(const Vec3 &v, const Vec3 &n)
+{
+    return v - 2 * Vec3::dot(v, n) * n;
+}
+
+// inline Vec3 reflect()
 
 using Point3 = Vec3;
 using Size = Vec3;

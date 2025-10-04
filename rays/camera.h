@@ -4,7 +4,7 @@
 #include "color_matrix.h"
 #include "constants.h"
 #include "vec3.h"
-// #include "color.h"
+#include "material.h"
 
 class Camera
 {
@@ -94,9 +94,15 @@ private:
         HitRecord rec;
         if (world.hit(ray, Interval(0.000001, INF), rec))
         {
-            Vec3 direction = rec.normal + Vec3::random_unit_vector();
-            // Vec3 direction = Vec3::random_on_hemisphere(rec.normal)
-            return 0.6 * ray_color(Ray(rec.point, direction), depth - 1, world);
+            Ray scattered;
+            Color attenuation;
+            if (rec.material->scatter(ray, rec, attenuation, scattered))
+            {
+                return attenuation * ray_color(scattered, depth - 1, world);
+            }
+            
+
+            return Color(0, 0, 0);
         }
 
         return sky(ray);
@@ -105,7 +111,6 @@ private:
     Ray get_ray(int i, int j) const
     {
         Vec3 offset = sample_square();
-        // Vec3 offset(0, 0, 0);
 
         Vec3 pixel_sample = pixel00_loc + ((i * (offset.x() + pixel_delta_u)) + (j * (offset.y() + pixel_delta_v)));
 
@@ -116,6 +121,6 @@ private:
 
     Vec3 sample_square() const
     {
-        return Vec3(random_double(-0.000001, 0.000001), random_double(-0.000001, 0.000001), 0);
+        return Vec3(random_double(-0.000002, 0.000002), random_double(-0.000002, 0.000002), 0);
     }
 };
