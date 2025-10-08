@@ -13,6 +13,14 @@ public:
     double aspect_ratio;
     int samples_per_pixel = 10;
     int max_depth = 10;
+    double vfov = 90;
+
+    Point3 lookfrom = Point3(0, 0, 0);
+    Point3 lookat = Point3(0, 0, -1);
+    Vec3 vup = Vec3(0, 1, 0);
+
+    double defocus_angle = 0; // Variation angle of rays through each pixel
+    double focus_dist = 10;   // Distance from camera lookfrom point to plane of perfect focus
 
     void render(const Hittable &world, ColorMatrix &color_matrix, Size size)
     {
@@ -41,36 +49,46 @@ private:
 
     Point3 center;
 
-    Vec3 viewport_u;
-    Vec3 viewport_v;
-
     Vec3 pixel_delta_u;
     Vec3 pixel_delta_v;
 
     Point3 viewport_upper_left;
     Point3 pixel00_loc;
 
+    Vec3 u, v, w; // Базисные векторы
+
+    Vec3 defocus_disk_u; // Defocus disk horizontal radius
+    Vec3 defocus_disk_v; // Defocus disk vertical radius
+
     void initialize()
     {
         aspect_ratio = static_cast<double>(_size.x()) / _size.y();
 
-        focal_length = 1.0;
+        pixel_samples_scale = 1.0 / samples_per_pixel;
+        center = lookfrom;
 
-        double viewport_height = 2.0;
+        // focal_length = (lookfrom - lookat).length();
+        double theta = degrees_to_radians(vfov);
+        double h = std::tan(theta / 2);
+        auto viewport_height = 2 * h * focus_dist;
         double viewport_width = viewport_height * (double(_size.x()) / _size.y());
 
-        pixel_samples_scale = 1.0 / samples_per_pixel;
+        w = unit_vector(lookfrom - lookat);
+        u = unit_vector(cross(vup, w));
+        v = cross(w, u);
 
-        center = Point3(0, 0, 0);
-
-        viewport_u = Vec3(viewport_width, 0, 0);
-        viewport_v = Vec3(0, -viewport_height, 0);
+        Vec3 viewport_u = viewport_width * u;   // Vector across viewport horizontal edge
+        Vec3 viewport_v = viewport_height * -v; // Vector down viewport vertical edge
 
         pixel_delta_u = viewport_u / _size.x();
         pixel_delta_v = viewport_v / _size.y();
 
-        viewport_upper_left = center - Vec3(0, 0, focal_length) - viewport_u / 2 - viewport_v / 2;
+        viewport_upper_left = center - (focus_dist * w) - viewport_u / 2 - viewport_v / 2;
         pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+
+        auto defocus_radius = focus_dist * std::tan(degrees_to_radians(defocus_angle / 2));
+        defocus_disk_u = u * defocus_radius;
+        defocus_disk_v = v * defocus_radius;
     }
 
     Color sky(Ray r) const
@@ -100,7 +118,6 @@ private:
             {
                 return attenuation * ray_color(scattered, depth - 1, world);
             }
-            
 
             return Color(0, 0, 0);
         }
@@ -114,9 +131,17 @@ private:
 
         Vec3 pixel_sample = pixel00_loc + ((i * (offset.x() + pixel_delta_u)) + (j * (offset.y() + pixel_delta_v)));
 
-        Point3 ray_origin = center;
+        // Point3 ray_origin = center;
+        Point3 ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample();
         Vec3 ray_direction = pixel_sample - ray_origin;
         return Ray(ray_origin, ray_direction);
+    }
+
+    Point3 defocus_disk_sample() const
+    {
+        // Returns a random point in the camera defocus disk.
+        Point3 p = random_in_unit_disk();
+        return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
     Vec3 sample_square() const

@@ -184,7 +184,23 @@ inline Vec3 reflect(const Vec3 &v, const Vec3 &n)
     return v - 2 * Vec3::dot(v, n) * n;
 }
 
-// inline Vec3 reflect()
+inline Vec3 refract(const Vec3 &uv, const Vec3 &normal, double etai_over_etat)
+{
+    auto cos_theta = std::fmin(Vec3::dot(-uv, normal), 1.0);
+    Vec3 r_out_perp = etai_over_etat * (uv + cos_theta * normal);
+    Vec3 r_out_parralel = -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) * normal;
+    return r_out_perp + r_out_parralel;
+}
+
+inline Vec3 random_in_unit_disk()
+{
+    while (true)
+    {
+        auto p = Vec3(random_double(-1, 1), random_double(-1, 1), 0);
+        if (p.length_squared() < 1)
+            return p;
+    }
+}
 
 using Point3 = Vec3;
 using Size = Vec3;
