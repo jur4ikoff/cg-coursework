@@ -27,9 +27,9 @@ ColorMatrix Scene::draw(QSize size)
     auto ground_material = make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
     world.add(make_shared<Sphere>(Point3(0, -1000, 0), 1000, ground_material));
 
-    for (int a = -11; a < 11; a++)
+    for (int a = -8; a < 8; a++)
     {
-        for (int b = -11; b < 11; b++)
+        for (int b = -8; b < 8; b++)
         {
             auto choose_mat = random_double();
             Point3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
@@ -73,15 +73,15 @@ ColorMatrix Scene::draw(QSize size)
     world.add(make_shared<Sphere>(Point3(4, 1, 0), 1.0, material3));
 
     Camera camera;
-    camera.samples_per_pixel = 3;
-    camera.max_depth = 10;
+    camera.samples_per_pixel = 10;
+    camera.max_depth = 12;
 
-    camera.vfov = 20;
+    camera.vfov = 30;
     camera.lookfrom = Point3(13, 2, 3);
     camera.lookat = Point3(0, 0, 0);
     camera.vup = Vec3(0, 1, 0);
 
-    camera.defocus_angle = 0.6;
+    camera.defocus_angle = 0.2;
     camera.focus_dist = 10.0;
 
     camera.render(world, color_matrix, Size(size.width(), size.height(), 0));

@@ -1,4 +1,5 @@
 #pragma once
+#include "omp.h"
 
 #include "hittable.h"
 #include "color_matrix.h"
@@ -28,9 +29,14 @@ public:
         initialize();
 
         // render
-        for (int j = 0; j < _size.y(); j++)
+        int j = 0;
+        // #pragma omp parallel for schedule(dynamic, 1)
+        int y_size = _size.y();
+        int x_size = _size.x();
+        #pragma omp parallel for schedule(dynamic)
+        for (j = 0; j < y_size; j++)
         {
-            for (int i = 0; i < _size.x(); i++)
+            for (int i = 0; i < x_size; i++)
             {
                 Color pixel_color(0, 0, 0);
                 for (int sample = 0; sample < samples_per_pixel; sample++)
