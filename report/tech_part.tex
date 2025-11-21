@@ -1,0 +1,192 @@
+\chapter{Технологическая часть}
+В данной части будут рассмотрены средства реализации программного обеспечения, предоставлены листинги и приведены тестовые данные
+
+\section{Средства реализации}
+В лабораторных работах необходимо использовать язык со статической типизацией, который поддерживает создание нативных потоков. По этой причине был выбран язык C++~\cite{lit2}. Разработка проводилась в среде программирования Visual Studio Code. Для сборки использована утилита CMake. Для визуализации данных, полученных в ходе исследования использовался язык Python~\cite{python} за счёт обилия библиотек для анализа данных. Мною были использованы pandas~\cite{pandas} и matplotlib~\cite{matplotlib}. Для запуска тестов и последующего сохранения результатов также использовался язык Python.
+
+\subsection{Реализация пула потоков}
+
+Для эффективной работы с множеством задач был реализован пул потоков. Он предоставляет механизм для асинхронного выполнения задач с использованием фиксированного количества рабочих потоков.
+
+При создании объекта класса запускается указанное число потоков, каждый из которых ожидает поступления задач через очередь. Исходный код рабочего потока указан в листинге~\ref{list:worker}. Задачи добавляются методом $add\_task$, приведённом в листинге~\ref{list:add_task}. Он принимает произвольную вызываемую сущность и её аргументы, упаковывает их в $std::packaged\_task$ помещает в очередь и возвращает $std::future$~\cite[с.~1595--1602]{lit2} для получения результата. Внутренняя синхронизация обеспечивается с помощью $std::mutex$ и переменной условия $std::condition\_variable$~\cite[с.~1583--1690]{lit2}, что позволяет рабочим потокам эффективно ожидать появления новых задач или сигнала завершения. При вызове деструктора или метода $stop()$ устанавливается флаг остановки, все ожидающие потоки уведомляются, завершают обработку и соединяются с основным потоком.
+\begin{lstlisting}[language=C++, caption={Реализация рабочего потока}, captionpos=b, label=list:worker]
+void worker() {
+	while (true) {
+		std::packaged_task<void()> task;{
+			std::unique_lock l(_mutex_queue);
+			_pool_notifier.wait(l, [this]() { return !_task_queue.empty() || _stop_required; });
+			if (_task_queue.empty() && _stop_required) {return;}
+			task = std::move(_task_queue.front());
+			_task_queue.pop();}
+		task();}}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption={Реализация рабочего потока}, captionpos=b, label=list:add_task]
+ template <typename Func, typename... Args>
+std::future<std::invoke_result_t<Func, Args...>> add_task(Func &&func,
+Args &&...args) {
+	using ret = std::invoke_result_t<Func, Args...>;
+	std::packaged_task<ret()> task(
+	[func = std::forward<Func>(func),args_tuple = std::make_tuple(std::forward<Args>(args)...)] {
+		return std::apply([&](auto &&...captured_args) -> ret {
+			return std::invoke(func, std::forward<decltype(captured_args)>(
+			captured_args)...);},
+		std::move(args_tuple));});
+		
+	std::future<ret> fut = task.get_future();
+	{
+		std::lock_guard l(_mutex_queue);
+		if (_stop_required)
+		throw std::runtime_error("ThreadPool is stopping or stopped");
+		_task_queue.emplace([task = std::move(task)]() mutable {task();});
+	}	
+	_pool_notifier.notify_one();
+	return fut;}
+\end{lstlisting}
+
+Пример использования собственной реализации пула потоков приведён на листинге~\ref{list:using}.
+\begin{lstlisting}[language=C++, caption={Реализация рабочего потока}, captionpos=b, label=list:using]
+ThreadPool pool(thread_count);
+ for (auto tile : tiles)
+{
+	auto fut = pool.add_task([&color_matrix, tile, &render_task, &world]()
+	{ render_task->execute(color_matrix, *tile, world); });
+	futures.push_back(std::move(fut));
+}
+pool.stop();
+\end{lstlisting}
+
+\section{Управление нативными потоками}
+
+Класс std::thread~\cite[с.~1784--1791]{lit2}, входящий в стандартную библиотеку C++, предоставляет высокоуровневый интерфейс для работы с потоками. Он реализован поверх нативных POSIX-потоков, что обеспечивает эффективное взаимодействие с операционной системой. Создание нового потока осуществляется путём вызова конструктора класса std::thread с передачей ему вызываемого объекта, которая начинает выполняться в отдельном потоке. Для синхронизации выполнения основного и дочернего потоков используется метод join(), который блокирует вызывающий поток до завершения целевого. Эти возможности полностью покрывают требования, поставленные в лабораторной работе, позволяя реализовать необходимую логику параллельного выполнения. Пример работы с классом std::thread показан в листинге~\ref{list:thread_ref}.  вызываемого.
+\begin{lstlisting}[language=C++, caption={Пример работы с библиотекой std::thread}, captionpos=b, label=list:thread_ref]
+#include <thread>
+
+void foo() {}
+void bar(int x) {}
+
+int main() {
+	std::thread first(foo);     // create pool 1
+	std::thread second(bar,0);  // create pool 2
+
+	first.join(); 
+	second.join();  
+}
+\end{lstlisting}
+
+\section{Реализация замеров времени выполнения реализации алгоритмов}
+
+Для измерения времени выполнения реализации алгоритмов использовалась библиотека $chrono$~\cite[с.~1250--1260]{lit2}, входящая в стандартную. Из этого класса для получения текущего времени использовались функции chrono::high\_resolution\_clock::now()~\cite[c.~1258]{lit2} для получения реального времени и~chrono::duration\_cast<>()~\cite[c.~1250]{lit2} для приведения времени к необходимому формату. Для проведения замеров была отключена оптимизация компилятора флагом -o0~\cite{compilator_level_optimize}.
+
+\section{Реализация генерации изображения по областям}
+
+Для того, чтобы генерация изображения не блокировала поток графического приложения, было принято решение разделить программу на 2 потока. Разделение происходило с помощью функции $run()$ из класса $QtConcurrent$~\cite{QtConcurrent}. Для получения результата функции запуска генерации изображения и вызова сигнала об окончании генерации использовался класс $QFutureWatcher$~\cite{QFutureWatcher}. Метод $invokeMethod()$ класса $QMetaObject$ нужен для связи фонового и основного потока. Лямбда функция с вызовом $invokeMethod()$ используется в качестве функции обратного вызова, которая вызывается каждый раз при завершении генерации области. Код запуска функции генерации кадра из интерфейса приведен на листинге~\ref{list:run_rtx}
+\begin{lstlisting}[language=C++, caption={Запуск функции генерации кадра из интерфейса}, captionpos=b, label=list:run_rtx]
+_render_color_matrix = std::make_shared<ColorMatrix>(size.height(), size.width());
+_render_pixmap = std::make_shared<QPixmap>(size);
+_drawer = std::make_shared<Drawer>(*_render_pixmap);
+_render_pixmap->fill(Qt::black);
+
+cancel_running = false;
+_futureWatcher.setFuture(QtConcurrent::run([this, size]() {
+	_scene->draw(size, *_render_color_matrix, cancel_running, [this]() {
+		QMetaObject::invokeMethod(this, "tile_render_finished_slot",
+		Qt::QueuedConnection);
+	});
+}));
+\end{lstlisting}
+
+\section{Реализация алгоритмов}
+
+Основной цикл алгоритма, подвергаемый распараллеливанию, обращается к общему ресурсу --- матрице, однако каждый поток обрабатывает строго определённую часть изображения, вследствие чего их рабочие области в памяти не пересекаются. Это исключает необходимость применения примитивов синхронизации, таких как мьютексы или семафоры. По той же причине отсутствует потребность в локальном вычислении промежуточных данных внутри каждого потока с последующим их объединением. 
+
+Исходный код реализации последовательного алгоритма представлен в листинге~\ref{list:seq}. Исходный код реализации параллельного алгоритма представлен в листинге~\ref{list:parallel}. Исходный код реализации алгоритма генерации части изображения представлен в листинге~\ref{list:part}.
+\begin{lstlisting}[language=C++, caption={Исходный код последовательного алгоритма генерации кадра}, captionpos=b, label=list:seq]
+void Render::render_seq(const Hittable &world, ColorMatrix &color_matrix)
+{
+	_size = color_matrix.size();
+	initialize();	
+	auto render_task = std::make_shared<RenderTask>(*this);
+	render_task->execute(color_matrix, Tile(0, 0, _size.x(), _size.y()), world);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption={Исходный код параллельного алгоритма генерации кадра}, captionpos=b, label=list:parallel]
+void Render::render(const Hittable &world, ColorMatrix &color_matrix,
+volatile bool &cancel_running, size_t thread_count,
+std::function<void()> tile_callback)
+{
+	_size = color_matrix.size();
+	initialize();
+	
+	ThreadPool pool(thread_count);
+	
+	auto tile_creator = std::make_shared<TileCreator>(_size.x(), _size.y());
+	auto tiles = tile_creator->create(48);
+	
+	auto render_task = std::make_shared<RenderTask>(*this);
+	std::vector<std::future<void>> futures;
+	for (auto tile : tiles)
+	{
+		auto fut = pool.add_task([&color_matrix, tile, &render_task, &world]()
+		{ render_task->execute(color_matrix, *tile, world); });
+		futures.push_back(std::move(fut));}
+	
+	size_t completed = 0;
+	while (completed < tiles.size())
+	{
+		for (size_t i = 0; i < futures.size(); ++i)
+		{
+			if (cancel_running)
+			break;
+			if (futures[i].valid() && futures[i].wait_for(std::chrono::milliseconds(
+			0)) == std::future_status::ready)
+			{
+				if (tile_callback)
+					tile_callback();
+				futures[i] = std::future<void>{};
+				completed++;
+			}}
+		
+		if (cancel_running)
+			break;
+	}
+	
+	pool.stop();}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption={Исходный код реализации алгоритма генерации части изображения представлен в листинге}, captionpos=b, label=list:part]
+void RenderTask::execute(ColorMatrix &color_matrix, const Tile &tile, const Hittable &world) {
+	for (int i = tile.i; i < tile.end_i; i++) {
+		for (int j = tile.j; j < tile.end_j; j++) {
+			Color pixel_color(0, 0, 0);
+			for (int sample = 0; sample < _camera.samples_per_pixel; sample++) {
+				Ray ray = _camera.get_ray(j, i);
+				pixel_color += _camera.ray_color(ray, _camera.max_depth, world);}
+			color_matrix.at(i, j) = _camera.pixel_samples_scale * pixel_color;}}
+\end{lstlisting}
+
+
+\section{Тестирование ПО}
+Для тестирования реализованного ПО были выделены тестовые случаи, указанные в~таблице~\ref{tab:functional_tests}. Все тесты пройдены успешно.
+\begin{table}[H]
+	\centering
+	\caption{Функциональные тесты}
+	\label{tab:functional_tests}
+	\begin{tabular}{|p{5.1cm}|p{5.3cm}|p{5.3cm}|}
+		\hline
+		\textbf{Вход алгоритма} & \textbf{Ожидаемый результат} & \textbf{Фактический результат} \\
+		\hline
+		Объект класса рисования не установлен & Painter not set! & Painter not set! \\
+		\hline
+		Массив камер пуст & Camera not set! & Camera not set! \\
+		\hline
+		Массив объектов сцены пуст & Кадр неба & Кадр неба \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section*{Вывод}
+В данной части описаны инструменты, использованные для реализации алгоритмов и пула потоков, а также рассмотрен подход к управлению нативными потоками. Приведены исходные коды параллельной и последовательной версий алгоритма, а также представлены результаты функционального тестирования разработанных решений.
+
+\clearpage
