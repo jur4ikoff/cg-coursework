@@ -57,8 +57,9 @@ find_package(GTest REQUIRED)
 qt_standard_project_setup()
 
 
+file(GLOB_RECURSE DATA_STRUCTS "interval/*.cpp")
 file(GLOB_RECURSE SOURCES "window/*.cpp" "utils/*.cpp" "rays/*.cpp" "qt_drawer/*.cpp" "drawer/*.cpp" "dev/*.cpp" "render/*.cpp" "tasks/*.cpp" "models/*.cpp" "scene/*.cpp" "material/*.cpp" "threads/*.cpp")
-file(GLOB_RECURSE APP_SOURCES  "main.cpp" ${SOURCES})
+file(GLOB_RECURSE APP_SOURCES  "main.cpp" ${SOURCES} ${DATA_STRUCTS})
 file(GLOB_RECURSE TEST_SOURCES  "tests/*.cpp" "utils/*.cpp")
 
 list(FILTER TEST_SOURCES EXCLUDE REGEX "main\\.cpp$") # Удаляем main.cpp из тестовых источников
@@ -68,11 +69,29 @@ qt_add_executable(tests.exe ${TEST_SOURCES})
 
 
 
-target_include_directories(app.exe PRIVATE window utils rays qt_drawer drawer models dev scene material threads tasks render)
+set(ALL_DIRS
+    window
+    utils
+    rays
+    qt_drawer
+    drawer
+    models
+    dev
+    scene
+    material
+    threads
+    tasks
+    render
+    interval
+)
+
+# 2. Передаём переменную в target_include_directories
+target_include_directories(app.exe PRIVATE ${ALL_DIRS})
+# target_include_directories(app.exe PRIVATE window utils rays qt_drawer drawer models dev scene material threads tasks render interval)
 target_precompile_headers(app.exe PRIVATE "pch.hxx")
 target_link_libraries(app.exe PRIVATE Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Concurrent)
 
-target_include_directories(tests.exe PRIVATE window utils rays qt_drawer drawer models dev scene material threads tasks render tests)
+target_include_directories(tests.exe PRIVATE ${ALL_DIRS})
 target_precompile_headers(tests.exe PRIVATE "pch.hxx")
 target_link_libraries(tests.exe PRIVATE GTest::GTest GTest::Main Qt6::Core Qt6::Widgets Qt6::Gui)
 

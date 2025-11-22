@@ -5,28 +5,38 @@
 #include "material.h"
 #include "vec3.h"
 
-class Sphere : public Hittable {
+class Sphere : public Hittable
+{
 public:
   Sphere(const Point3 &center, double radius, shared_ptr<Material> mat)
-      : _center(center), _radius(std::fmax(0, radius)), _material(mat) {}
+      : _center(center), _radius(std::fmax(0, radius)), _material(mat)
+  {
+    // auto rvec = vec3(_radius, _radius, _radius);
+    // bbox = aabb(static_center - rvec, static_center + rvec);
+  }
+  // : _center(center, Vec3(0,0,0)), _radius(std::fmax(0, radius)), _material(mat) {}
 
-  bool hit(const Ray &ray, Interval ray_t, HitRecord &rec) const override {
+  bool hit(const Ray &ray, Interval ray_t, HitRecord &rec) const override
+  {
     Vec3 oc = _center - ray.origin();
     double a = ray.direction().length_squared();
     double h = Vec3::dot(ray.direction(), oc);
     double c = oc.length_squared() - _radius * _radius;
 
     double discriminant = h * h - a * c;
-    if (discriminant < 0) {
+    if (discriminant < 0)
+    {
       return false;
     }
 
     double sqrtd = std::sqrt(discriminant);
 
     double root = (h - sqrtd) / a;
-    if (!ray_t.surrounds(root)) {
+    if (!ray_t.surrounds(root))
+    {
       root = (h + sqrtd) / a;
-      if (!ray_t.surrounds(root)) {
+      if (!ray_t.surrounds(root))
+      {
         return false;
       }
     }
