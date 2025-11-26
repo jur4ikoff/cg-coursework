@@ -5,6 +5,7 @@
 #include "qt_drawer.h"
 
 #include "scene.h"
+#include "render.h"
 #include "ui_main_window.h"
 
 #include <QApplication>
@@ -24,13 +25,15 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+  class MainWindow;
 }
 
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
   Q_OBJECT
 public:
   MainWindow(QWidget *parent = nullptr);
@@ -51,10 +54,14 @@ private:
 
   std::shared_ptr<Drawer> _drawer;
   std::shared_ptr<Scene> _scene;
+  std::shared_ptr<Render> _render;
+
   std::shared_ptr<QGraphicsScene> _qt_scene;
   std::shared_ptr<QPixmap> _pixmap;
   std::shared_ptr<ColorMatrix> _color_matrix;
   std::shared_ptr<ColorMatrix> _render_color_matrix;
+
+  hittable_list _world;
 
   QtRenderManager *_render_manager;
 

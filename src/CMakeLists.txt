@@ -57,9 +57,10 @@ find_package(GTest REQUIRED)
 qt_standard_project_setup()
 
 
-file(GLOB_RECURSE DATA_STRUCTS "interval/*.cpp")
-file(GLOB_RECURSE SOURCES "window/*.cpp" "utils/*.cpp" "rays/*.cpp" "qt_drawer/*.cpp" "drawer/*.cpp" "dev/*.cpp" "render/*.cpp" "tasks/*.cpp" "models/*.cpp" "scene/*.cpp" "material/*.cpp" "threads/*.cpp")
-file(GLOB_RECURSE APP_SOURCES  "main.cpp" ${SOURCES} ${DATA_STRUCTS})
+# file(GLOB_RECURSE DATA_STRUCTS "interval/*.cpp")
+file(GLOB_RECURSE UI_SRC "window/*.cpp" "qt_drawer/*.cpp")
+file(GLOB_RECURSE SOURCES "render/*.cpp" "drawer/*.cpp" "dev/*.cpp" "tasks/*.cpp" "scene/*.cpp" "threads/*.cpp" "raytraicer/*.cpp")
+file(GLOB_RECURSE APP_SOURCES  "main.cpp" ${SOURCES} ${UI_SRC})
 file(GLOB_RECURSE TEST_SOURCES  "tests/*.cpp" "utils/*.cpp")
 
 list(FILTER TEST_SOURCES EXCLUDE REGEX "main\\.cpp$") # Удаляем main.cpp из тестовых источников
@@ -71,18 +72,14 @@ qt_add_executable(tests.exe ${TEST_SOURCES})
 
 set(ALL_DIRS
     window
-    utils
-    rays
+    raytraicer
     qt_drawer
     drawer
-    models
-    dev
-    scene
-    material
     threads
     tasks
+    dev
+    scene
     render
-    interval
 )
 
 # 2. Передаём переменную в target_include_directories
