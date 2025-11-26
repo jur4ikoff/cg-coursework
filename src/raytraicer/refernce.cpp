@@ -13,7 +13,7 @@
 
 // #include "bvh.h"
 // #include "Render.h"
-// #include "constant_medium.h"
+// #include "fog.h"
 // #include "hittable.h"
 // #include "hittable_list.h"
 // #include "material.h"

@@ -22,9 +22,9 @@ class Render
     friend class RenderTask;
 
 public:
-    int samples_per_pixel = 10; // Count of random samples for each pixel
+    int samples_per_pixel = 100; // Count of random samples for each pixel
     int max_depth = 10;         // Maximum number of ray bounces into scene
-    color background;           // Scene background color
+    color background;           // Фоновый цвет
 
     void render(const hittable &world, ColorMatrix &color_matrix,
                 volatile bool &cancel_running, size_t thread_count,
@@ -128,13 +128,13 @@ private:
 
     color ray_color(const ray &r, int depth, const hittable &world) const
     {
-        // If we've exceeded the ray bounce limit, no more light is gathered.
+        // Если превысили лимит отражений, то выходим 
         if (depth <= 0)
             return color(0, 0, 0);
 
         hit_record rec;
 
-        // If the ray hits nothing, return the background color.
+        // Если луч ничего не пересекает, то возвращаем цвет пикселя
         if (!world.hit(r, interval(0.001, infinity), rec))
             return background;
 

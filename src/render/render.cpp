@@ -7,14 +7,8 @@ void Render::render(const hittable &world, ColorMatrix &color_matrix,
                     volatile bool &cancel_running, size_t thread_count,
                     std::function<void()> tile_callback)
 {
-    // Size size = color_matrix.size();
     _size = color_matrix.size();
     initialize();
-    // initialize(size.x(), size.y());
-    // initialize(size.y(), size.x());
-
-    // std::cout << "test " << image_height << " " << image_width << std::endl;
-
 
     ThreadPool pool(thread_count);
 
@@ -23,7 +17,6 @@ void Render::render(const hittable &world, ColorMatrix &color_matrix,
 
     auto render_task = std::make_shared<RenderTask>(*this);
     std::vector<std::future<void>> futures;
-
 
     for (auto tile : tiles)
     {

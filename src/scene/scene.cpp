@@ -7,8 +7,7 @@
 #include "pyramid.h"
 #include "cylinder.h"
 #include "cone.h"
-
-#include "constant_medium.h"
+#include "fog.h"
 
 hittable_list Scene::draw()
 {
@@ -21,10 +20,23 @@ hittable_list Scene::draw()
   auto cylinder_mat = make_shared<lambertian>(color(1, 0, 0));
   auto glass = make_shared<dielectric>(1.5);
   auto metal_mat = make_shared<metal>(color(0.8, 0.8, 0.8), 1);
+  auto fog_color = make_shared<color>(0.2, 0.2, 0.2);
+  auto nz_tex = make_shared<noise_texture>(1);
+  auto nz_mat = make_shared<lambertian>(nz_tex);
 
-  auto con = make_shared<cone>(point3(350, 150, 350), 100, 200, metal_mat);
-  // auto con_r = make_shared<rotate_x>(con, 20);
-  world.add(con);
+  auto noise = make_shared<perlin>();
+
+  // Граница — например, большой box
+  // auto boundary = make_shared<quad>(point3(0, 0, 0), vec3(400, 0, 400), vec3(400, 555, 400), red);
+  // auto boundary = make_shared<quad>(point3(0, 0, 400), vec3(0, 0, -400), vec3(0, 555, 0), red);
+  auto boundary = box(point3(0, 0, -100), point3(700, 700, 700), white);
+  // auto boundary_2 = box(point3(275, 0, 0), point3(550, 600, 600), white);
+
+  // world.add(make_shared<constant_medium>(boundary_2, 0.001, *fog_color));
+  world.add(make_shared<nonuniform_medium>(boundary, noise, 2, 0.01, *fog_color));
+
+  world.add(make_shared<cone>(point3(200, 0, 350), 100, 200, white));
+  world.add(box(point3(200, 0, 100), point3(400, 200, 500), green));
 
   // auto pyr = pyramid(point3(400, 0, 200), 150, 300, red);
   // auto pyr_r = make_shared<rotate_y>(pyr, -45);
@@ -52,7 +64,7 @@ hittable_list Scene::draw()
 
   // Light
   world.add(make_shared<quad>(point3(200, 554, 200), vec3(200, 0, 0), vec3(0, 0, 200), light));
-  world.add(make_shared<sphere>(point3(350, 600, 200), 200, light));
+  world.add(make_shared<sphere>(point3(250, 650, 500), 150, light));
 
   // Box
 
@@ -74,7 +86,7 @@ hittable_list Scene::draw()
 
   // Glass Sphere
 
-  world.add(make_shared<sphere>(point3(200, 90, 190), 90, glass));
+  // world.add(make_shared<sphere>(point3(200, 90, 190), 90, glass));
 
   return world;
 }

@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
   _render = std::make_shared<Render>();
   _world = _scene->draw();
 
-  _render->samples_per_pixel = 100;
-  _render->max_depth = 20;
+  _render->samples_per_pixel = 120;
+  _render->max_depth = 30;
   _render->background = color(0, 0, 0);
 
   Camera camera;
@@ -69,7 +69,7 @@ void MainWindow::tile_render_finished_slot()
 {
   if (!cancel_running)
   {
-    // qDebug() << "draw";
+    qDebug() << "draw";
     _drawer->draw(*_render_color_matrix);
     update_render_scene();
   }
@@ -106,8 +106,6 @@ void MainWindow::on_renderButton_clicked()
   _render_pixmap->fill(Qt::black);
 
   cancel_running = false;
-  qDebug() << size;
-  std::cout << _render_color_matrix->size() << std::endl;
   _futureWatcher.setFuture(QtConcurrent::run([this, size]()
                                              { _render->render(_world, *_render_color_matrix, cancel_running, 8, [this]()
                                                                { QMetaObject::invokeMethod(this, "tile_render_finished_slot",
