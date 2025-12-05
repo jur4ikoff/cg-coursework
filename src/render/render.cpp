@@ -3,7 +3,7 @@
 #include "hittable_list.h"
 #include "tile_creator.h"
 
-void Render::render(const hittable &world, ColorMatrix &color_matrix,
+void Render::render(const Hittable &world, ColorMatrix &color_matrix,
                     volatile bool &cancel_running, size_t thread_count,
                     std::function<void()> tile_callback)
 {
@@ -20,8 +20,8 @@ void Render::render(const hittable &world, ColorMatrix &color_matrix,
 
     for (auto tile : tiles)
     {
-        auto fut = pool.add_task([&color_matrix, tile, &render_task, &world]()
-                                 { render_task->execute(color_matrix, *tile, world); });
+        auto fut = pool.add_task([&color_matrix, tile, &render_task, &world, &cancel_running]()
+                                 { render_task->execute(color_matrix, *tile, world, cancel_running); });
         futures.push_back(std::move(fut));
     }
 

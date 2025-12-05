@@ -14,7 +14,7 @@
 #include "interval.h"
 #include "vec3.h"
 
-using color = vec3;
+using color = Vec3;
 
 inline double linear_to_gamma(double linear_component)
 {

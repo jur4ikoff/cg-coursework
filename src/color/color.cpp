@@ -17,7 +17,7 @@ QColor get_QColor(const color &pixel_color)
     g = linear_to_gamma(g);
     b = linear_to_gamma(b);
 
-    const interval intensity(0.000, 0.999);
+    const Interval intensity(0.000, 0.999);
     int rbyte = int(256 * intensity.clamp(r));
     int gbyte = int(256 * intensity.clamp(g));
     int bbyte = int(256 * intensity.clamp(b));
@@ -50,7 +50,7 @@ void write_color(std::ostream &out, const color &pixel_color)
     b = linear_to_gamma(b);
 
     // Translate the [0,1] component values to the byte range [0,255].
-    static const interval intensity(0.000, 0.999);
+    static const Interval intensity(0.000, 0.999);
     int rbyte = int(256 * intensity.clamp(r));
     int gbyte = int(256 * intensity.clamp(g));
     int bbyte = int(256 * intensity.clamp(b));

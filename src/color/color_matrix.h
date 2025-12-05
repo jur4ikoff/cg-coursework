@@ -65,7 +65,7 @@ public:
     return _data[row][column];
   }
 
-  vec3 size() { return vec3(_rows_count, _columns_count, 0); }
+  Vec3 size() { return Vec3(_rows_count, _columns_count, 0); }
 
   // Изменение размера
   void resize(size_type new_rows, size_type new_columns,

@@ -1,15 +1,5 @@
-#ifndef CAMERA_H
-#define CAMERA_H
-//==============================================================================================
-// Originally written in 2016 by Peter Shirley <ptrshrl@gmail.com>
-//
-// To the extent possible under law, the author(s) have dedicated all copyright and related and
-// neighboring rights to this software to the public domain worldwide. This software is
-// distributed without any warranty.
-//
-// You should have received a copy (see file COPYING.txt) of the CC0 Public Domain Dedication
-// along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
-//==============================================================================================
+#ifndef RENDER_H
+#define RENDER_H
 
 #include "hittable.h"
 #include "material.h"
@@ -17,16 +7,28 @@
 #include "task.h"
 #include "camera.h"
 
+class RenderSettings
+{
+public:
+    RenderSettings(int samples, int depth, color back) : samples_per_pixel(samples),
+                                                         max_depth(depth),
+                                                         background(back) {}
+                                                         
+    int samples_per_pixel = 100;
+    int max_depth = 10;
+    color background{0.5, 0.5, 0.5};
+};
+
 class Render
 {
     friend class RenderTask;
 
 public:
-    int samples_per_pixel = 100; // Count of random samples for each pixel
-    int max_depth = 10;         // Maximum number of ray bounces into scene
-    color background;           // Фоновый цвет
+    int samples_per_pixel = 100; // Количество лучей на каждый пиксель
+    int max_depth = 10;          // Максимальное количество переотражений
+    color background;            // Фоновый цвет
 
-    void render(const hittable &world, ColorMatrix &color_matrix,
+    void render(const Hittable &world, ColorMatrix &color_matrix,
                 volatile bool &cancel_running, size_t thread_count,
                 std::function<void()> tile_callback);
 
@@ -44,14 +46,15 @@ private:
     int image_width = 600;
     int image_height = 600;
     Size _size;
+
     double pixel_samples_scale; // Color scale factor for a sum of pixel samples
-    point3 center;              // Camera center
-    point3 pixel00_loc;         // Location of pixel 0, 0
-    vec3 pixel_delta_u;         // Offset to pixel to the right
-    vec3 pixel_delta_v;         // Offset to pixel below
-    vec3 u, v, w;               // Camera frame basis vectors
-    vec3 defocus_disk_u;        // Defocus disk horizontal radius
-    vec3 defocus_disk_v;        // Defocus disk vertical radius
+    point3 center;              // Центр камеры
+    point3 pixel00_loc;         // Локация пикселя 0, 0
+    Vec3 pixel_delta_u;         // Смещение пикселя вправо
+    Vec3 pixel_delta_v;         // Смещение пикселя вниз
+    Vec3 u, v, w;               // Базисные векторы
+    Vec3 defocus_disk_u;        // Горизонтальный радиус диска расфокусировки
+    Vec3 defocus_disk_v;        // Вертикальный радиус диска расфокусировки
     Camera _camera;
 
     void initialize()
@@ -75,8 +78,8 @@ private:
         v = cross(w, u);
 
         // Calculate the vectors across the horizontal and down the vertical viewport edges.
-        vec3 viewport_u = viewport_width * u;   // Vector across viewport horizontal edge
-        vec3 viewport_v = viewport_height * -v; // Vector down viewport vertical edge
+        Vec3 viewport_u = viewport_width * u;   // Vector across viewport horizontal edge
+        Vec3 viewport_v = viewport_height * -v; // Vector down viewport vertical edge
 
         // Calculate the horizontal and vertical delta vectors from pixel to pixel.
         pixel_delta_u = viewport_u / image_width;
@@ -92,7 +95,7 @@ private:
         defocus_disk_v = v * defocus_radius;
     }
 
-    ray get_ray(int i, int j) const
+    Ray get_ray(int i, int j) const
     {
         // Construct a Render ray originating from the defocus disk and directed at a randomly
         // sampled point around the pixel location i, j.
@@ -104,16 +107,16 @@ private:
         auto ray_direction = pixel_sample - ray_origin;
         auto ray_time = random_double();
 
-        return ray(ray_origin, ray_direction, ray_time);
+        return Ray(ray_origin, ray_direction, ray_time);
     }
 
-    vec3 sample_square() const
+    Vec3 sample_square() const
     {
         // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
-        return vec3(random_double() - 0.5, random_double() - 0.5, 0);
+        return Vec3(random_double() - 0.5, random_double() - 0.5, 0);
     }
 
-    vec3 sample_disk(double radius) const
+    Vec3 sample_disk(double radius) const
     {
         // Returns a random point in the unit (radius 0.5) disk centered at the origin.
         return radius * random_in_unit_disk();
@@ -126,29 +129,32 @@ private:
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
-    color ray_color(const ray &r, int depth, const hittable &world) const
+    color ray_color(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
     {
-        // Если превысили лимит отражений, то выходим 
+        if (cancel_running)
+            return background;
+
+        // Если превысили лимит отражений, то выходим
         if (depth <= 0)
             return color(0, 0, 0);
 
-        hit_record rec;
+        HitRecord rec;
 
         // Если луч ничего не пересекает, то возвращаем цвет пикселя
-        if (!world.hit(r, interval(0.001, infinity), rec))
+        if (!world.hit(r, Interval(0.001, infinity), rec))
             return background;
 
-        ray scattered;
+        Ray scattered;
         color attenuation;
         color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
 
         if (!rec.mat->scatter(r, rec, attenuation, scattered))
             return color_from_emission;
 
-        color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world);
+        color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
 
         return color_from_emission + color_from_scatter;
     }
 };
 
-#endif
+#endif // RENDER_H

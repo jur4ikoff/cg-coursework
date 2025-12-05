@@ -4,52 +4,53 @@
 #include "aabb.h"
 #include "ray.h"
 
-class material;
+class Material;
 
-class hit_record
+class HitRecord
 {
 public:
     point3 p;
-    vec3 normal;
-    shared_ptr<material> mat;
+    Vec3 normal;
+    shared_ptr<Material> mat;
     double t;
     double u;
     double v;
     bool front_face;
 
-    void set_face_normal(const ray &r, const vec3 &outward_normal)
+    /**
+     * @brief Устанавливает вектор нормали в запись о попадании
+     * @note Параметр outward_normal должен иметь единичную длину
+     */
+    void set_face_normal(const Ray &r, const Vec3 &outward_normal)
     {
-        // Sets the hit record normal vector.
-        // NOTE: the parameter `outward_normal` is assumed to have unit length.
-
         front_face = dot(r.direction(), outward_normal) < 0;
         normal = front_face ? outward_normal : -outward_normal;
     }
 };
 
-class hittable
+class Hittable
 {
 public:
-    virtual ~hittable() = default;
+    virtual ~Hittable() = default;
 
-    virtual bool hit(const ray &r, interval ray_t, hit_record &rec) const = 0;
+    virtual bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const = 0;
 
-    virtual aabb bounding_box() const = 0;
+    virtual Aaab bounding_box() const = 0;
 };
 
-class translate : public hittable
+class Shift : public Hittable
 {
 public:
-    translate(shared_ptr<hittable> object, const vec3 &offset)
+    Shift(shared_ptr<Hittable> object, const Vec3 &offset)
         : object(object), offset(offset)
     {
         bbox = object->bounding_box() + offset;
     }
 
-    bool hit(const ray &r, interval ray_t, hit_record &rec) const override
+    bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
         // Move the ray backwards by the offset
-        ray offset_r(r.origin() - offset, r.direction(), r.time());
+        Ray offset_r(r.origin() - offset, r.direction(), r.time());
 
         // Determine whether an intersection exists along the offset ray (and if so, where)
         if (!object->hit(offset_r, ray_t, rec))
@@ -61,18 +62,18 @@ public:
         return true;
     }
 
-    aabb bounding_box() const override { return bbox; }
+    Aaab bounding_box() const override { return bbox; }
 
 private:
-    shared_ptr<hittable> object;
-    vec3 offset;
-    aabb bbox;
+    shared_ptr<Hittable> object;
+    Vec3 offset;
+    Aaab bbox;
 };
 
-class rotate_y : public hittable
+class RotateY : public Hittable
 {
 public:
-    rotate_y(shared_ptr<hittable> object, double angle) : object(object)
+    RotateY(shared_ptr<Hittable> object, double angle) : object(object)
     {
         auto radians = degrees_to_radians(angle);
         sin_theta = std::sin(radians);
@@ -95,7 +96,7 @@ public:
                     auto newx = cos_theta * x + sin_theta * z;
                     auto newz = -sin_theta * x + cos_theta * z;
 
-                    vec3 tester(newx, y, newz);
+                    Vec3 tester(newx, y, newz);
 
                     for (int c = 0; c < 3; c++)
                     {
@@ -106,10 +107,10 @@ public:
             }
         }
 
-        bbox = aabb(min, max);
+        bbox = Aaab(min, max);
     }
 
-    bool hit(const ray &r, interval ray_t, hit_record &rec) const override
+    bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
 
         // Transform the ray from world space to object space.
@@ -119,12 +120,12 @@ public:
             r.origin().y(),
             (sin_theta * r.origin().x()) + (cos_theta * r.origin().z()));
 
-        auto direction = vec3(
+        auto direction = Vec3(
             (cos_theta * r.direction().x()) - (sin_theta * r.direction().z()),
             r.direction().y(),
             (sin_theta * r.direction().x()) + (cos_theta * r.direction().z()));
 
-        ray rotated_r(origin, direction, r.time());
+        Ray rotated_r(origin, direction, r.time());
 
         // Determine whether an intersection exists in object space (and if so, where).
 
@@ -138,7 +139,7 @@ public:
             rec.p.y(),
             (-sin_theta * rec.p.x()) + (cos_theta * rec.p.z()));
 
-        rec.normal = vec3(
+        rec.normal = Vec3(
             (cos_theta * rec.normal.x()) + (sin_theta * rec.normal.z()),
             rec.normal.y(),
             (-sin_theta * rec.normal.x()) + (cos_theta * rec.normal.z()));
@@ -146,19 +147,19 @@ public:
         return true;
     }
 
-    aabb bounding_box() const override { return bbox; }
+    Aaab bounding_box() const override { return bbox; }
 
 private:
-    shared_ptr<hittable> object;
+    shared_ptr<Hittable> object;
     double sin_theta;
     double cos_theta;
-    aabb bbox;
+    Aaab bbox;
 };
 
-class rotate_z : public hittable
+class RotateZ : public Hittable
 {
 public:
-    rotate_z(shared_ptr<hittable> object, double angle) : object(object)
+    RotateZ(shared_ptr<Hittable> object, double angle) : object(object)
     {
         auto radians = degrees_to_radians(angle);
         sin_theta = std::sin(radians);
@@ -182,7 +183,7 @@ public:
                     auto newx = cos_theta * x - sin_theta * y;
                     auto newy = sin_theta * x + cos_theta * y;
 
-                    vec3 tester(newx, newy, z);
+                    Vec3 tester(newx, newy, z);
 
                     for (int c = 0; c < 3; c++)
                     {
@@ -193,10 +194,10 @@ public:
             }
         }
 
-        bbox = aabb(min, max);
+        bbox = Aaab(min, max);
     }
 
-    bool hit(const ray &r, interval ray_t, hit_record &rec) const override
+    bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
         // Преобразуем луч из мировых координат в локальные (обратный поворот вокруг Z)
         auto origin = point3(
@@ -204,12 +205,12 @@ public:
             (-sin_theta * r.origin().x()) + (cos_theta * r.origin().y()),
             r.origin().z());
 
-        auto direction = vec3(
+        auto direction = Vec3(
             (cos_theta * r.direction().x()) + (sin_theta * r.direction().y()),
             (-sin_theta * r.direction().x()) + (cos_theta * r.direction().y()),
             r.direction().z());
 
-        ray rotated_r(origin, direction, r.time());
+        Ray rotated_r(origin, direction, r.time());
 
         // Проверяем пересечение в локальной системе
         if (!object->hit(rotated_r, ray_t, rec))
@@ -221,7 +222,7 @@ public:
             (sin_theta * rec.p.x()) + (cos_theta * rec.p.y()),
             rec.p.z());
 
-        rec.normal = vec3(
+        rec.normal = Vec3(
             (cos_theta * rec.normal.x()) - (sin_theta * rec.normal.y()),
             (sin_theta * rec.normal.x()) + (cos_theta * rec.normal.y()),
             rec.normal.z());
@@ -229,19 +230,19 @@ public:
         return true;
     }
 
-    aabb bounding_box() const override { return bbox; }
+    Aaab bounding_box() const override { return bbox; }
 
 private:
-    shared_ptr<hittable> object;
+    shared_ptr<Hittable> object;
     double sin_theta;
     double cos_theta;
-    aabb bbox;
+    Aaab bbox;
 };
 
-class rotate_x : public hittable
+class RotateX : public Hittable
 {
 public:
-    rotate_x(shared_ptr<hittable> object, double angle) : object(object)
+    RotateX(shared_ptr<Hittable> object, double angle) : object(object)
     {
         auto radians = degrees_to_radians(angle);
         sin_theta = std::sin(radians);
@@ -265,7 +266,7 @@ public:
                     auto newy = cos_theta * y - sin_theta * z;
                     auto newz = sin_theta * y + cos_theta * z;
 
-                    vec3 tester(x, newy, newz);
+                    Vec3 tester(x, newy, newz);
 
                     for (int c = 0; c < 3; c++)
                     {
@@ -276,10 +277,10 @@ public:
             }
         }
 
-        bbox = aabb(min, max);
+        bbox = Aaab(min, max);
     }
 
-    bool hit(const ray &r, interval ray_t, hit_record &rec) const override
+    bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
         // Преобразуем луч из мировых координат в локальные (обратный поворот вокруг X)
         auto origin = point3(
@@ -287,12 +288,12 @@ public:
             (cos_theta * r.origin().y()) + (sin_theta * r.origin().z()),
             (-sin_theta * r.origin().y()) + (cos_theta * r.origin().z()));
 
-        auto direction = vec3(
+        auto direction = Vec3(
             r.direction().x(),
             (cos_theta * r.direction().y()) + (sin_theta * r.direction().z()),
             (-sin_theta * r.direction().y()) + (cos_theta * r.direction().z()));
 
-        ray rotated_r(origin, direction, r.time());
+        Ray rotated_r(origin, direction, r.time());
 
         // Проверяем пересечение в локальной системе
         if (!object->hit(rotated_r, ray_t, rec))
@@ -304,7 +305,7 @@ public:
             (cos_theta * rec.p.y()) - (sin_theta * rec.p.z()),
             (sin_theta * rec.p.y()) + (cos_theta * rec.p.z()));
 
-        rec.normal = vec3(
+        rec.normal = Vec3(
             rec.normal.x(),
             (cos_theta * rec.normal.y()) - (sin_theta * rec.normal.z()),
             (sin_theta * rec.normal.y()) + (cos_theta * rec.normal.z()));
@@ -312,13 +313,13 @@ public:
         return true;
     }
 
-    aabb bounding_box() const override { return bbox; }
+    Aaab bounding_box() const override { return bbox; }
 
 private:
-    shared_ptr<hittable> object;
+    shared_ptr<Hittable> object;
     double sin_theta;
     double cos_theta;
-    aabb bbox;
+    Aaab bbox;
 };
 
 #endif

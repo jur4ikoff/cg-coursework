@@ -4,19 +4,19 @@
 #include "hittable.h"
 #include <algorithm>
 
-class triangle : public quad
+class Triangle : public Quad
 {
 public:
     // Конструктор: три вершины A, B, C
-    triangle(const point3 &A, const point3 &B, const point3 &C, shared_ptr<material> mat)
-        : quad(A, B - A, C - A, mat)
+    Triangle(const point3 &A, const point3 &B, const point3 &C, shared_ptr<Material> mat)
+        : Quad(A, B - A, C - A, mat)
     {
-        // quad уже вычислил normal, w, bbox и т.д.
+        // Quad уже вычислил normal, w, bbox и т.д.
         // Нам остаётся только переопределить поведение is_interior
     }
 
     // Переопределяем is_interior для треугольника
-    bool is_interior(double a, double b, hit_record &rec) const override
+    bool is_interior(double a, double b, HitRecord &rec) const override
     {
         // Точка внутри треугольника, если:
         // a >= 0, b >= 0, и a + b <= 1
@@ -30,9 +30,9 @@ public:
     }
 };
 
-inline shared_ptr<hittable_list> pyramid(const point3 &base_center, double half_width, double height, shared_ptr<material> mat)
+inline shared_ptr<HittableList> pyramid(const point3 &base_center, double half_width, double height, shared_ptr<Material> mat)
 {
-    auto sides = make_shared<hittable_list>();
+    auto sides = make_shared<HittableList>();
 
     // Четыре угла основания (Y = 0)
     auto hw = half_width;
@@ -46,60 +46,60 @@ inline shared_ptr<hittable_list> pyramid(const point3 &base_center, double half_
     point3 top(c.x(), c.y() + h, c.z());      // вершина
 
     // Основание (квадрат, направлено вниз)
-    sides->add(make_shared<quad>(bl, br - bl, fl - bl, mat));
+    sides->add(make_shared<Quad>(bl, br - bl, fl - bl, mat));
 
     // Боковые грани — треугольники (если у вас есть triangle)
-    sides->add(make_shared<triangle>(bl, br, top, mat));
-    sides->add(make_shared<triangle>(br, fr, top, mat));
-    sides->add(make_shared<triangle>(fr, fl, top, mat));
-    sides->add(make_shared<triangle>(fl, bl, top, mat));
+    sides->add(make_shared<Triangle>(bl, br, top, mat));
+    sides->add(make_shared<Triangle>(br, fr, top, mat));
+    sides->add(make_shared<Triangle>(fr, fl, top, mat));
+    sides->add(make_shared<Triangle>(fl, bl, top, mat));
 
     return sides;
 }
 
 // Создаёт пирамиду с произвольным четырёхугольным основанием и вершиной
-inline shared_ptr<hittable_list> irregular_pyramid(
+inline shared_ptr<HittableList> irregular_pyramid(
     const point3 &v0,   // вершина 0 основания
     const point3 &v1,   // вершина 1 основания
     const point3 &v2,   // вершина 2 основания
     const point3 &v3,   // вершина 3 основания
     const point3 &apex, // вершина пирамиды
-    shared_ptr<material> mat)
+    shared_ptr<Material> mat)
 {
-    auto sides = make_shared<hittable_list>();
+    auto sides = make_shared<HittableList>();
 
-    // Основание — quad (может быть трапецией, ромбом, любым четырёхугольником)
-    // quad строится из точки v0 и векторов к v1 и v3
-    sides->add(make_shared<quad>(v0, v1 - v0, v3 - v0, mat));
+    // Основание — Quad (может быть трапецией, ромбом, любым четырёхугольником)
+    // Quad строится из точки v0 и векторов к v1 и v3
+    sides->add(make_shared<Quad>(v0, v1 - v0, v3 - v0, mat));
 
     // Боковые грани — треугольники
-    sides->add(make_shared<triangle>(v0, v1, apex, mat));
-    sides->add(make_shared<triangle>(v1, v2, apex, mat));
-    sides->add(make_shared<triangle>(v2, v3, apex, mat));
-    sides->add(make_shared<triangle>(v3, v0, apex, mat));
+    sides->add(make_shared<Triangle>(v0, v1, apex, mat));
+    sides->add(make_shared<Triangle>(v1, v2, apex, mat));
+    sides->add(make_shared<Triangle>(v2, v3, apex, mat));
+    sides->add(make_shared<Triangle>(v3, v0, apex, mat));
 
     return sides;
 }
 
 // Создаёт пирамиду с произвольным четырёхугольным основанием и вершиной
-inline shared_ptr<hittable_list> triangle_pyramid(
+inline shared_ptr<HittableList> triangle_pyramid(
     const point3 &v0,   // вершина 0 основания
     const point3 &v1,   // вершина 1 основания
     const point3 &v2,   // вершина 2 основания
     const point3 &apex, // вершина пирамиды
-    shared_ptr<material> mat)
+    shared_ptr<Material> mat)
 {
-    auto sides = make_shared<hittable_list>();
+    auto sides = make_shared<HittableList>();
 
-    // Основание — quad (может быть трапецией, ромбом, любым четырёхугольником)
-    // quad строится из точки v0 и векторов к v1 и v3
+    // Основание — Quad (может быть трапецией, ромбом, любым четырёхугольником)
+    // Quad строится из точки v0 и векторов к v1 и v3
     // ⚠️ Важно: основание должно быть планарным и выпуклым!
-    sides->add(make_shared<triangle>(v0, v1, v2, mat));
+    sides->add(make_shared<Triangle>(v0, v1, v2, mat));
 
     // Боковые грани — треугольники
-    sides->add(make_shared<triangle>(v0, v1, apex, mat));
-    sides->add(make_shared<triangle>(v1, v2, apex, mat));
-    sides->add(make_shared<triangle>(v2, v0, apex, mat));
+    sides->add(make_shared<Triangle>(v0, v1, apex, mat));
+    sides->add(make_shared<Triangle>(v1, v2, apex, mat));
+    sides->add(make_shared<Triangle>(v2, v0, apex, mat));
 
     return sides;
 }

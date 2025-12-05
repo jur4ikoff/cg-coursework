@@ -1,6 +1,6 @@
 #pragma once
 
-// #include "interval.h"
+// #include "Interval.h"
 
 #include <cmath>
 #include <cstdlib>

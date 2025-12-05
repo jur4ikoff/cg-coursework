@@ -1,9 +1,10 @@
 #include "main_window.h"
 #include "ui_main_window.h"
-#include <QtConcurrent>
 
-// TODO segfault когда нажимаешь на крестик в попапе, выполнение все еще
-// продолжается
+#include "start_simple_render_command.h"
+
+#include <QtConcurrent>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -22,19 +23,20 @@ MainWindow::MainWindow(QWidget *parent)
   _pixmap = std::make_shared<QPixmap>(size);
 
   _drawer = std::make_shared<Drawer>(*_pixmap.get());
+  _render_drawer = std::make_shared<Drawer>(*_pixmap.get());
   _scene = std::make_shared<Scene>();
   _render = std::make_shared<Render>();
+  _facade = std::make_shared<Facade>();
   _world = _scene->draw();
 
-  _render->samples_per_pixel = 120;
+  _render->samples_per_pixel = 100;
   _render->max_depth = 30;
-  _render->background = color(0, 0, 0);
+  _render->background = color{1, 1, 1};
 
-  Camera camera;
-  camera.vfov =40;
+  camera.vfov = 40;
   camera.lookfrom = point3(278, 278, -800);
   camera.lookat = point3(278, 278, 0);
-  camera.vup = vec3(0, 1, 0);
+  camera.vup = Vec3(0, 1, 0);
   camera.defocus_angle = 0;
   camera.focus_dist = 10;
 
@@ -48,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
+  // cancel_live_view_running = true;
   QWidget::resizeEvent(event);
   if (!_scene || !ui->graphicsView->scene() ||
       ui->graphicsView->scene()->items().isEmpty())
@@ -56,11 +59,17 @@ void MainWindow::resizeEvent(QResizeEvent *event)
   QSize new_size = ui->graphicsView->viewport()->size();
 
   _pixmap = std::make_shared<QPixmap>(new_size);
-  _pixmap->fill(Qt::black);
-
-  _drawer = std::make_shared<Drawer>(*_pixmap.get());
+  _drawer = std::make_shared<Drawer>(*_pixmap);
   _color_matrix =
       std::make_shared<ColorMatrix>(new_size.height(), new_size.width());
+
+  RenderSettings settings{1, 3, color(1, 1, 1)};
+  // cancel_live_view_running = false;
+  StartSimpleRenderCommand command{settings, camera, _world, *_color_matrix, cancel_live_view_running};
+  _facade->execute(command);
+
+  _drawer->draw(*_color_matrix);
+  // _pixmap->fill(Qt::red);
 
   set_scene();
 }
@@ -69,17 +78,10 @@ void MainWindow::tile_render_finished_slot()
 {
   if (!cancel_running)
   {
-    qDebug() << "draw";
-    _drawer->draw(*_render_color_matrix);
+    // qDebug() << "draw";
+    _render_drawer->draw(*_render_color_matrix);
     update_render_scene();
   }
-}
-
-void MainWindow::pop_up_closed_slot()
-{
-  cancel_running = true;
-  ui->renderButton->setEnabled(true);
-  qDebug() << "destroy";
 }
 
 void MainWindow::set_scene()
@@ -102,7 +104,7 @@ void MainWindow::on_renderButton_clicked()
   _render_color_matrix =
       std::make_shared<ColorMatrix>(size.height(), size.width());
   _render_pixmap = std::make_shared<QPixmap>(size);
-  _drawer = std::make_shared<Drawer>(*_render_pixmap);
+  _render_drawer = std::make_shared<Drawer>(*_render_pixmap);
   _render_pixmap->fill(Qt::black);
 
   cancel_running = false;
@@ -123,11 +125,37 @@ void MainWindow::on_renderButton_clicked()
   _popup->show();
 }
 
+void MainWindow::pop_up_closed_slot()
+{
+  cancel_running = true;
+  ui->renderButton->setEnabled(true);
+  qDebug() << "destroy";
+}
+
 void MainWindow::update_render_scene()
 {
   _render_label->setPixmap(*_render_pixmap.get());
 }
 
-void MainWindow::disable_render_button() {}
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  if (!is_mw_closed)
+  {
+    is_mw_closed = true;
+    event->ignore();
+
+    qDebug() << "MainWindow Destroy";
+
+    // 1. Сигнализируем отмену
+    cancel_running = true;
+    QTimer::singleShot(50, this, [this]()
+                       {
+                         QTimer::singleShot(100, this, &MainWindow::close);
+                         QMainWindow::close(); // вызов closeEvent
+                       });
+    return;
+  }
+  event->accept();
+}
 
 MainWindow::~MainWindow() {}

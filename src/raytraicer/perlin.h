@@ -1,11 +1,11 @@
 #ifndef PERLIN_H
 #define PERLIN_H
 
-class perlin {
+class Perlin {
   public:
-    perlin() {
+    Perlin() {
         for (int i = 0; i < point_count; i++) {
-            randvec[i] = unit_vector(vec3::random(-1,1));
+            randvec[i] = unit_vector(Vec3::random(-1,1));
         }
 
         perlin_generate_perm(perm_x);
@@ -21,7 +21,7 @@ class perlin {
         auto i = int(std::floor(p.x()));
         auto j = int(std::floor(p.y()));
         auto k = int(std::floor(p.z()));
-        vec3 c[2][2][2];
+        Vec3 c[2][2][2];
 
         for (int di=0; di < 2; di++)
             for (int dj=0; dj < 2; dj++)
@@ -51,7 +51,7 @@ class perlin {
 
   private:
     static const int point_count = 256;
-    vec3 randvec[point_count];
+    Vec3 randvec[point_count];
     int perm_x[point_count];
     int perm_y[point_count];
     int perm_z[point_count];
@@ -72,7 +72,7 @@ class perlin {
         }
     }
 
-    static double perlin_interp(const vec3 c[2][2][2], double u, double v, double w) {
+    static double perlin_interp(const Vec3 c[2][2][2], double u, double v, double w) {
         auto uu = u*u*(3-2*u);
         auto vv = v*v*(3-2*v);
         auto ww = w*w*(3-2*w);
@@ -81,7 +81,7 @@ class perlin {
         for (int i=0; i < 2; i++)
             for (int j=0; j < 2; j++)
                 for (int k=0; k < 2; k++) {
-                    vec3 weight_v(u-i, v-j, w-k);
+                    Vec3 weight_v(u-i, v-j, w-k);
                     accum += (i*uu + (1-i)*(1-uu))
                            * (j*vv + (1-j)*(1-vv))
                            * (k*ww + (1-k)*(1-ww))
