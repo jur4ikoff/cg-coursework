@@ -63,7 +63,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
   _color_matrix =
       std::make_shared<ColorMatrix>(new_size.height(), new_size.width());
 
-  RenderSettings settings{1, 3, color(1, 1, 1)};
+  RenderSettings settings{1, 3, color(0.5, 0.5, 0.5)};
   // cancel_live_view_running = false;
   StartSimpleRenderCommand command{settings, camera, _world, *_color_matrix, cancel_live_view_running};
   _facade->execute(command);

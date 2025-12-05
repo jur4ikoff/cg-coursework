@@ -21,23 +21,24 @@ HittableList Scene::draw()
   auto cylinder_mat = make_shared<Lambertian>(color(1, 0, 0));
   auto glass = make_shared<Transparent>(1.5);
   auto metal_mat = make_shared<Metal>(color(0.8, 0.8, 0.8), 1);
-  auto fog_color = make_shared<color>(0.2, 0.2, 0.2);
+  auto fog_color = make_shared<color>(0.1, 0.1, 0.1);
   auto nz_tex = make_shared<NoiseTexture>(1);
   auto nz_mat = make_shared<Lambertian>(nz_tex);
 
-  auto noise = make_shared<Perlin>();
+  auto noise = std::make_shared<Perlin>();
 
   // Граница — например, большой box
   // auto boundary = make_shared<Quad>(point3(0, 0, 0), vec3(400, 0, 400), vec3(400, 555, 400), red);
   // auto boundary = make_shared<Quad>(point3(0, 0, 400), vec3(0, 0, -400), vec3(0, 555, 0), red);
-  // auto boundary = box(point3(0, 0, -100), point3(700, 700, 700), white);
-  // auto boundary_2 = box(point3(275, 0, 0), point3(550, 600, 600), white);
+  auto boundary = box(point3(-10, -10, 0), point3(700, 700, 4000), white);
 
-  // world.add(make_shared<ConstantFog>(boundary_2, 0.001, *fog_color));
-  // world.add(make_shared<NonuniformFog>(boundary, noise, 2.5, 0.02, *fog_color));
+  // world.add(make_shared<ConstantFog>(boundary, 0.003, *fog_color));
+  // world.add(make_shared<Smoke>(boundary, 2, 0.01, *fog_color));
+  // world.add(make_shared<NonUniformFog>(boundary, *fog_color));
+  world.add(make_shared<DynamicFog>(boundary, 0.01, noise, 0.5, *fog_color));
 
   // world.add(make_shared<Cone>(point3(200, 0, 350), 100, 200, white));
-  // world.add(box(point3(200, 0, 100), point3(400, 200, 500), green));
+  world.add(box(point3(0, 0, 600), point3(100, 500, 10000), green));
 
   // auto pyr = pyramid(point3(400, 0, 200), 150, 300, red);
   // auto pyr_r = make_shared<RotateY>(pyr, -45);
@@ -60,7 +61,8 @@ HittableList Scene::draw()
   world.add(make_shared<Quad>(point3(0, 0, 555), Vec3(0, 0, -555), Vec3(0, 555, 0), red));
   // world.add(make_shared<Quad>(point3(0,555,0), vec3(555,0,0), vec3(0,0,555), white));
   world.add(make_shared<Quad>(point3(0, 0, 555), Vec3(555, 0, 0), Vec3(0, 0, -555), white));
-  world.add(make_shared<Quad>(point3(555, 0, 555), Vec3(-555, 0, 0), Vec3(0, 555, 0), white));
+  // world.add(make_shared<Quad>(point3(555, 0, 555), Vec3(-555, 0, 0), Vec3(0, 555, 0), white));
+
   // world.add(make_shared<Sphere>(point3(200, 20, 200)  white));
 
   // Light
@@ -85,9 +87,7 @@ HittableList Scene::draw()
   // box1 = make_shared<Shift>(box1, vec3(265, 0, 295));
   // world.add(make_shared<ConstantFog>(box1, 0.001, color(0.25, 0.25, 0.25)));
 
-  // Glass Sphere
-
-  // world.add(make_shared<Sphere>(point3(200, 90, 190), 90, glass));
+  world.add(make_shared<Sphere>(point3(200, 90, 190), 90, glass));
 
   return world;
 }

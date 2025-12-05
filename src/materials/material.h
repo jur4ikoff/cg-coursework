@@ -24,7 +24,7 @@ public:
 class Lambertian : public Material
 {
 public:
-  Lambertian(const color &albedo) : tex(make_shared<solid_color>(albedo)) {}
+  Lambertian(const color &albedo) : tex(make_shared<SolidColor>(albedo)) {}
   Lambertian(shared_ptr<Texture> tex) : tex(tex) {}
 
   bool scatter(const Ray &r_in, const HitRecord &rec, color &attenuation, Ray &scattered)
@@ -109,7 +109,7 @@ private:
 class diffuse_light : public Material
 {
 public:
-  diffuse_light(const color &emit_light) : tex(make_shared<solid_color>(emit_light)) {}
+  diffuse_light(const color &emit_light) : tex(make_shared<SolidColor>(emit_light)) {}
   diffuse_light(shared_ptr<Texture> tex) : tex(tex) {}
 
   color emitted(double u, double v, const point3 &p) const override
@@ -124,7 +124,7 @@ private:
 class isotropic : public Material
 {
 public:
-  isotropic(const color &albedo) : tex(make_shared<solid_color>(albedo)) {}
+  isotropic(const color &albedo) : tex(make_shared<SolidColor>(albedo)) {}
   isotropic(shared_ptr<Texture> tex) : tex(tex) {}
 
   bool scatter(const Ray &r_in, const HitRecord &rec, color &attenuation, Ray &scattered)
