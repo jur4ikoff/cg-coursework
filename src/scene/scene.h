@@ -2,19 +2,18 @@
 
 #include "color_matrix.h"
 #include "drawer.h"
+#include "hittable_list.h"
 
 #include <QSize>
 #include <iostream>
 
-class Scene {
+class Scene
+{
 public:
   Scene() {}
-
-  void draw(QSize size, ColorMatrix &color_matrix,
-            volatile bool &cancel_request,
-            std::function<void()> tile_callback = nullptr);
-
-  void measure_1(ColorMatrix &color_matrix);
-  void measure_2(ColorMatrix &color_matrix);
+  HittableList draw();
+  HittableList leave_only_seample_objects(HittableList &objects);
   ~Scene() {}
+private:
+  HittableList _objects;
 };

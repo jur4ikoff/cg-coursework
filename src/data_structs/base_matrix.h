@@ -5,7 +5,6 @@
 class BaseMatrix {
 public:
   using size_type = size_t;
-  virtual ~BaseMatrix();
 
   bool is_empty() const noexcept;
 

@@ -1,7 +1,5 @@
 #include "base_matrix.h"
 
-BaseMatrix::~BaseMatrix() = default;
-
 bool BaseMatrix::is_empty() const noexcept {
   return _rows_count == 0 || _columns_count == 0;
 }

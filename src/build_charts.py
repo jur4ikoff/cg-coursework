@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import os
 import sys
 
@@ -11,6 +12,7 @@ DATA_PATH_2 = f"{SCRIPT_DIR}/charts/exp_2.csv"
 
 RES_PATH_1 = f"{SCRIPT_DIR}/charts/exp_1.png"
 RES_PATH_2 = f"{SCRIPT_DIR}/charts/exp_2.png"
+
 
 def plot_execution_times(csv_path: str) -> None:
     """
@@ -57,9 +59,6 @@ def plot_execution_times(csv_path: str) -> None:
     plt.savefig(RES_PATH_1, dpi=300, bbox_inches="tight")
     plt.close()
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 
 def plot_performance_by_threads(csv_path: str) -> None:
     """
@@ -74,42 +73,45 @@ def plot_performance_by_threads(csv_path: str) -> None:
         Последующие строки — время выполнения для каждого числа потоков.
     """
     # Загрузка данных
-    df = pd.read_csv(csv_path, sep=';')
+    df = pd.read_csv(csv_path, sep=";")
 
     # Проверка структуры
-    if 'thread_count' not in df.columns:
+    if "thread_count" not in df.columns:
         raise ValueError("Файл должен содержать столбец 'thread_count'")
 
     # Ось X — это названия столбцов (кроме thread_count) — количество видимых объектов
-    x_values = [int(col) for col in df.columns if col != 'thread_count']
+    x_values = [int(col) for col in df.columns if col != "thread_count"]
 
     # Цветовая палитра и маркеры (можно настроить под себя)
     colors = list(mcolors.TABLEAU_COLORS.values())  # 10 цветов
-    markers = ['o', 's', '^', 'D', 'v', 'p', '*', 'X', 'H', '+']  # 10 маркеров
+    markers = ["o", "s", "^", "D", "v", "p", "*", "X", "H", "+"]  # 10 маркеров
 
     # Настройка графика
     plt.figure(figsize=(12, 8))
-    plt.xlabel('Количество видимых объектов', fontsize=12)
-    plt.ylabel('Время выполнения (мс)', fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.xlabel("Количество видимых объектов", fontsize=12)
+    plt.ylabel("Время выполнения (мс)", fontsize=12)
+    plt.grid(True, linestyle="--", alpha=0.7)
 
     # Рисуем по одной линии для каждого числа потоков
     for idx, row in df.iterrows():
-        thread_count = int(row['thread_count'])
-        y_values = row.drop('thread_count').values.astype(float)
+        thread_count = int(row["thread_count"])
+        y_values = row.drop("thread_count").values.astype(float)
 
         color = colors[idx % len(colors)]
         marker = markers[idx % len(markers)]
 
-        plt.plot(x_values, y_values,
-                 label=f'{thread_count} потоков',
-                 color=color,
-                 marker=marker,
-                 linestyle='-',
-                 linewidth=2,
-                 markersize=6)
+        plt.plot(
+            x_values,
+            y_values,
+            label=f"{thread_count} потоков",
+            color=color,
+            marker=marker,
+            linestyle="-",
+            linewidth=2,
+            markersize=6,
+        )
 
-    plt.legend(loc='upper left', fontsize=10, ncol=2)
+    plt.legend(loc="upper left", fontsize=10, ncol=2)
     plt.tight_layout()
 
     plt.savefig(RES_PATH_2, dpi=300, bbox_inches="tight")
