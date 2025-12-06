@@ -9,3 +9,4 @@
 #include <QPoint>
 #include <QPointF>
 #include <QVBoxLayout>
+#include <QColorDialog>

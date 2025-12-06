@@ -13,7 +13,7 @@ public:
   {
   }
 
-  ConstantFog(shared_ptr<Hittable> boundary, double density, const color &albedo)
+  ConstantFog(shared_ptr<Hittable> boundary, double density, const Color &albedo)
       : boundary(boundary), neg_inv_density(-1 / density),
         phase_function(make_shared<isotropic>(albedo))
   {
@@ -80,7 +80,7 @@ public:
       shared_ptr<Hittable> boundary,
       double density,
       double scale,
-      const color &albedo) : Smoke(boundary, density, scale, make_shared<isotropic>(albedo)) {}
+      const Color &albedo) : Smoke(boundary, density, scale, make_shared<isotropic>(albedo)) {}
 
   bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
   {
@@ -159,7 +159,7 @@ private:
 //              double max_density,
 //              shared_ptr<Perlin> noise,
 //              double noise_scale,
-//              const color &albedo)
+//              const Color &albedo)
 //       : boundary(boundary),
 //         max_density(max_density),
 //         neg_inv_max_density(-1.0 / max_density),
@@ -289,7 +289,7 @@ public:
   }
 
   DynamicFog(shared_ptr<Hittable> boundary, double max_density,
-             shared_ptr<Perlin> noise, double scale, const color &albedo)
+             shared_ptr<Perlin> noise, double scale, const Color &albedo)
       : boundary(boundary),
         max_density(max_density),
         inv_max_density(1.0 / max_density),

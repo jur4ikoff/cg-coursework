@@ -10,13 +10,14 @@
 class RenderSettings
 {
 public:
-    RenderSettings(int samples, int depth, color back) : samples_per_pixel(samples),
+    RenderSettings() = default;
+    RenderSettings(int samples, int depth, Color back) : samples_per_pixel(samples),
                                                          max_depth(depth),
                                                          background(back) {}
-                                                         
+
     int samples_per_pixel = 100;
     int max_depth = 10;
-    color background{0.5, 0.5, 0.5};
+    Color background{0.5, 0.5, 0.5};
 };
 
 class Render
@@ -26,7 +27,7 @@ class Render
 public:
     int samples_per_pixel = 100; // Количество лучей на каждый пиксель
     int max_depth = 10;          // Максимальное количество переотражений
-    color background;            // Фоновый цвет
+    Color background;            // Фоновый цвет
 
     void render(const Hittable &world, ColorMatrix &color_matrix,
                 volatile bool &cancel_running, size_t thread_count,
@@ -37,6 +38,7 @@ public:
         _camera = camera;
     }
 
+    void set_render_settings(RenderSettings &settings);
     Camera &get_camera()
     {
         return _camera;
@@ -129,14 +131,14 @@ private:
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
-    color ray_color(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
+    Color ray_color(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
     {
         if (cancel_running)
             return background;
 
         // Если превысили лимит отражений, то выходим
         if (depth <= 0)
-            return color(0, 0, 0);
+            return Color(0, 0, 0);
 
         HitRecord rec;
 
@@ -145,13 +147,13 @@ private:
             return background;
 
         Ray scattered;
-        color attenuation;
-        color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+        Color attenuation;
+        Color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
 
         if (!rec.mat->scatter(r, rec, attenuation, scattered))
             return color_from_emission;
 
-        color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
+        Color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
 
         return color_from_emission + color_from_scatter;
     }

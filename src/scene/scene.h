@@ -12,7 +12,8 @@ class Scene
 public:
   Scene() {}
   HittableList draw();
-  HittableList leave_only_seample_objects(HittableList &objects);
+  void make_default_scene();
+  HittableList &get_objects();
   ~Scene() {}
 private:
   HittableList _objects;

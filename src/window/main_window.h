@@ -46,6 +46,7 @@ protected:
 private slots:
   // Кнопки
   void on_renderButton_clicked();
+  void on_changeWorldColor_clicked();
 
   void tile_render_finished_slot();
   void pop_up_closed_slot();
@@ -64,12 +65,17 @@ private:
   std::shared_ptr<Drawer> _drawer;
   std::shared_ptr<Drawer> _render_drawer;
   std::shared_ptr<Scene> _scene;
+
+  // Настройка рендера
   std::shared_ptr<Render> _render;
+  RenderSettings final_render_settings;
+  RenderSettings live_render_settings{1, 3, Color{0.5, 0.5, 0.5}};
 
   std::shared_ptr<QGraphicsScene> _qt_scene;
   std::shared_ptr<QPixmap> _pixmap;
   std::shared_ptr<ColorMatrix> _color_matrix;
   std::shared_ptr<ColorMatrix> _render_color_matrix;
+  
 
   HittableList _world;
 
@@ -89,4 +95,7 @@ private:
   // Обновление сцен
   void set_scene();
   void update_render_scene();
+
+  // Рендер в окне программы
+  void _livetime_render();
 };
