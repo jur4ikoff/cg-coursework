@@ -9,7 +9,7 @@ class Material;
 class HitRecord
 {
 public:
-    point3 p;
+    Point3 p;
     Vec3 normal;
     shared_ptr<Material> mat;
     double t;
@@ -80,8 +80,8 @@ public:
         cos_theta = std::cos(radians);
         bbox = object->bounding_box();
 
-        point3 min(infinity, infinity, infinity);
-        point3 max(-infinity, -infinity, -infinity);
+        Point3 min(infinity, infinity, infinity);
+        Point3 max(-infinity, -infinity, -infinity);
 
         for (int i = 0; i < 2; i++)
         {
@@ -115,7 +115,7 @@ public:
 
         // Transform the ray from world space to object space.
 
-        auto origin = point3(
+        auto origin = Point3(
             (cos_theta * r.origin().x()) - (sin_theta * r.origin().z()),
             r.origin().y(),
             (sin_theta * r.origin().x()) + (cos_theta * r.origin().z()));
@@ -134,7 +134,7 @@ public:
 
         // Transform the intersection from object space back to world space.
 
-        rec.p = point3(
+        rec.p = Point3(
             (cos_theta * rec.p.x()) + (sin_theta * rec.p.z()),
             rec.p.y(),
             (-sin_theta * rec.p.x()) + (cos_theta * rec.p.z()));
@@ -166,8 +166,8 @@ public:
         cos_theta = std::cos(radians);
         bbox = object->bounding_box();
 
-        point3 min(infinity, infinity, infinity);
-        point3 max(-infinity, -infinity, -infinity);
+        Point3 min(infinity, infinity, infinity);
+        Point3 max(-infinity, -infinity, -infinity);
 
         for (int i = 0; i < 2; i++)
         {
@@ -200,7 +200,7 @@ public:
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
         // Преобразуем луч из мировых координат в локальные (обратный поворот вокруг Z)
-        auto origin = point3(
+        auto origin = Point3(
             (cos_theta * r.origin().x()) + (sin_theta * r.origin().y()),
             (-sin_theta * r.origin().x()) + (cos_theta * r.origin().y()),
             r.origin().z());
@@ -217,7 +217,7 @@ public:
             return false;
 
         // Преобразуем точку и нормаль обратно в мировые координаты (прямой поворот)
-        rec.p = point3(
+        rec.p = Point3(
             (cos_theta * rec.p.x()) - (sin_theta * rec.p.y()),
             (sin_theta * rec.p.x()) + (cos_theta * rec.p.y()),
             rec.p.z());
@@ -249,8 +249,8 @@ public:
         cos_theta = std::cos(radians);
         bbox = object->bounding_box();
 
-        point3 min(infinity, infinity, infinity);
-        point3 max(-infinity, -infinity, -infinity);
+        Point3 min(infinity, infinity, infinity);
+        Point3 max(-infinity, -infinity, -infinity);
 
         for (int i = 0; i < 2; i++)
         {
@@ -283,7 +283,7 @@ public:
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
         // Преобразуем луч из мировых координат в локальные (обратный поворот вокруг X)
-        auto origin = point3(
+        auto origin = Point3(
             r.origin().x(),
             (cos_theta * r.origin().y()) + (sin_theta * r.origin().z()),
             (-sin_theta * r.origin().y()) + (cos_theta * r.origin().z()));
@@ -300,7 +300,7 @@ public:
             return false;
 
         // Преобразуем точку и нормаль обратно в мировые координаты (прямой поворот)
-        rec.p = point3(
+        rec.p = Point3(
             rec.p.x(),
             (cos_theta * rec.p.y()) - (sin_theta * rec.p.z()),
             (sin_theta * rec.p.y()) + (cos_theta * rec.p.z()));

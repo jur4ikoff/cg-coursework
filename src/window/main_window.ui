@@ -199,7 +199,7 @@
             </rect>
            </property>
           </widget>
-          <widget class="QPushButton" name="cameraSetPushbutton">
+          <widget class="QPushButton" name="cameraSetButton">
            <property name="geometry">
             <rect>
              <x>300</x>
@@ -212,11 +212,11 @@
             <string>Установить</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="cameraDeletePushbutton">
+          <widget class="QPushButton" name="cameraDeleteButton">
            <property name="geometry">
             <rect>
              <x>300</x>
-             <y>30</y>
+             <y>90</y>
              <width>221</width>
              <height>31</height>
             </rect>
@@ -225,7 +225,7 @@
             <string>Удалить</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="cameraDeletePushbutton_3">
+          <widget class="QPushButton" name="cameraEditButton">
            <property name="geometry">
             <rect>
              <x>300</x>
@@ -236,6 +236,19 @@
            </property>
            <property name="text">
             <string>Изменить</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="CameraAddDialogButton">
+           <property name="geometry">
+            <rect>
+             <x>300</x>
+             <y>30</y>
+             <width>221</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Добавить</string>
            </property>
           </widget>
          </widget>

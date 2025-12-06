@@ -17,7 +17,7 @@ public:
         pad_to_minimums();
     }
 
-    Aaab(const point3 &a, const point3 &b)
+    Aaab(const Point3 &a, const Point3 &b)
     {
         // Treat the two points a and b as extrema for the bounding box, so we don't require a
         // particular minimum/maximum coordinate order.
@@ -47,7 +47,7 @@ public:
 
     bool hit(const Ray &r, Interval ray_t) const
     {
-        const point3 &ray_orig = r.origin();
+        const Point3 &ray_orig = r.origin();
         const Vec3 &ray_dir = r.direction();
 
         for (int axis = 0; axis < 3; axis++)

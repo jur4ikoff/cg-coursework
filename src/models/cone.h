@@ -9,7 +9,7 @@ class Cone : public Hittable {
     // center: центр основания (основание лежит в плоскости y = center.y())
     // radius: радиус основания
     // height: высота конуса (вершина будет в center.y() + height)
-    Cone(const point3& center, double radius, double height, shared_ptr<Material> mat)
+    Cone(const Point3& center, double radius, double height, shared_ptr<Material> mat)
       : cx(center.x()), cz(center.z()),
         y_min(center.y()), y_max(center.y() + height),
         radius(radius), mat(mat)
@@ -17,8 +17,8 @@ class Cone : public Hittable {
         // AABB: охватывает весь конус
         auto r = radius;
         bbox = Aaab(
-            point3(cx - r, y_min, cz - r),
-            point3(cx + r, y_max, cz + r)
+            Point3(cx - r, y_min, cz - r),
+            Point3(cx + r, y_max, cz + r)
         );
     }
 
@@ -71,7 +71,7 @@ class Cone : public Hittable {
         }
 
         // Заполняем HitRecord
-        point3 p = r.at(t);
+        Point3 p = r.at(t);
         rec.t = t;
         rec.p = p;
         rec.mat = mat;
@@ -107,7 +107,7 @@ class Cone : public Hittable {
         double t = (y_min - r.origin().y()) / r.direction().y();
         if (!ray_t.contains(t)) return false;
 
-        point3 p = r.at(t);
+        Point3 p = r.at(t);
         double dx = p.x() - cx;
         double dz = p.z() - cz;
         if (dx*dx + dz*dz <= radius*radius) {

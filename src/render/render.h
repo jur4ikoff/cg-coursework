@@ -50,8 +50,8 @@ private:
     Size _size;
 
     double pixel_samples_scale; // Color scale factor for a sum of pixel samples
-    point3 center;              // Центр камеры
-    point3 pixel00_loc;         // Локация пикселя 0, 0
+    Point3 center;              // Центр камеры
+    Point3 pixel00_loc;         // Локация пикселя 0, 0
     Vec3 pixel_delta_u;         // Смещение пикселя вправо
     Vec3 pixel_delta_v;         // Смещение пикселя вниз
     Vec3 u, v, w;               // Базисные векторы
@@ -124,7 +124,7 @@ private:
         return radius * random_in_unit_disk();
     }
 
-    point3 defocus_disk_sample() const
+    Point3 defocus_disk_sample() const
     {
         // Returns a random point in the Render defocus disk.
         auto p = random_in_unit_disk();

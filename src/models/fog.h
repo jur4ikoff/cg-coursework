@@ -105,7 +105,7 @@ public:
       return false;
 
     auto t = t0 + hit_dist / ray_len;
-    point3 p = r.at(t);
+    Point3 p = r.at(t);
 
     // Гарантированно ненулевая плотность
     double raw = noise.noise(scale * p);

@@ -48,6 +48,11 @@ private slots:
   void on_renderButton_clicked();
   void on_changeWorldColor_clicked();
 
+  void on_CameraAddDialogButton_clicked();
+  void on_cameraDeleteButton_clicked();
+  void on_cameraEditButton_clicked();
+  void on_cameraSetButton_clicked();
+
   void tile_render_finished_slot();
   void pop_up_closed_slot();
 
@@ -75,20 +80,17 @@ private:
   std::shared_ptr<QPixmap> _pixmap;
   std::shared_ptr<ColorMatrix> _color_matrix;
   std::shared_ptr<ColorMatrix> _render_color_matrix;
-  
 
   HittableList _world;
 
   QtRenderManager *_render_manager;
-
   QFutureWatcher<void> _futureWatcher;
 
   // Для окна рендера
   QWidget *_popup = nullptr;
   QLabel *_render_label = nullptr;
 
-  Camera camera;
-
+  CameraList camera_list;
 
   std::shared_ptr<QPixmap> _render_pixmap;
 
@@ -98,4 +100,17 @@ private:
 
   // Рендер в окне программы
   void _livetime_render();
+
+  // Иниты
+  void init_camera();
+
+  // Получить выделенные
+  std::vector<size_t> get_selected_camera();
+  std::vector<size_t> get_selected_object();
+
+  // Списки
+  void update_camera_list();
+
+  // Ошибки
+  void show_error(const std::string label, const std::string message);
 };
