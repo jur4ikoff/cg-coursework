@@ -143,7 +143,7 @@ void Scene::add_light(size_t id, double power, Color &color)
   {
 
     auto light = make_shared<diffuse_light>(color);
-    // object.ma
+    object->mat = light;
   }
   std::cout << object->id << std::endl;
 }

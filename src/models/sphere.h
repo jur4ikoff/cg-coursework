@@ -6,9 +6,10 @@
 class Sphere : public Hittable
 {
 public:
-  Sphere(const Point3 &static_center, double radius, shared_ptr<Material> mat)
-      : center(static_center, Vec3(0, 0, 0)), radius(std::fmax(0, radius)), mat(mat)
+  Sphere(const Point3 &static_center, double radius, shared_ptr<Material> _mat)
+      : center(static_center, Vec3(0, 0, 0)), radius(std::fmax(0, radius)) // , mat(mat)
   {
+    mat = _mat;
     auto rvec = Vec3(radius, radius, radius);
     bbox = Aaab(static_center - rvec, static_center + rvec);
   }
@@ -51,7 +52,7 @@ public:
 private:
   Ray center;
   double radius;
-  shared_ptr<Material> mat;
+  // shared_ptr<Material> mat;
   Aaab bbox;
 
   static void get_sphere_uv(const Point3 &p, double &u, double &v)

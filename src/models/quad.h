@@ -7,10 +7,10 @@
 class Quad : public Hittable
 {
 public:
-    Quad(const Point3 &Q, const Vec3 &u, const Vec3 &v, shared_ptr<Material> mat)
-        : Q(Q), u(u), v(v), mat(mat)
+    Quad(const Point3 &Q, const Vec3 &u, const Vec3 &v, shared_ptr<Material> _mat)
+        : Q(Q), u(u), v(v) //, mat(mat)
     {
-        // mat = mat;
+        mat = _mat;
         auto n = cross(u, v);
         normal = unit_vector(n);
         D = dot(normal, Q);
@@ -78,7 +78,7 @@ private:
     Point3 Q;
     Vec3 u, v;
     Vec3 w;
-    shared_ptr<Material> mat;
+    // shared_ptr<Material> mat;
     Aaab bbox;
     Vec3 normal;
     double D;

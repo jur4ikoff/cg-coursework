@@ -9,18 +9,19 @@ class Cylinder : public Hittable
 {
 public:
     // Конструктор: цилиндр вдоль оси Y от y0 до y1, радиусом r
-    Cylinder(const Point3 &center, double radius, double y0, double y1, shared_ptr<Material> mat)
+    Cylinder(const Point3 &center, double radius, double y0, double y1, shared_ptr<Material> _mat)
         : center(center.x(), 0, center.z()), // x и z — центр оси, y игнорируется
           radius(radius),
           y_min(std::fmin(y0, y1)),
-          y_max(std::fmax(y0, y1)),
-          mat(mat)
+          y_max(std::fmax(y0, y1))
+          // mat(mat)
     {
         // Ограничивающий AABB: цилиндр вписан в коробку
         auto r = radius;
         Point3 min(center.x() - r, y_min, center.z() - r);
         Point3 max(center.x() + r, y_max, center.z() + r);
         bbox = Aaab(min, max);
+        mat = _mat;
     }
 
     Aaab bounding_box() const override { return bbox; }
@@ -156,7 +157,7 @@ private:
     Point3 center; // центр оси цилиндра (x, 0, z)
     double radius;
     double y_min, y_max;
-    shared_ptr<Material> mat;
+    // shared_ptr<Material> mat;
     Aaab bbox;
 };
 

@@ -38,7 +38,7 @@ public:
     virtual Aaab bounding_box() const = 0;
 
     size_t id = 0;
-    // shared_ptr<Material> mat;
+    shared_ptr<Material> mat;
 };
 
 class Shift : public Hittable
