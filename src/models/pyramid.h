@@ -2,6 +2,7 @@
 #define PYRAMID_H
 
 #include "hittable.h"
+#include "quad.h" 
 #include <algorithm>
 
 class Triangle : public Quad

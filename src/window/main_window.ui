@@ -70,7 +70,7 @@
           <property name="title">
            <string>Объекты</string>
           </property>
-          <widget class="QPushButton" name="objectDeletePushbutton">
+          <widget class="QPushButton" name="objectDeletebutton">
            <property name="geometry">
             <rect>
              <x>370</x>
@@ -96,7 +96,7 @@
             <enum>QAbstractItemView::MultiSelection</enum>
            </property>
           </widget>
-          <widget class="QPushButton" name="objectDeletePushbutton_2">
+          <widget class="QPushButton" name="objectChangeMaterialButton">
            <property name="geometry">
             <rect>
              <x>370</x>
@@ -122,20 +122,7 @@
             <string>Y</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="objectDeletePushbutton_3">
-           <property name="geometry">
-            <rect>
-             <x>370</x>
-             <y>110</y>
-             <width>151</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Переместить</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="objectDeletePushbutton_4">
+          <widget class="QPushButton" name="objectAdd">
            <property name="geometry">
             <rect>
              <x>370</x>
@@ -146,6 +133,19 @@
            </property>
            <property name="text">
             <string>Добавить</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="objectMakeEmitButton">
+           <property name="geometry">
+            <rect>
+             <x>370</x>
+             <y>110</y>
+             <width>151</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Сделать источником</string>
            </property>
           </widget>
          </widget>
@@ -457,7 +457,7 @@
      <x>0</x>
      <y>0</y>
      <width>1168</width>
-     <height>33</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_2">
@@ -478,8 +478,6 @@
     <addaction name="action_7"/>
     <addaction name="action_8"/>
     <addaction name="separator"/>
-    <addaction name="action_10"/>
-    <addaction name="action_9"/>
     <addaction name="action_11"/>
    </widget>
    <addaction name="menu"/>

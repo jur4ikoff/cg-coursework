@@ -61,7 +61,6 @@ void MainWindow::init_camera()
 void MainWindow::init_scene()
 {
     _world = _scene->make_default_scene();
-    // _scene->make_default_scene();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -125,7 +124,7 @@ void MainWindow::on_renderButton_clicked()
     _futureWatcher.setFuture(QtConcurrent::run([this, size]() { _render->render(_world,
     *_render_color_matrix,
     cancel_running,
-    16,
+    8,
     [this]() { QMetaObject::invokeMethod(this, "tile_render_finished_slot",
                                                                                                                                                                        Qt::QueuedConnection); }); }));
 
