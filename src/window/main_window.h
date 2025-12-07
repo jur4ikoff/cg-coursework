@@ -103,6 +103,7 @@ private:
 
   // Иниты
   void init_camera();
+  void init_scene();
 
   // Получить выделенные
   std::vector<size_t> get_selected_camera();

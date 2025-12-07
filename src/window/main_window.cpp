@@ -58,6 +58,11 @@ void MainWindow::init_camera()
   update_camera_list();
 }
 
+void MainWindow::init_scene()
+{
+  _scene->make_base_scene();
+}
+
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
   QWidget::resizeEvent(event);
