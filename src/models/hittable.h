@@ -36,6 +36,8 @@ public:
     virtual bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const = 0;
 
     virtual Aaab bounding_box() const = 0;
+
+    size_t id = 0;
 };
 
 class Shift : public Hittable

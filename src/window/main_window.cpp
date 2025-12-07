@@ -1,7 +1,9 @@
 #include "main_window.h"
 #include "ui_main_window.h"
 
+#include "object_add_dialog.h"
 #include "camera_add.h"
+
 #include "color.h"
 #include "start_simple_render_command.h"
 
@@ -15,351 +17,446 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 
 {
-    setWindowTitle("Рейтрейсинг");
+  setWindowTitle("Рейтрейсинг");
 
-    ui->setupUi(this);
-    ui->graphicsView->viewport()->setMinimumSize(MIN_SCENE_WIDTH,
-                                                 MIN_SCENE_HEIGHT);
-    ui->graphicsView->setHorizontalScrollBarPolicy(
-        Qt::ScrollBarAlwaysOff); // Отключаем скроллбары
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  ui->setupUi(this);
+  ui->graphicsView->viewport()->setMinimumSize(MIN_SCENE_WIDTH,
+                                               MIN_SCENE_HEIGHT);
+  ui->graphicsView->setHorizontalScrollBarPolicy(
+      Qt::ScrollBarAlwaysOff); // Отключаем скроллбары
+  ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QSize size = ui->graphicsView->viewport()->size();
-    _qt_scene = std::make_shared<QGraphicsScene>(this);
-    _pixmap = std::make_shared<QPixmap>(size);
+  QSize size = ui->graphicsView->viewport()->size();
+  _qt_scene = std::make_shared<QGraphicsScene>(this);
+  _pixmap = std::make_shared<QPixmap>(size);
 
-    _drawer = std::make_shared<Drawer>(*_pixmap.get());
-    _render_drawer = std::make_shared<Drawer>(*_pixmap.get());
-    _scene = std::make_shared<Scene>();
-    _render = std::make_shared<Render>();
-    _facade = std::make_shared<Facade>();
+  _drawer = std::make_shared<Drawer>(*_pixmap.get());
+  _render_drawer = std::make_shared<Drawer>(*_pixmap.get());
+  _scene = std::make_shared<Scene>();
+  _render = std::make_shared<Render>();
+  _facade = std::make_shared<Facade>();
 
-    init_camera();
-    init_scene();
+  init_camera();
+  init_scene();
 
-    connect(&_futureWatcher, &QFutureWatcher<void>::finished, this,
-            &MainWindow::tile_render_finished_slot);
+  connect(&_futureWatcher, &QFutureWatcher<void>::finished, this,
+          &MainWindow::tile_render_finished_slot);
 
-    set_scene();
+  set_scene();
 }
 
 void MainWindow::init_camera()
 {
-    auto camera = std::make_shared<Camera>();
-    camera->id = 0;
-    camera->vfov = 40;
-    camera->lookfrom = Point3(278, 278, -800);
-    camera->lookat = Point3(278, 278, 0);
-    camera->vup = Vec3(0, 1, 0);
-    camera->defocus_angle = 0;
-    camera->focus_dist = 10;
-    camera_list.add_camera(camera);
+  auto camera = std::make_shared<Camera>();
+  camera->id = 0;
+  camera->vfov = 40;
+  camera->lookfrom = Point3(278, 278, -800);
+  camera->lookat = Point3(278, 278, 0);
+  camera->vup = Vec3(0, 1, 0);
+  camera->defocus_angle = 0;
+  camera->focus_dist = 10;
+  camera_list.add_camera(camera);
 
-    update_camera_list();
+  update_camera_list();
 }
 
 void MainWindow::init_scene()
 {
-    _world = _scene->make_default_scene();
+  _scene->make_default_scene();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    QWidget::resizeEvent(event);
-    if (!_scene || !ui->graphicsView->scene() ||
-        ui->graphicsView->scene()->items().isEmpty())
-        return;
+  QWidget::resizeEvent(event);
+  if (!_scene || !ui->graphicsView->scene() ||
+      ui->graphicsView->scene()->items().isEmpty())
+    return;
 
-    _livetime_render();
+  _livetime_render();
 }
 
 void MainWindow::tile_render_finished_slot()
 {
-    if (!cancel_running)
-    {
-        _render_drawer->draw(*_render_color_matrix);
-        update_render_scene();
-    }
+  if (!cancel_running)
+  {
+    _render_drawer->draw(*_render_color_matrix);
+    update_render_scene();
+  }
 }
 
 void MainWindow::set_scene()
 {
-    _qt_scene->setSceneRect(_pixmap.get()->rect());
-    ui->graphicsView->setScene(_qt_scene.get());
+  _qt_scene->setSceneRect(_pixmap.get()->rect());
+  ui->graphicsView->setScene(_qt_scene.get());
 
-    QGraphicsPixmapItem *pixmapItem = _qt_scene->addPixmap(*_pixmap.get());
+  QGraphicsPixmapItem *pixmapItem = _qt_scene->addPixmap(*_pixmap.get());
 }
 
 void MainWindow::on_renderButton_clicked()
 {
-    cancel_running = false;
+  cancel_running = false;
 
-    _popup = new QWidget();
-    _popup->setAttribute(Qt::WA_DeleteOnClose);
-    connect(_popup, &QWidget::destroyed, this, &MainWindow::pop_up_closed_slot);
+  _popup = new QWidget();
+  _popup->setAttribute(Qt::WA_DeleteOnClose);
+  connect(_popup, &QWidget::destroyed, this, &MainWindow::pop_up_closed_slot);
 
-    ui->renderButton->setEnabled(false);
-    QSize size = ui->graphicsView->viewport()->size();
+  ui->renderButton->setEnabled(false);
+  QSize size = ui->graphicsView->viewport()->size();
 
-    _render_color_matrix =
-        std::make_shared<ColorMatrix>(size.height(), size.width());
-    _render_pixmap = std::make_shared<QPixmap>(size);
-    _render_drawer = std::make_shared<Drawer>(*_render_pixmap);
-    _render_pixmap->fill(Qt::black);
+  _render_color_matrix =
+      std::make_shared<ColorMatrix>(size.height(), size.width());
+  _render_pixmap = std::make_shared<QPixmap>(size);
+  _render_drawer = std::make_shared<Drawer>(*_render_pixmap);
+  _render_pixmap->fill(Qt::black);
 
-    final_render_settings.samples_per_pixel = ui->renderSampleCount->value();
-    final_render_settings.max_depth = ui->renderDepthCount->value();
+  final_render_settings.samples_per_pixel = ui->renderSampleCount->value();
+  final_render_settings.max_depth = ui->renderDepthCount->value();
 
-    try
-    {
-        _render->set_camera(*camera_list.get_active_camera());
-    }
-    catch (const std::exception &e)
-    {
-        show_error("Ошибка", "Нет активной камеры");
-        ui->renderButton->setEnabled(true);
-        return;
-    }
-    _render->set_render_settings(final_render_settings);
-    _futureWatcher.setFuture(QtConcurrent::run([this, size]() { _render->render(_world,
-    *_render_color_matrix,
-    cancel_running,
-    8,
-    [this]() { QMetaObject::invokeMethod(this, "tile_render_finished_slot",
-                                                                                                                                                                       Qt::QueuedConnection); }); }));
+  try
+  {
+    _render->set_camera(*camera_list.get_active_camera());
+  }
+  catch (const std::exception &e)
+  {
+    show_error("Ошибка", "Нет активной камеры");
+    ui->renderButton->setEnabled(true);
+    return;
+  }
 
-    _render_label = new QLabel(_popup);
-    update_render_scene();
-    _render_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  _render->set_render_settings(final_render_settings);
+  _world = _scene->get_objects();
+  _futureWatcher.setFuture(QtConcurrent::run([this, size]()
+                                             { _render->render(_world,
+                                                               *_render_color_matrix,
+                                                               cancel_running,
+                                                               8,
+                                                               [this]()
+                                                               { QMetaObject::invokeMethod(this, "tile_render_finished_slot",
+                                                                                           Qt::QueuedConnection); }); }));
 
-    QVBoxLayout *layout = new QVBoxLayout(_popup);
-    layout->addWidget(_render_label, 0, Qt::AlignCenter);
-    layout->setContentsMargins(0, 0, 0, 0);
+  _render_label = new QLabel(_popup);
+  update_render_scene();
+  _render_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    _popup->resize(size);
-    _popup->show();
+  QVBoxLayout *layout = new QVBoxLayout(_popup);
+  layout->addWidget(_render_label, 0, Qt::AlignCenter);
+  layout->setContentsMargins(0, 0, 0, 0);
+
+  _popup->resize(size);
+  _popup->show();
 }
 
 void MainWindow::on_changeWorldColor_clicked()
 {
-    QColor selectedColor = QColorDialog::getColor(Qt::white, this, "Выберите цвет");
+  QColor selectedColor = QColorDialog::getColor(Qt::white, this, "Выберите цвет");
 
-    if (selectedColor.isValid())
-    {
-        QString style = QString("background-Color: rgb(%1, %2, %3);")
-                            .arg(selectedColor.red())
-                            .arg(selectedColor.green())
-                            .arg(selectedColor.blue());
-        ui->changeWorldColor->setStyleSheet(style);
+  if (selectedColor.isValid())
+  {
+    QString style = QString("background-Color: rgb(%1, %2, %3);")
+                        .arg(selectedColor.red())
+                        .arg(selectedColor.green())
+                        .arg(selectedColor.blue());
+    ui->changeWorldColor->setStyleSheet(style);
 
-        float r = selectedColor.redF();
-        float g = selectedColor.greenF();
-        float b = selectedColor.blueF();
-        float a = selectedColor.alphaF();
+    float r = selectedColor.redF();
+    float g = selectedColor.greenF();
+    float b = selectedColor.blueF();
+    float a = selectedColor.alphaF();
 
-        final_render_settings.background = Color{ r, g, b };
-        live_render_settings.background = Color{ r, g, b };
+    final_render_settings.background = Color{r, g, b};
+    live_render_settings.background = Color{r, g, b};
 
-        _livetime_render();
-    }
+    _livetime_render();
+  }
 }
 
 void MainWindow::on_cameraDeleteButton_clicked()
 {
-    auto cams = get_selected_camera();
-    if (cams.size() == 0)
-    {
-        show_error("Ошибка", "Нужно выбрать хотя бы одну камеру");
-        return;
-    }
-    for (size_t id : cams)
-    {
-        camera_list.delete_camera(id);
-    }
-    update_camera_list();
+  auto cams = get_selected_camera();
+  if (cams.size() == 0)
+  {
+    show_error("Ошибка", "Нужно выбрать хотя бы одну камеру");
+    return;
+  }
+  for (size_t id : cams)
+  {
+    camera_list.delete_camera(id);
+  }
+  update_camera_list();
 }
 
 void MainWindow::on_CameraAddDialogButton_clicked()
 {
-    CameraAddDialog dialog(this);
-    Point3 vup = Point3{ 0, 1, 0 };
+  CameraAddDialog dialog(this);
+  Point3 vup = Point3{0, 1, 0};
 
-    if (dialog.exec() == QDialog::Accepted)
+  if (dialog.exec() == QDialog::Accepted)
+  {
+    try
     {
-        try
-        {
-            auto camera = std::make_shared<Camera>(dialog.vfov(), dialog.lookfrom(), dialog.lookat(), vup);
-            camera->defocus_angle = dialog.defocus_angle();
-            camera->focus_dist = dialog.focus_dist();
-            camera->id = camera_list.get_max_id() + 1;
+      auto camera = std::make_shared<Camera>(dialog.vfov(), dialog.lookfrom(), dialog.lookat(), vup);
+      camera->defocus_angle = dialog.defocus_angle();
+      camera->focus_dist = dialog.focus_dist();
+      camera->id = camera_list.get_max_id() + 1;
 
-            camera_list.add_camera(camera);
-        }
-        catch (const std::exception &e)
-        {
-            QMessageBox::critical(this, "Ошибка", "Невозможно добавить камеру.");
-        }
-        update_camera_list();
+      camera_list.add_camera(camera);
     }
+    catch (const std::exception &e)
+    {
+      QMessageBox::critical(this, "Ошибка", "Невозможно добавить камеру.");
+    }
+    update_camera_list();
+  }
 }
 
 void MainWindow::on_cameraEditButton_clicked()
 {
-    auto cams = get_selected_camera();
-    if (cams.size() != 1)
+  auto cams = get_selected_camera();
+  if (cams.size() != 1)
+  {
+    show_error("Ошибка", "Для изменения необходимо выбрать ОДНУ камеру");
+    return;
+  }
+
+  size_t id = cams[0];
+  auto camera = camera_list.get_camera(id);
+
+  CameraAddDialog dialog(
+      camera->lookfrom, camera->lookat,
+      camera->vfov, camera->defocus_angle,
+      camera->focus_dist, this);
+  Point3 vup = Point3{0, 1, 0};
+
+  if (dialog.exec() == QDialog::Accepted)
+  {
+    try
     {
-        show_error("Ошибка", "Для изменения необходимо выбрать ОДНУ камеру");
-        return;
+      camera->lookat = dialog.lookat();
+      camera->lookfrom = dialog.lookfrom();
+      camera->vfov = dialog.vfov();
+      camera->defocus_angle = dialog.defocus_angle();
+      camera->focus_dist = dialog.focus_dist();
     }
-
-    size_t id = cams[0];
-    auto camera = camera_list.get_camera(id);
-
-    CameraAddDialog dialog(
-        camera->lookfrom, camera->lookat,
-        camera->vfov, camera->defocus_angle,
-        camera->focus_dist, this);
-    Point3 vup = Point3{ 0, 1, 0 };
-
-    if (dialog.exec() == QDialog::Accepted)
+    catch (const std::exception &e)
     {
-        try
-        {
-            camera->lookat = dialog.lookat();
-            camera->lookfrom = dialog.lookfrom();
-            camera->vfov = dialog.vfov();
-            camera->defocus_angle = dialog.defocus_angle();
-            camera->focus_dist = dialog.focus_dist();
-        }
-        catch (const std::exception &e)
-        {
-            QMessageBox::critical(this, "Ошибка", "Невозможно отредактировать камеру.");
-        }
-        _livetime_render();
+      QMessageBox::critical(this, "Ошибка", "Невозможно отредактировать камеру.");
     }
+    _livetime_render();
+  }
 }
 
 void MainWindow::on_cameraSetButton_clicked()
 {
-    auto cams = get_selected_camera();
-    if (cams.size() != 1)
-    {
-        show_error("Ошибка", "Выбрать активной можно только одну камеру");
-        return;
-    }
+  auto cams = get_selected_camera();
+  if (cams.size() != 1)
+  {
+    show_error("Ошибка", "Выбрать активной можно только одну камеру");
+    return;
+  }
 
-    size_t id = cams[0];
-    camera_list.set_active_camera(id);
-    _livetime_render();
+  size_t id = cams[0];
+  camera_list.set_active_camera(id);
+  _livetime_render();
 }
 
 void MainWindow::pop_up_closed_slot()
 {
-    cancel_running = true;
-    ui->renderButton->setEnabled(true);
-    qDebug() << "destroy";
+  cancel_running = true;
+  ui->renderButton->setEnabled(true);
+  qDebug() << "destroy";
 }
 
 void MainWindow::update_render_scene()
 {
-    _render_label->setPixmap(*_render_pixmap.get());
+  _render_label->setPixmap(*_render_pixmap.get());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (!is_mw_closed)
-    {
-        is_mw_closed = true;
-        event->ignore();
+  if (!is_mw_closed)
+  {
+    is_mw_closed = true;
+    event->ignore();
 
-        qDebug() << "MainWindow Destroy";
+    qDebug() << "MainWindow Destroy";
 
-        cancel_running = true;
-        QTimer::singleShot(50, this, [this]() {
-            QTimer::singleShot(100, this, &MainWindow::close);
-            QMainWindow::close(); // вызов closeEvent
-        });
-        return;
-    }
-    event->accept();
+    cancel_running = true;
+    QTimer::singleShot(50, this, [this]()
+                       {
+                         QTimer::singleShot(100, this, &MainWindow::close);
+                         QMainWindow::close(); // вызов closeEvent
+                       });
+    return;
+  }
+  event->accept();
 }
 
 void MainWindow::_livetime_render()
 {
-    QSize new_size = ui->graphicsView->viewport()->size();
+  QSize new_size = ui->graphicsView->viewport()->size();
 
-    _pixmap = std::make_shared<QPixmap>(new_size);
-    _drawer = std::make_shared<Drawer>(*_pixmap);
-    _color_matrix =
-        std::make_shared<ColorMatrix>(new_size.height(), new_size.width());
+  _pixmap = std::make_shared<QPixmap>(new_size);
+  _drawer = std::make_shared<Drawer>(*_pixmap);
+  _color_matrix =
+      std::make_shared<ColorMatrix>(new_size.height(), new_size.width());
 
-    cancel_live_view_running = false;
+  cancel_live_view_running = false;
 
-    Camera camera;
-    try
-    {
-        camera = *camera_list.get_active_camera();
-    }
-    catch (const std::exception &e)
-    {
-        show_error("Ошибка", "Нет активной камеры");
-        ui->renderButton->setEnabled(true);
-        return;
-    }
-    StartSimpleRenderCommand command{ live_render_settings, camera, _world, *_color_matrix, cancel_live_view_running };
-    _facade->execute(command);
+  Camera camera;
+  try
+  {
+    camera = *camera_list.get_active_camera();
+  }
+  catch (const std::exception &e)
+  {
+    show_error("Ошибка", "Нет активной камеры");
+    ui->renderButton->setEnabled(true);
+    return;
+  }
 
-    _drawer->draw(*_color_matrix);
+  try
+  {
+    _world = _scene->get_objects();
+  }
+  catch (const std::exception &e)
+  {
+    show_error("Ошибка", "Ошибка при получении информации о мире");
+    ui->renderButton->setEnabled(true);
+    return;
+  }
 
-    set_scene();
+  StartSimpleRenderCommand command{live_render_settings, camera, _world, *_color_matrix, cancel_live_view_running};
+  _facade->execute(command);
+
+  _drawer->draw(*_color_matrix);
+
+  set_scene();
 }
 
 void MainWindow::update_camera_list()
 {
-    ui->cameraListWidget->clear();
-    for (size_t id : camera_list.get_camera_ids())
-    {
-        ui->cameraListWidget->addItem(QString::number(id));
-    }
+  ui->cameraListWidget->clear();
+  for (size_t id : camera_list.get_camera_ids())
+  {
+    ui->cameraListWidget->addItem(QString::number(id));
+  }
 }
 
 std::vector<size_t> MainWindow::get_selected_camera()
 {
-    std::vector<size_t> ids;
-    for (int i = 0; i < ui->cameraListWidget->count(); i++)
+  std::vector<size_t> ids;
+  for (int i = 0; i < ui->cameraListWidget->count(); i++)
+  {
+    if (ui->cameraListWidget->item(i)->isSelected())
     {
-        if (ui->cameraListWidget->item(i)->isSelected())
-        {
-            ids.push_back(ui->cameraListWidget->item(i)->text().toInt());
-        }
+      ids.push_back(ui->cameraListWidget->item(i)->text().toInt());
     }
-    return ids;
+  }
+  return ids;
 }
 
 std::vector<size_t> MainWindow::get_selected_object()
 {
-    std::vector<size_t> ids;
-    for (int i = 0; i < ui->objectListWidget->count(); i++)
+  std::vector<size_t> ids;
+  for (int i = 0; i < ui->objectListWidget->count(); i++)
+  {
+    if (ui->objectListWidget->item(i)->isSelected())
     {
-        if (ui->objectListWidget->item(i)->isSelected())
-        {
-            ids.push_back(ui->objectListWidget->item(i)->text().toInt());
-        }
+      ids.push_back(ui->objectListWidget->item(i)->text().toInt());
     }
-    return ids;
+  }
+  return ids;
 }
 
 void MainWindow::show_error(const std::string label, const std::string message)
 {
-    QMessageBox::critical(
-        this,
-        QString::fromStdString(label),
-        QString::fromStdString(message));
+  QMessageBox::critical(
+      this,
+      QString::fromStdString(label),
+      QString::fromStdString(message));
+}
+
+void MainWindow::on_objectAddButton_clicked()
+{
+  AddObjectDialog dialog(this);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+
+  try
+  {
+    switch (dialog.selectedType())
+    {
+    case AddObjectDialog::Sphere:
+      // _scene.add_sphere(dialog.sphereCenter(), dialog.sphereRadius());
+      break;
+
+    case AddObjectDialog::Cylinder:
+      //       _world.add_cylinder(
+      //           dialog.cylinderAxisCenter(),
+      //           dialog.cylinderRadius(),
+      //           dialog.cylinderY0(),
+      //           dialog.cylinderY1(),
+      //           mat);
+      break;
+
+    case AddObjectDialog::Cone:
+      //       _world.add_cone(
+      //           dialog.coneBaseCenter(),
+      //           dialog.coneRadius(),
+      //           dialog.coneHeight(),
+      //           mat);
+      break;
+
+    case AddObjectDialog::QuadPyramid:
+      //       _world.add_quad_pyramid(
+      //           dialog.quadPyramidBaseCenter(),
+      //           dialog.quadPyramidHalfWidth(),
+      //           dialog.quadPyramidHeight(),
+      //           mat);
+      break;
+
+    case AddObjectDialog::TriPyramid:
+      //       _world.add_tri_pyramid(
+      //           dialog.triPyramidV0(),
+      //           dialog.triPyramidV1(),
+      //           dialog.triPyramidV2(),
+      //           dialog.triPyramidApex(),
+      //           mat);
+      break;
+
+    case AddObjectDialog::Box:
+      //       _world.add_box(dialog.boxPointA(), dialog.boxPointB(), mat);
+      break;
+
+    case AddObjectDialog::Quad:
+      //       _world.add_quad(
+      //           dialog.quadQ(),
+      //           dialog.quadP1(),
+      //           dialog.quadP2(),
+      //           mat);
+      break;
+
+    case AddObjectDialog::Triangle:
+      //       _world.add_triangle(
+      //           dialog.triA(),
+      //           dialog.triB(),
+      //           dialog.triC(),
+      //           mat);
+      break;
+    }
+
+    //     // Обновляем сцену
+    _livetime_render();
+  }
+  catch (const std::exception &e)
+  {
+    show_error("Ошибка", e.what());
+  }
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+  delete ui;
 }
 
 // #include "main_window.hpp"

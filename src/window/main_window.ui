@@ -58,7 +58,7 @@
           <property name="minimumSize">
            <size>
             <width>530</width>
-            <height>200</height>
+            <height>225</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -73,9 +73,9 @@
           <widget class="QPushButton" name="objectDeletebutton">
            <property name="geometry">
             <rect>
-             <x>370</x>
+             <x>360</x>
              <y>30</y>
-             <width>151</width>
+             <width>161</width>
              <height>27</height>
             </rect>
            </property>
@@ -88,8 +88,8 @@
             <rect>
              <x>10</x>
              <y>30</y>
-             <width>351</width>
-             <height>151</height>
+             <width>341</width>
+             <height>181</height>
             </rect>
            </property>
            <property name="selectionMode">
@@ -99,9 +99,9 @@
           <widget class="QPushButton" name="objectChangeMaterialButton">
            <property name="geometry">
             <rect>
-             <x>370</x>
-             <y>70</y>
-             <width>151</width>
+             <x>360</x>
+             <y>120</y>
+             <width>161</width>
              <height>27</height>
             </rect>
            </property>
@@ -122,30 +122,56 @@
             <string>Y</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="objectAdd">
-           <property name="geometry">
-            <rect>
-             <x>370</x>
-             <y>150</y>
-             <width>151</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Добавить</string>
-           </property>
-          </widget>
           <widget class="QPushButton" name="objectMakeEmitButton">
            <property name="geometry">
             <rect>
-             <x>370</x>
-             <y>110</y>
-             <width>151</width>
+             <x>360</x>
+             <y>150</y>
+             <width>161</width>
              <height>27</height>
             </rect>
            </property>
            <property name="text">
             <string>Сделать источником</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="objectShiftButton">
+           <property name="geometry">
+            <rect>
+             <x>360</x>
+             <y>60</y>
+             <width>161</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Переместить</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="objectRotateButton">
+           <property name="geometry">
+            <rect>
+             <x>360</x>
+             <y>90</y>
+             <width>161</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Повернуть</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="objectAddButton">
+           <property name="geometry">
+            <rect>
+             <x>360</x>
+             <y>180</y>
+             <width>161</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Добавить объект</string>
            </property>
           </widget>
          </widget>
@@ -457,7 +483,7 @@
      <x>0</x>
      <y>0</y>
      <width>1168</width>
-     <height>23</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_2">
@@ -470,15 +496,9 @@
     <property name="title">
      <string>Добавить объект</string>
     </property>
-    <addaction name="action_2"/>
-    <addaction name="action_3"/>
-    <addaction name="action_4"/>
-    <addaction name="action_5"/>
-    <addaction name="action_6"/>
-    <addaction name="action_7"/>
-    <addaction name="action_8"/>
     <addaction name="separator"/>
     <addaction name="action_11"/>
+    <addaction name="action_12"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
@@ -535,7 +555,12 @@
   </action>
   <action name="action_11">
    <property name="text">
-    <string>Туман</string>
+    <string>Однородный туман</string>
+   </property>
+  </action>
+  <action name="action_12">
+   <property name="text">
+    <string>Неоднородный туман</string>
    </property>
   </action>
  </widget>

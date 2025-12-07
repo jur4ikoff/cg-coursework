@@ -52,6 +52,7 @@ private slots:
   void on_cameraDeleteButton_clicked();
   void on_cameraEditButton_clicked();
   void on_cameraSetButton_clicked();
+  void on_objectAddButton_clicked();
 
   void tile_render_finished_slot();
   void pop_up_closed_slot();
