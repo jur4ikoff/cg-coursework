@@ -486,12 +486,6 @@
      <height>33</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>Перемещение</string>
-    </property>
-    <addaction name="action"/>
-   </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Добавить объект</string>
@@ -501,7 +495,6 @@
     <addaction name="action_12"/>
    </widget>
    <addaction name="menu"/>
-   <addaction name="menu_2"/>
   </widget>
   <action name="action">
    <property name="text">

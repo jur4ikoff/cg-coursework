@@ -112,7 +112,7 @@ AddObjectDialog::ObjectType AddObjectDialog::selectedType() const
 {
     // Сопоставление индекса с enum
     static const ObjectType mapping[] = {
-        Sphere, Box, Cylinder, Cone, Quad, QuadPyramid, TriPyramid};
+        Sphere, Cylinder, Cone, QuadPyramid, TriPyramid, Box, Quad, Triangle};
     int idx = ui->typeComboBox->currentIndex();
     if (idx >= 0 && idx < static_cast<int>(sizeof(mapping) / sizeof(mapping[0])))
     {

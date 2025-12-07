@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
+    <width>983</width>
     <height>769</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>793</width>
+    <width>983</width>
     <height>769</height>
    </size>
   </property>
@@ -48,11 +48,6 @@
      </item>
      <item>
       <property name="text">
-       <string>Коробка</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Цилиндр</string>
       </property>
      </item>
@@ -63,17 +58,27 @@
      </item>
      <item>
       <property name="text">
-       <string>Четырёхугольник</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Пирамида 4-уг</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Пирамида 3-уг</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Коробка</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Четырёхугольник</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Треугольник</string>
       </property>
      </item>
     </widget>
@@ -89,7 +94,7 @@
         <widget class="QGroupBox" name="quadPyramidGroup">
          <property name="maximumSize">
           <size>
-           <width>245</width>
+           <width>265</width>
            <height>200</height>
           </size>
          </property>
@@ -204,7 +209,7 @@
         <widget class="QGroupBox" name="boxGroup">
          <property name="maximumSize">
           <size>
-           <width>245</width>
+           <width>265</width>
            <height>225</height>
           </size>
          </property>

@@ -22,9 +22,14 @@ public:
 
   void delete_object(size_t id);
 
-
   void add_sphere(const Point3 &center, double radius);
-  
+  void add_cylinder(const Point3 &center, double radius, double ymin, double ymax);
+  void add_cone(const Point3 &center, double radius, double height);
+  void add_quad_pyramid(const Point3 &center, double half_width, double height);
+  void add_triag_pyramid(const Point3 &v0, const Point3 &v1, const Point3 &v2, const Point3 &up);
+  void add_box(const Point3 &point1, const Point3 &point2);
+  void add_quad(const Point3 &left_down, const Vec3 &u, const Vec3 &v);
+  void add_triangle(const Point3 &v1, const Point3 &v2, const Point3 &v3);
 
 private:
   HittableList _objects;

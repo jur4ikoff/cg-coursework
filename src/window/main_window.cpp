@@ -400,61 +400,63 @@ void MainWindow::on_objectAddButton_clicked()
     switch (dialog.selectedType())
     {
     case AddObjectDialog::Sphere:
+      qDebug() << "add sphere";
       _scene->add_sphere(dialog.sphereCenter(), dialog.sphereRadius());
       break;
 
     case AddObjectDialog::Cylinder:
-      //       _world.add_cylinder(
-      //           dialog.cylinderAxisCenter(),
-      //           dialog.cylinderRadius(),
-      //           dialog.cylinderY0(),
-      //           dialog.cylinderY1(),
-      //           mat);
+      qDebug() << "add cylender";
+      _scene->add_cylinder(
+          dialog.cylinderAxisCenter(),
+          dialog.cylinderRadius(),
+          dialog.cylinderY0(),
+          dialog.cylinderY1());
       break;
 
     case AddObjectDialog::Cone:
-      //       _world.add_cone(
-      //           dialog.coneBaseCenter(),
-      //           dialog.coneRadius(),
-      //           dialog.coneHeight(),
-      //           mat);
+      qDebug() << "add cone";
+      _scene->add_cone(
+          dialog.coneBaseCenter(),
+          dialog.coneRadius(),
+          dialog.coneHeight());
       break;
 
     case AddObjectDialog::QuadPyramid:
-      //       _world.add_quad_pyramid(
-      //           dialog.quadPyramidBaseCenter(),
-      //           dialog.quadPyramidHalfWidth(),
-      //           dialog.quadPyramidHeight(),
-      //           mat);
+      qDebug() << "add quad pyramid";
+      _scene->add_quad_pyramid(
+          dialog.quadPyramidBaseCenter(),
+          dialog.quadPyramidHalfWidth(),
+          dialog.quadPyramidHeight());
       break;
 
     case AddObjectDialog::TriPyramid:
-      //       _world.add_tri_pyramid(
-      //           dialog.triPyramidV0(),
-      //           dialog.triPyramidV1(),
-      //           dialog.triPyramidV2(),
-      //           dialog.triPyramidApex(),
-      //           mat);
+      qDebug() << "add triangle pyramid";
+      _scene->add_triag_pyramid(
+          dialog.triPyramidV0(),
+          dialog.triPyramidV1(),
+          dialog.triPyramidV2(),
+          dialog.triPyramidApex());
       break;
 
     case AddObjectDialog::Box:
-      //       _world.add_box(dialog.boxPointA(), dialog.boxPointB(), mat);
+      qDebug() << "add box";
+      _scene->add_box(dialog.boxPointA(), dialog.boxPointB());
       break;
 
     case AddObjectDialog::Quad:
-      //       _world.add_quad(
-      //           dialog.quadQ(),
-      //           dialog.quadP1(),
-      //           dialog.quadP2(),
-      //           mat);
+      qDebug() << "add quad";
+      _scene->add_quad(
+          dialog.quadQ(),
+          dialog.quadU(),
+          dialog.quadV());
       break;
 
     case AddObjectDialog::Triangle:
-      //       _world.add_triangle(
-      //           dialog.triA(),
-      //           dialog.triB(),
-      //           dialog.triC(),
-      //           mat);
+      qDebug() << "add triag";
+      _scene->add_triangle(
+          dialog.triA(),
+          dialog.triB(),
+          dialog.triC());
       break;
     }
 
@@ -472,294 +474,3 @@ MainWindow::~MainWindow()
 {
   delete ui;
 }
-
-// #include "main_window.hpp"
-
-// #include <QPushButton>
-// #include <QMessageBox>
-// #include <QFileDialog>
-// #include <QFileInfo>
-// #include <cmath>
-
-// #include "MatrixLoadCommand.h"
-// #include "ListLoadCommand.h"
-// #include "SqliteLoadCommandDecorator.h"
-// #include "PostgresqlLoadCommandDecorator.h"
-// #include "TxtLoadCommandDecorator.h"
-// #include "DrawSceneQtCommand.h"
-// #include "GetCameraIDsSceneCommand.h"
-// #include "GetObjectIDsSceneCommand.h"
-// #include "AddCameraCommand.h"
-// #include "SetCameraCommand.h"
-// #include "RemoveCameraCommand.h"
-// #include "ShiftObjectCommand.h"
-// #include "RotateObjectCommand.h"
-// #include "ScaleObjectCommand.h"
-// #include "CompositeObjectCommand.h"
-// #include "RemoveObjectCommand.h"
-// #include "Point.h"
-// #include "baseexception.h"
-// #include "BaseHistoryCommand.h"
-// #include "ToggleFaceCullingCommand.h"
-
-// double DegToRad(double angle) { return angle / 180.0 * M_PI; }
-
-// MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
-// {
-//     ui->setupUi(this);
-//     QGraphicsScene *scene = new QGraphicsScene(this);
-//     ui->graphicsView->setScene(scene);
-//     scene->setBackgroundBrush(Qt::white);
-//     ui->graphicsView->scene()->setSceneRect(ui->graphicsView->sceneRect());
-// }
-
-// void MainWindow::on_fileSelectButton_clicked()
-// {
-//     QString fileName = QFileDialog::getOpenFileName(this,
-//                                                     tr("Выберите файл"), "",
-//                                                     tr("Все файлы (*);;Текстовые файлы (*.txt);;База данных SQLite (*.db *.sqlite)"));
-
-//     if (!fileName.isEmpty())
-//     {
-//         _selected_file_path = fileName;
-//         ui->fileSelectButton->setText(QFileInfo(fileName).fileName());
-//     }
-// }
-
-// void MainWindow::on_loadPushButton_clicked()
-// {
-//     // Обработчик нажатия на кнопку "загрузка файла"
-//     if (_selected_file_path.isEmpty())
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Сначала выберите файл.");
-//         return;
-//     }
-
-//     std::string str = _selected_file_path.toStdString();
-//     const char *fname = str.c_str();
-
-//     std::shared_ptr<BaseLoadCommand> command;
-
-//     // Выбираем лоадеры
-//     if (ui->listRadioButton->isChecked())
-//         command = std::make_shared<ListLoadCommand>();
-//     else
-//         command = std::make_shared<MatrixLoadCommand>();
-
-//     // Использование паттерна декоратор
-//     std::shared_ptr<BaseCommand> decorator;
-//     if (ui->sqliteRadioButton->isChecked())
-//         decorator = std::make_shared<SqliteLoadCommandDecorator>(*command, fname);
-//     else if (ui->postgresqlRadioButton->isChecked())
-//         decorator = std::make_shared<PostgresqlLoadCommandDecorator>(*command, fname);
-//     else
-//         decorator = std::make_shared<TxtLoadCommandDecorator>(*command, fname);
-//     try
-//     {
-//         // Фасад просто вызывает метод .Execute у команды
-//         _facade.Execute(*decorator);
-//     }
-//     catch (BaseException &exc)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", exc.what());
-//         return;
-//     }
-
-//     drawScene();
-//     updateObjectList();
-// }
-
-// void MainWindow::on_CameraAddDialogPushbutton_clicked()
-// {
-//     double x = ui->cameraXSpin->value();
-//     double y = ui->cameraYSpin->value();
-//     double z = ui->cameraZSpin->value();
-//     Point pos(x, y, z);
-//     AddCameraCommand command(pos);
-//     _facade.Execute(command);
-//     updateCameraList();
-//     updateObjectList();
-// }
-
-// void MainWindow::on_cameraSetPushbutton_clicked()
-// {
-//     auto cams = getSelectedCameraIds();
-//     if (cams.size() != 1)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Нужно выбрать ровно одну камеру.");
-//         return;
-//     }
-//     SetCameraCommand command(cams[0]);
-//     _facade.Execute(command);
-//     drawScene();
-// }
-
-// void MainWindow::updateCameraList()
-// {
-//     ui->cameraListWidget->clear();
-//     GetCameraIDsSceneCommand ids;
-//     _facade.Execute(ids);
-//     std::vector<size_t> cameraIds = ids.GetIDs();
-//     for (size_t id : cameraIds)
-//     {
-//         ui->cameraListWidget->addItem(QString::number(id));
-//     }
-// }
-
-// void MainWindow::updateObjectList()
-// {
-//     ui->objectListWidget->clear();
-//     GetObjectIDsSceneCommand ids;
-//     _facade.Execute(ids);
-//     std::vector<size_t> objectIds = ids.GetIDs();
-//     for (size_t id : objectIds)
-//     {
-//         ui->objectListWidget->addItem(QString::number(id));
-//     }
-// }
-
-// void MainWindow::drawScene()
-// {
-//     ui->graphicsView->scene()->clear();
-//     ui->graphicsView->scene()->setSceneRect(ui->graphicsView->sceneRect());
-//     DrawSceneQtCommand drawcommand(ui->graphicsView->scene());
-//     _facade.Execute(drawcommand);
-// }
-
-// void MainWindow::on_objectMovePushbutton_clicked()
-// {
-//     auto objs = getSelectedObjectIds();
-//     if (objs.size() == 0)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Нужно выбрать хотя бы один объект.");
-//         return;
-//     }
-
-//     saveStateBeforeTransform(objs);
-
-//     double x = ui->obkectMoveXSpin->value();
-//     double y = ui->objectMoveYSpin->value();
-//     double z = ui->objectMoveZSpin->value();
-//     for (size_t id : objs)
-//     {
-//         ShiftObjectCommand command(id, x, y, z);
-//         _facade.Execute(command);
-//     }
-//     drawScene();
-// }
-
-// void MainWindow::on_objectRotatePushbutton_clicked()
-// {
-//     auto objs = getSelectedObjectIds();
-//     if (objs.size() == 0)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Нужно выбрать хотя бы один объект.");
-//         return;
-//     }
-
-//     saveStateBeforeTransform(objs);
-
-//     double x = DegToRad(ui->objectRotateXSpin->value());
-//     double y = DegToRad(ui->objectRotateYSpin->value());
-//     double z = DegToRad(ui->objectRotateZSpin->value());
-//     for (size_t id : objs)
-//     {
-//         RotateObjectCommand command(id, x, y, z);
-//         _facade.Execute(command);
-//     }
-//     drawScene();
-// }
-
-// void MainWindow::on_objectScalePushbutton_clicked()
-// {
-//     auto objs = getSelectedObjectIds();
-//     if (objs.size() == 0)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Нужно выбрать хотя бы один объект.");
-//         return;
-//     }
-
-//     saveStateBeforeTransform(objs);
-
-//     double x = ui->objectScaleXSpin->value();
-//     double y = ui->objectScaleYSpin->value();
-//     double z = ui->objectScaleZSpin->value();
-//     for (size_t id : objs)
-//     {
-//         ScaleObjectCommand command(id, x, y, z);
-//         _facade.Execute(command);
-//     }
-//     drawScene();
-// }
-
-// void MainWindow::on_objectDeletePushbutton_clicked()
-// {
-//     auto objs = getSelectedObjectIds();
-//     if (objs.size() == 0)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Нужно выбрать хотя бы один объект.");
-//         return;
-//     }
-//     for (auto &id : objs)
-//     {
-//         RemoveObjectCommand command(id);
-//         _facade.Execute(command);
-
-//         RemoveCameraCommand command_del_camera(id);
-//         _facade.Execute(command_del_camera);
-//     }
-
-//     drawScene();
-//     updateCameraList();
-//     updateObjectList();
-// }
-
-// void MainWindow::on_objectCompositePushbutton_clicked()
-// {
-//     auto objs = getSelectedObjectIds();
-//     if (objs.size() == 0)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Нужно выбрать хотя бы один объект.");
-//         return;
-//     }
-//     CompositeObjectCommand command(objs);
-//     _facade.Execute(command);
-
-//     drawScene();
-//     updateObjectList();
-// }
-
-// void MainWindow::saveStateBeforeTransform(const std::vector<size_t> &objectIds)
-// {
-//     for (size_t id : objectIds)
-//     {
-//         SaveStateCommand saveCommand(id);
-//         _facade.Execute(saveCommand);
-//     }
-// }
-
-// void MainWindow::on_undoLastTransformPushbutton_clicked()
-// {
-//     auto objs = getSelectedObjectIds();
-//     if (objs.size() == 0)
-//     {
-//         QMessageBox::critical(nullptr, "Ошибка", "Нужно выбрать хотя бы один объект.");
-//         return;
-//     }
-
-//     for (size_t id : objs)
-//     {
-//         RestoreStateCommand restoreCommand(id);
-//         _facade.Execute(restoreCommand);
-//     }
-
-//     drawScene();
-// }
-
-// void MainWindow::on_toggleFaceCullingPushbutton_clicked()
-// {
-//     ToggleFaceCullingCommand toggleCommand;
-//     _facade.Execute(toggleCommand);
-
-//     drawScene();
-// }

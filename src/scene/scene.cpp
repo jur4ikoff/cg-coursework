@@ -99,6 +99,41 @@ void Scene::add_sphere(const Point3 &center, double radius)
   _objects.add(make_shared<Sphere>(center, radius, _default_material));
 }
 
+void Scene::add_cylinder(const Point3 &center, double radius, double ymin, double ymax)
+{
+  _objects.add(make_shared<Cylinder>(center, radius, ymin, ymax, _default_material));
+}
+
+void Scene::add_cone(const Point3 &center, double radius, double height)
+{
+  _objects.add(make_shared<Cone>(center, radius, height, _default_material));
+}
+
+void Scene::add_quad_pyramid(const Point3 &center, double half_width, double height)
+{
+  _objects.add(pyramid(center, half_width, height, _default_material));
+}
+
+void Scene::add_triag_pyramid(const Point3 &v0, const Point3 &v1, const Point3 &v2, const Point3 &apex)
+{
+  _objects.add(triangle_pyramid(v0, v1, v2, apex, _default_material));
+}
+
+void Scene::add_box(const Point3 &point1, const Point3 &point2)
+{
+  _objects.add(box(point1, point2, _default_material));
+}
+
+void Scene::add_quad(const Point3 &left_down, const Vec3 &u, const Vec3 &v)
+{
+  _objects.add(make_shared<Quad>(left_down, u, v, _default_material));
+}
+
+void Scene::add_triangle(const Point3 &v1, const Point3 &v2, const Point3 &v3)
+{
+  _objects.add(make_shared<Triangle>(v1, v2, v3, _default_material));
+}
+
 void Scene::delete_object(size_t id)
 {
   _objects.delete_object(id);
