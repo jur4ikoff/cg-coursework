@@ -20,6 +20,7 @@ public:
   HittableList make_default_scene();
   HittableList &get_objects();
 
+  void add_light(size_t id, double power, Color &color);
   void delete_object(size_t id);
 
   void add_sphere(const Point3 &center, double radius);

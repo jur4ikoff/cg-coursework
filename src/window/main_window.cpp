@@ -2,6 +2,7 @@
 #include "ui_main_window.h"
 
 #include "object_add_dialog.h"
+#include "power_color_dialog.h"
 #include "camera_add.h"
 
 #include "color.h"
@@ -276,6 +277,34 @@ void MainWindow::on_objectDeletebutton_clicked()
   _livetime_render();
 }
 
+void MainWindow::on_objectMakeEmitButton_clicked()
+{
+  auto objects = get_selected(ui->objectListWidget);
+  if (objects.size() == 0)
+  {
+    show_error("Ошибка", "Нужно выбрать хотя бы один объект");
+    return;
+  }
+
+  PowerColorDialog dialog(this);
+  if (dialog.exec() == QDialog::Accepted)
+  {
+    double power = dialog.power();
+    QColor color = dialog.color();
+
+    Color c{color.redF(), color.greenF(), color.blueF()};
+    qDebug() << "Мощность:" << power;
+    qDebug() << "Цвет RGB:" << c.x() << c.y() << c.z();
+
+    for (size_t id : objects)
+    {
+      _scene->add_light(id, power, c);
+    }
+  }
+
+  _livetime_render();
+}
+
 void MainWindow::pop_up_closed_slot()
 {
   cancel_running = true;
@@ -460,7 +489,6 @@ void MainWindow::on_objectAddButton_clicked()
       break;
     }
 
-    //     // Обновляем сцену
     _livetime_render();
     update_objects_list();
   }

@@ -24,6 +24,18 @@ public:
         _cur_max_id++;
     }
 
+    shared_ptr<Hittable> get_object_by_id(size_t id)
+    {
+        for (auto object : objects)
+        {
+            if (object->id == id)
+            {
+                return object;
+            }
+        }
+        return nullptr;
+    }
+
     void delete_object(size_t id)
     {
         auto it = std::find_if(objects.begin(), objects.end(),

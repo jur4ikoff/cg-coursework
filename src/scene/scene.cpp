@@ -134,6 +134,20 @@ void Scene::add_triangle(const Point3 &v1, const Point3 &v2, const Point3 &v3)
   _objects.add(make_shared<Triangle>(v1, v2, v3, _default_material));
 }
 
+void Scene::add_light(size_t id, double power, Color &color)
+{
+  auto object = _objects.get_object_by_id(id);
+  color *= power;
+
+  if (object)
+  {
+
+    auto light = make_shared<diffuse_light>(color);
+    // object.ma
+  }
+  std::cout << object->id << std::endl;
+}
+
 void Scene::delete_object(size_t id)
 {
   _objects.delete_object(id);
