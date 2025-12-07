@@ -49,7 +49,7 @@ void MainWindow::init_camera()
 {
   auto camera = std::make_shared<Camera>();
   camera->id = 0;
-  camera->vfov = 40;
+  camera->vfov = 38;
   camera->lookfrom = Point3(278, 278, -800);
   camera->lookat = Point3(278, 278, 0);
   camera->vup = Vec3(0, 1, 0);
@@ -63,6 +63,7 @@ void MainWindow::init_camera()
 void MainWindow::init_scene()
 {
   _scene->make_default_scene();
+  update_objects_list();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -172,7 +173,7 @@ void MainWindow::on_changeWorldColor_clicked()
 
 void MainWindow::on_cameraDeleteButton_clicked()
 {
-  auto cams = get_selected_camera();
+  auto cams = get_selected(ui->cameraListWidget);
   if (cams.size() == 0)
   {
     show_error("Ошибка", "Нужно выбрать хотя бы одну камеру");
@@ -211,7 +212,7 @@ void MainWindow::on_CameraAddDialogButton_clicked()
 
 void MainWindow::on_cameraEditButton_clicked()
 {
-  auto cams = get_selected_camera();
+  auto cams = get_selected(ui->cameraListWidget);
   if (cams.size() != 1)
   {
     show_error("Ошибка", "Для изменения необходимо выбрать ОДНУ камеру");
@@ -247,7 +248,7 @@ void MainWindow::on_cameraEditButton_clicked()
 
 void MainWindow::on_cameraSetButton_clicked()
 {
-  auto cams = get_selected_camera();
+  auto cams = get_selected(ui->cameraListWidget);
   if (cams.size() != 1)
   {
     show_error("Ошибка", "Выбрать активной можно только одну камеру");
@@ -256,6 +257,22 @@ void MainWindow::on_cameraSetButton_clicked()
 
   size_t id = cams[0];
   camera_list.set_active_camera(id);
+  _livetime_render();
+}
+
+void MainWindow::on_objectDeletebutton_clicked()
+{
+  auto objects = get_selected(ui->objectListWidget);
+  if (objects.size() == 0)
+  {
+    show_error("Ошибка", "Нужно выбрать хотя бы один объект");
+    return;
+  }
+  for (size_t id : objects)
+  {
+    _scene->delete_object(id);
+  }
+  update_objects_list();
   _livetime_render();
 }
 
@@ -342,27 +359,23 @@ void MainWindow::update_camera_list()
   }
 }
 
-std::vector<size_t> MainWindow::get_selected_camera()
+void MainWindow::update_objects_list()
 {
-  std::vector<size_t> ids;
-  for (int i = 0; i < ui->cameraListWidget->count(); i++)
+  ui->objectListWidget->clear();
+  for (size_t id : _scene->get_objects().get_objects_ids())
   {
-    if (ui->cameraListWidget->item(i)->isSelected())
-    {
-      ids.push_back(ui->cameraListWidget->item(i)->text().toInt());
-    }
+    ui->objectListWidget->addItem(QString::number(id));
   }
-  return ids;
 }
 
-std::vector<size_t> MainWindow::get_selected_object()
+std::vector<size_t> MainWindow::get_selected(QListWidget *label)
 {
   std::vector<size_t> ids;
-  for (int i = 0; i < ui->objectListWidget->count(); i++)
+  for (int i = 0; i < label->count(); i++)
   {
-    if (ui->objectListWidget->item(i)->isSelected())
+    if (label->item(i)->isSelected())
     {
-      ids.push_back(ui->objectListWidget->item(i)->text().toInt());
+      ids.push_back(label->item(i)->text().toInt());
     }
   }
   return ids;
@@ -387,7 +400,7 @@ void MainWindow::on_objectAddButton_clicked()
     switch (dialog.selectedType())
     {
     case AddObjectDialog::Sphere:
-      // _scene.add_sphere(dialog.sphereCenter(), dialog.sphereRadius());
+      _scene->add_sphere(dialog.sphereCenter(), dialog.sphereRadius());
       break;
 
     case AddObjectDialog::Cylinder:
@@ -447,6 +460,7 @@ void MainWindow::on_objectAddButton_clicked()
 
     //     // Обновляем сцену
     _livetime_render();
+    update_objects_list();
   }
   catch (const std::exception &e)
   {

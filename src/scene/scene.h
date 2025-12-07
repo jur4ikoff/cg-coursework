@@ -17,13 +17,13 @@ public:
   }
   ~Scene() {}
 
-
   HittableList make_default_scene();
   HittableList &get_objects();
 
-  // Добавление объектов
-  
+  void delete_object(size_t id);
 
+
+  void add_sphere(const Point3 &center, double radius);
   
 
 private:

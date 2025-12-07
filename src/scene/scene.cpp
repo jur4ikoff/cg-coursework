@@ -34,7 +34,7 @@ HittableList Scene::make_default_scene()
   auto boundary = box(Point3(-10, -10, 0), Point3(600, 600, 600), white);
 
   // _objects.add(make_shared<ConstantFog>(boundary, 0.003, *fog_color));
-  _objects.add(make_shared<Smoke>(boundary, 1.5, 0.005, *fog_color));
+  // _objects.add(make_shared<Smoke>(boundary, 1.5, 0.005, *fog_color));
   // _objects.add(make_shared<DynamicFog>(boundary, 0.01, noise, 0.5, *fog_color));
 
   _objects.add(make_shared<Cone>(Point3(450, 0, 350), 100, 200, white));
@@ -92,6 +92,16 @@ HittableList Scene::make_default_scene()
   _objects.add(make_shared<Sphere>(Point3(200, 90, 190), 90, glass));
 
   return _objects;
+}
+
+void Scene::add_sphere(const Point3 &center, double radius)
+{
+  _objects.add(make_shared<Sphere>(center, radius, _default_material));
+}
+
+void Scene::delete_object(size_t id)
+{
+  _objects.delete_object(id);
 }
 
 HittableList &Scene::get_objects()

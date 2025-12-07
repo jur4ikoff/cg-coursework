@@ -52,7 +52,9 @@ private slots:
   void on_cameraDeleteButton_clicked();
   void on_cameraEditButton_clicked();
   void on_cameraSetButton_clicked();
+
   void on_objectAddButton_clicked();
+  void on_objectDeletebutton_clicked();
 
   void tile_render_finished_slot();
   void pop_up_closed_slot();
@@ -107,11 +109,11 @@ private:
   void init_scene();
 
   // Получить выделенные
-  std::vector<size_t> get_selected_camera();
-  std::vector<size_t> get_selected_object();
+  std::vector<size_t> get_selected(QListWidget *label);
 
   // Списки
   void update_camera_list();
+  void update_objects_list();
 
   // Ошибки
   void show_error(const std::string label, const std::string message);
