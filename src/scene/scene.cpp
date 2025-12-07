@@ -10,7 +10,7 @@
 #include "fog.h"
 
 // Сделать эту функцию так, чтобы возвращалась сцена через параметр
-HittableList Scene::draw()
+HittableList Scene::make_default_scene()
 {
 
   auto red = make_shared<Lambertian>(Color(.65, .05, .05));
@@ -37,7 +37,6 @@ HittableList Scene::draw()
   // _objects.add(make_shared<DynamicFog>(boundary, 0.01, noise, 0.5, *fog_color));
 
   // _objects.add(make_shared<Cone>(Point3(200, 0, 350), 100, 200, white));
-  _objects.add(box(Point3(0, 0, 600), Point3(100, 500, 10000), green));
 
   // auto pyr = pyramid(Point3(400, 0, 200), 150, 300, red);
   // auto pyr_r = make_shared<RotateY>(pyr, -45);
@@ -58,9 +57,9 @@ HittableList Scene::draw()
   // Cornell box sides
   _objects.add(make_shared<Quad>(Point3(555, 0, 0), Vec3(0, 0, 555), Vec3(0, 555, 0), green));
   _objects.add(make_shared<Quad>(Point3(0, 0, 555), Vec3(0, 0, -555), Vec3(0, 555, 0), red));
-  // _objects.add(make_shared<Quad>(Point3(0,555,0), vec3(555,0,0), vec3(0,0,555), white));
+  _objects.add(make_shared<Quad>(Point3(0,555,0), Vec3(555,0,0), Vec3(0,0,555), white));
   _objects.add(make_shared<Quad>(Point3(0, 0, 555), Vec3(555, 0, 0), Vec3(0, 0, -555), white));
-  // _objects.add(make_shared<Quad>(Point3(555, 0, 555), Vec3(-555, 0, 0), Vec3(0, 555, 0), white));
+  _objects.add(make_shared<Quad>(Point3(555, 0, 555), Vec3(-555, 0, 0), Vec3(0, 555, 0), white));
 
   // _objects.add(make_shared<Sphere>(Point3(200, 20, 200)  white));
 
@@ -91,9 +90,9 @@ HittableList Scene::draw()
   return _objects;
 }
 
-void Scene::make_default_scene()
-{
-}
+// void Scene::make_default_scene()
+// {
+// }
 
 HittableList &Scene::get_objects()
 {
