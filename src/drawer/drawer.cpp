@@ -1,7 +1,7 @@
 #include "drawer.h"
 #include "qt_drawer.h"
 
-#include <Qpixmap>
+#include <QPixmap>
 #include <iostream>
 
 Drawer::~Drawer() = default; // ← или просто {}
