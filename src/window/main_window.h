@@ -60,6 +60,8 @@ private slots:
   void on_objectMoveButton_clicked();
   void on_objectRotateButton_clicked();
 
+  void add_constant_fog();
+
   void tile_render_finished_slot();
   void pop_up_closed_slot();
 

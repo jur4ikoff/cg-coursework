@@ -44,7 +44,6 @@ public:
         {
             if (object->id == id)
             {
-                std::cout << "Тут" << std::endl;
                 object = new_object;
                 return;
             }

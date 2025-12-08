@@ -163,6 +163,11 @@ HittableList &Scene::get_objects()
   return _objects;
 }
 
+std::vector<size_t> Scene::get_objects_ids()
+{
+  return _objects.get_objects_ids();
+}
+
 void Scene::set_material(size_t id, MaterialStruct &mat_struct)
 {
   auto object = _objects.get_object_by_id(id);
@@ -215,6 +220,12 @@ void Scene::rotate_object(size_t id, Vec3 &rotate_info)
   std::shared_ptr<Hittable> new_object = std::make_shared<RotateX>(object, rotate_info.x());
   new_object = std::make_shared<RotateY>(new_object, rotate_info.y());
   new_object = std::make_shared<RotateZ>(new_object, rotate_info.z());
-  // auto new_object = std::make_shared<Rotate>(object, rotate_info);
   _objects.add_element_instead_of_id(id, new_object);
+}
+
+void Scene::add_fog(size_t obj_id, double density, Color &fog_color)
+{
+  auto object = _objects.get_object_by_id(obj_id);
+  _objects.add(make_shared<ConstantFog>(object, density, fog_color));
+  _objects.delete_object(obj_id);
 }

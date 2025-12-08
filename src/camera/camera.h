@@ -34,8 +34,6 @@ public:
 
     void add_camera(shared_ptr<Camera> camera)
     {
-        std::cout << "Add camera " << _camera_list.size() << " " << _active_camera << std::endl;
-
         camera->id = _max_id;
         _max_id++;
 
@@ -90,7 +88,6 @@ public:
 
     void set_active_camera(int index)
     {
-        // std::cout << index << std::endl;
         _active_camera = index;
     }
 
@@ -123,7 +120,6 @@ private:
 
     void _check_index(int index)
     {
-        std::cout << index << " " << _camera_list.size() << std::endl;
         if (index >= _camera_list.size() || index < 0)
         {
             throw std::invalid_argument("Такой камеры не существует");

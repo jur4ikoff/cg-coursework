@@ -6,6 +6,8 @@
 #include "material_dialog.h"
 #include "move_object_dialog.h"
 #include "rotate_object_dialog.h"
+#include "fog_dialog.h"
+
 #include "camera_add.h"
 
 #include "color.h"
@@ -45,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(&_futureWatcher, &QFutureWatcher<void>::finished, this,
           &MainWindow::tile_render_finished_slot);
+  connect(ui->action_constant_fog, &QAction::triggered, this, &MainWindow::add_constant_fog);
 
   set_scene();
 }
@@ -421,6 +424,37 @@ void MainWindow::on_objectRotateButton_clicked()
   {
     QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
   }
+}
+
+void MainWindow::add_constant_fog()
+{
+  std::vector<size_t> object_ids = _scene->get_objects_ids();
+
+  if (object_ids.empty())
+  {
+    QMessageBox::warning(this, "Ошибка", "Нет объектов для привязки тумана.");
+    return;
+  }
+
+  FogDialog dialog(object_ids, this);
+  if (dialog.exec() == QDialog::Accepted)
+  {
+    size_t obj_id = dialog.selectedObjectId();
+    double density = dialog.density();
+    QColor c = dialog.fogColor();
+    Color fog_color(c.redF(), c.greenF(), c.blueF());
+
+    try
+    {
+      _scene->add_fog(obj_id, density, fog_color);
+    }
+    catch (const std::exception &e)
+    {
+      QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+    }
+  }
+  _livetime_render();
+  update_objects_list();
 }
 
 void MainWindow::pop_up_closed_slot()

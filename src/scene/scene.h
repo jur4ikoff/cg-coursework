@@ -17,11 +17,13 @@ public:
 
   HittableList make_default_scene();
   HittableList &get_objects();
+  std::vector<size_t> get_objects_ids();
 
   void set_material(size_t id, MaterialStruct &mat_struct);
   void move_object(size_t id, Vec3 &offset);
   void rotate_object(size_t id, Vec3 &rotate_info);
 
+  void add_fog(size_t obj_id, double density, Color &fog_color);
   void add_light(size_t id, double power, Color &color);
   void delete_object(size_t id);
 

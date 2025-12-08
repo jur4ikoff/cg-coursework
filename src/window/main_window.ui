@@ -486,15 +486,14 @@
      <height>33</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="Menu">
     <property name="title">
-     <string>Добавить объект</string>
+     <string>Добавить туман</string>
     </property>
-    <addaction name="separator"/>
-    <addaction name="action_11"/>
-    <addaction name="action_12"/>
+    <addaction name="action_constant_fog"/>
+    <addaction name="action_random_fog"/>
    </widget>
-   <addaction name="menu"/>
+   <addaction name="Menu"/>
   </widget>
   <action name="action">
    <property name="text">
@@ -546,12 +545,12 @@
     <string>Камера</string>
    </property>
   </action>
-  <action name="action_11">
+  <action name="action_constant_fog">
    <property name="text">
     <string>Однородный туман</string>
    </property>
   </action>
-  <action name="action_12">
+  <action name="action_random_fog">
    <property name="text">
     <string>Неоднородный туман</string>
    </property>

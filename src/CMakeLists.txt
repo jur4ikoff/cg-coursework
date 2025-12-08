@@ -109,5 +109,5 @@ if(ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 
-set(UI_FILES main_window.ui camera_add.ui power_color_dialog.ui material_dialog.ui move_object_dialog.ui rotate_object_dialog.ui)
+set(UI_FILES main_window.ui camera_add.ui power_color_dialog.ui material_dialog.ui move_object_dialog.ui rotate_object_dialog.ui fog_dialog.ui)
 qt_wrap_ui(QtUIExample ${UI_FILES})

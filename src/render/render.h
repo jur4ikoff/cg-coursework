@@ -1,5 +1,4 @@
-#ifndef RENDER_H
-#define RENDER_H
+#pragma once
 
 #include "hittable.h"
 #include "material.h"
@@ -131,71 +130,31 @@ private:
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
-    // Color ray_color(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
-    // {
-    //     if (cancel_running)
-    //         return background;
-
-    //     // Если превысили лимит отражений, то выходим
-    //     if (depth <= 0)
-    //         return Color(0, 0, 0);
-
-    //     HitRecord rec;
-
-    //     // Если луч ничего не пересекает, то возвращаем цвет пикселя
-    //     if (!world.hit(r, Interval(0.001, infinity), rec))
-    //         return background;
-
-    //     Ray scattered;
-    //     Color attenuation;
-    //     Color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
-
-    //     if (!rec.mat->scatter(r, rec, attenuation, scattered))
-    //         return color_from_emission;
-
-    //     Color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
-
-    //     return color_from_emission + color_from_scatter;
-    // }
     Color ray_color(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
     {
         if (cancel_running)
             return background;
 
+        // Если превысили лимит отражений, то выходим
         if (depth <= 0)
             return Color(0, 0, 0);
 
         HitRecord rec;
-        const double fog_density = 0.005;               // настраиваемый параметр
-        const Color fog_color = Color(0, 0, 0); // цвет тумана (например, голубоватый)
 
+        // Если луч ничего не пересекает, то возвращаем цвет пикселя
         if (!world.hit(r, Interval(0.001, infinity), rec))
-        {
-            // Луч уходит в бесконечность → применяем туман к фону
-            // В простом случае можно вернуть fog_color, но лучше — затухание фона
-            return fog_color; // или: background * exp(-fog_density * some_max_dist)
-        }
+            return background;
 
-        // Расстояние до объекта
-        double distance = (rec.p - r.origin()).length();
-        double fog_factor = exp(-fog_density * distance);
-
-        // Рекурсивный вызов (без тумана внутри объекта)
         Ray scattered;
         Color attenuation;
-        Color emitted = rec.mat->emitted(rec.u, rec.v, rec.p);
+        Color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
 
         if (!rec.mat->scatter(r, rec, attenuation, scattered))
-        {
-            // Нет рассеяния → просто затухший эмитированный цвет
-            return emitted * fog_factor + fog_color * (1 - fog_factor);
-        }
+            return color_from_emission;
 
-        Color scattered_color = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
-        Color object_color = emitted + scattered_color;
+        Color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
 
-        // Смешиваем цвет объекта с туманом
-        return object_color * fog_factor + fog_color * (1 - fog_factor);
+        return color_from_emission + color_from_scatter;
     }
 
     // Color ray_color_with_exp_fog(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
@@ -322,4 +281,3 @@ private:
     // }
 };
 
-#endif // RENDER_H
