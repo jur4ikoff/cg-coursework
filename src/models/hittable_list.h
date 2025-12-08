@@ -36,6 +36,22 @@ public:
         return nullptr;
     }
 
+    // Функция вставялет элемент за место
+    void add_element_instead_of_id(size_t id, std::shared_ptr<Hittable> new_object)
+    {
+        new_object->id = id;
+        for (std::shared_ptr<Hittable> &object : objects)
+        {
+            if (object->id == id)
+            {
+                std::cout << "Тут" << std::endl;
+                object = new_object;
+                return;
+            }
+        }
+        throw std::invalid_argument("В списке нет объекта с таким id");
+    }
+
     void delete_object(size_t id)
     {
         auto it = std::find_if(objects.begin(), objects.end(),

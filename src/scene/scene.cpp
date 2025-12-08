@@ -187,3 +187,17 @@ void Scene::set_material(size_t id, MaterialStruct &mat_struct)
 
   object->mat = mat;
 }
+
+void Scene::move_object(size_t id, Vec3 offset)
+{
+  auto object = _objects.get_object_by_id(id);
+  if (!object)
+    throw std::invalid_argument("Нету такого объекта");
+
+  if (offset.x() == 0 && offset.y() == 0 && offset.z() == 0)
+    return;
+
+  std::cout << offset.x() << " " << offset.y() << " " << offset.z() << std::endl;
+  auto new_object = std::make_shared<Shift>(object, offset);
+  _objects.add_element_instead_of_id(id, new_object);
+}

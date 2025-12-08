@@ -57,6 +57,7 @@ private slots:
   void on_objectDeletebutton_clicked();
   void on_objectMakeEmitButton_clicked();
   void on_objectChangeMaterialButton_clicked();
+  void on_objectMoveButton_clicked();
   
   void tile_render_finished_slot();
   void pop_up_closed_slot();

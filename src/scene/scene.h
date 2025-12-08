@@ -19,6 +19,8 @@ public:
   HittableList &get_objects();
 
   void set_material(size_t id, MaterialStruct &mat_struct);
+  void move_object(size_t id, Vec3 offset);
+
   void add_light(size_t id, double power, Color &color);
   void delete_object(size_t id);
 

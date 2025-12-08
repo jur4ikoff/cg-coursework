@@ -135,7 +135,7 @@
             <string>Сделать источником</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="objectShiftButton">
+          <widget class="QPushButton" name="objectMoveButton">
            <property name="geometry">
             <rect>
              <x>360</x>

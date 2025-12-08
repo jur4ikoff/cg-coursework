@@ -4,6 +4,7 @@
 #include "object_add_dialog.h"
 #include "power_color_dialog.h"
 #include "material_dialog.h"
+#include "move_object_dialog.h"
 #include "camera_add.h"
 
 #include "color.h"
@@ -357,6 +358,29 @@ void MainWindow::on_objectChangeMaterialButton_clicked()
   {
     QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
   }
+}
+
+void MainWindow::on_objectMoveButton_clicked()
+{
+    auto selected = get_selected(ui->objectListWidget);
+    if (selected.empty()) {
+        QMessageBox::warning(this, "Ошибка", "Выберите объект для перемещения.");
+        return;
+    }
+
+    MoveObjectDialog dialog(this);
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    Point3 offset = dialog.offset();
+    size_t object_id = selected[0];
+
+    try {
+        _scene->move_object(object_id, offset);
+        _livetime_render();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+    }
 }
 
 void MainWindow::pop_up_closed_slot()
