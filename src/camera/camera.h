@@ -23,7 +23,6 @@ public:
     size_t id;
 };
 
-
 class CameraList
 {
 public:
@@ -35,14 +34,15 @@ public:
 
     void add_camera(shared_ptr<Camera> camera)
     {
+        std::cout << "Add camera " << _camera_list.size() << " " << _active_camera << std::endl;
+
+        camera->id = _max_id;
+        _max_id++;
+
         if (_camera_list.size() == 0)
-            _active_camera = 0;
-        
+            _active_camera = camera->id;
+
         _camera_list.push_back(camera);
-        if (camera->id > _max_id)
-        {
-            _max_id = camera->id;
-        }
     }
 
     void delete_camera(size_t id)
@@ -53,7 +53,7 @@ public:
         auto it = std::find_if(_camera_list.begin(), _camera_list.end(),
                                [id](const auto &camera)
                                {
-                                   return camera->id == id; // или camera.id == id, если объекты хранятся по значению
+                                   return camera->id == id;
                                });
 
         if (it != _camera_list.end())
@@ -62,20 +62,35 @@ public:
         }
     }
 
-    shared_ptr<Camera> get_camera(int index)
+    shared_ptr<Camera> &get_camera(int camera_id)
     {
+        int index = _find_element(camera_id);
         _check_index(index);
         return _camera_list[index];
     }
 
+    int _find_element(int camera_id)
+    {
+        for (size_t i = 0; i < _camera_list.size(); i++)
+        {
+            if (_camera_list[i]->id == camera_id)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     shared_ptr<Camera> &get_active_camera()
     {
-        _check_index(_active_camera);
-        return _camera_list[_active_camera];
+        int index = _find_element(_active_camera);
+        _check_index(index);
+        return _camera_list[index];
     }
 
     void set_active_camera(int index)
     {
+        // std::cout << index << std::endl;
         _active_camera = index;
     }
 
@@ -108,6 +123,7 @@ private:
 
     void _check_index(int index)
     {
+        std::cout << index << " " << _camera_list.size() << std::endl;
         if (index >= _camera_list.size() || index < 0)
         {
             throw std::invalid_argument("Такой камеры не существует");
