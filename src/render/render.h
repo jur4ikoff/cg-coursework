@@ -157,6 +157,129 @@ private:
 
         return color_from_emission + color_from_scatter;
     }
+
+    // Color ray_color_with_exp_fog(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
+    // {
+    //     if (cancel_running)
+    //         return background;
+
+    //     if (depth <= 0)
+    //         return Color(0, 0, 0);
+
+    //     HitRecord rec;
+    //     if (!world.hit(r, Interval(0.001, infinity), rec))
+    //     {
+    //         // Нет пересечения — просто возвращаем фон, но можно тоже затуманить,
+    //         // если хотите "бесконечный" туман (необязательно)
+    //         return background;
+    //     }
+
+    //     // === ПАРАМЕТРЫ ТУМАНА ===
+    //     const double fog_density = 0.002;         // Настройте: 0.01–0.5 (чем больше — гуще)
+    //     const Color fog_color = Color(0, 0, 0); // Цвет тумана: белый, можно Color(0.8, 0.8, 0.9)
+
+    //     // Расстояние от начала луча до точки пересечения
+    //     double ray_dist = rec.t * r.direction().length();
+
+    //     // Пропускание (transmittance) по экспоненциальному закону
+    //     double transmittance = std::exp(-fog_density * ray_dist);
+    //     // Ограничиваем значение, чтобы избежать артефактов при больших расстояниях
+    //     transmittance = std::clamp(transmittance, 0.0, 1.0);
+
+    //     // Получаем цвет от эмиссии (он тоже должен затухать в тумане!)
+    //     Color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+
+    //     Ray scattered;
+    //     Color attenuation;
+    //     if (!rec.mat->scatter(r, rec, attenuation, scattered))
+    //     {
+    //         // Нет рассеяния — только эмиссия, затухающая в тумане
+    //         return transmittance * color_from_emission + (1.0 - transmittance) * fog_color;
+    //     }
+
+    //     // Рекурсивный вызов для рассеянного луча
+    //     Color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
+
+    //     // Общий цвет объекта (до применения тумана)
+    //     Color object_color = color_from_emission + color_from_scatter;
+
+    //     // Применяем туман: смешиваем цвет объекта с цветом тумана
+    //     return transmittance * object_color + (1.0 - transmittance) * fog_color;
+    // }
+
+    // Color ray_color(const Ray &r, int depth, const Hittable &world, volatile bool &cancel_running) const
+    // {
+    //     Perlin perlin_noise = Perlin();
+    //     if (cancel_running)
+    //         return background;
+
+    //     if (depth <= 0)
+    //         return Color(0, 0, 0);
+
+    //     HitRecord rec;
+    //     if (!world.hit(r, Interval(0.001, infinity), rec))
+    //     {
+    //         // Фон: можно либо вернуть background, либо затуманить "в бесконечность"
+    //         // Здесь — просто фон (или замените на затуманенный, как ниже)
+    //         return background;
+    //     }
+
+    //     // === ПАРАМЕТРЫ НЕОДНОРОДНОГО ТУМАНА ===
+    //     const double base_density = 0.001;               // Базовая плотность (0.05–0.3)
+    //     const double noise_scale = 0.02;               // Масштаб шума (меньше → крупнее облака)
+    //     const double noise_strength = 0.4;             // Насколько сильно шум модулирует плотность [0,1]
+    //     const Color fog_color = Color(0, 0, 0); // Холодный бело-голубой туман
+
+    //     // Направление и длина луча (предполагается, что r.direction() не нормирован)
+    //     Vec3 ray_dir = r.direction();
+    //     double ray_len = ray_dir.length();
+    //     Vec3 unit_dir = ray_dir / ray_len;
+
+    //     double t0 = 0.001;
+    //     double t1 = rec.t;
+
+    //     // === ЧИСЛЕННОЕ ИНТЕГРИРОВАНИЕ ПЛОТНОСТИ ВДОЛЬ ЛУЧА ===
+    //     const int STEPS = 32; // Качество/производительность: 32–128
+    //     double transmittance = 1.0;
+
+    //     // Используем метод прямоугольников (можно улучшить до трапеций)
+    //     for (int i = 0; i < STEPS; ++i)
+    //     {
+    //         double t = t0 + (t1 - t0) * (i + 0.5) / STEPS;
+    //         Point3 p = r.at(t);
+
+    //         // Плотность в точке: база + шум
+    //         double noise_val = perlin_noise.noise(noise_scale * p);
+    //         // Сдвигаем в [0,1] и усиливаем контраст по желанию
+    //         noise_val = 0.5 + 0.5 * noise_val; // теперь [0,1]
+    //         // Или: noise_val = std::fabs(noise_val); // для "пушистых" облаков
+
+    //         double local_density = base_density * (1.0 + noise_strength * noise_val);
+    //         // Альтернатива: local_density = base_reserved_density * std::pow(noise_val, 3); // более "клубисто"
+
+    //         // Вклад в оптическую глубину
+    //         double segment_length = (t1 - t0) * ray_len / STEPS;
+    //         transmittance *= std::exp(-local_density * segment_length);
+    //     }
+
+    //     transmittance = std::clamp(transmittance, 0.0, 1.0);
+
+    //     // Цвет объекта (эмиссия + рассеяние)
+    //     Color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+
+    //     Ray scattered;
+    //     Color attenuation;
+    //     if (!rec.mat->scatter(r, rec, attenuation, scattered))
+    //     {
+    //         Color object_color = color_from_emission;
+    //         return transmittance * object_color + (1.0 - transmittance) * fog_color;
+    //     }
+
+    //     Color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
+    //     Color object_color = color_from_emission + color_from_scatter;
+
+    //     return transmittance * object_color + (1.0 - transmittance) * fog_color;
+    // }
 };
 
 #endif // RENDER_H

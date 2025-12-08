@@ -3,6 +3,7 @@
 
 #include "object_add_dialog.h"
 #include "power_color_dialog.h"
+#include "material_dialog.h"
 #include "camera_add.h"
 
 #include "color.h"
@@ -303,6 +304,59 @@ void MainWindow::on_objectMakeEmitButton_clicked()
   }
 
   _livetime_render();
+}
+
+void MainWindow::on_objectChangeMaterialButton_clicked()
+{
+  auto objects = get_selected(ui->objectListWidget);
+  if (objects.size() == 0)
+  {
+    show_error("Ошибка", "Нужно выбрать хотя бы один объект");
+    return;
+  }
+
+  MaterialDialog dialog(this);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+
+  // Формируем MaterialStruct из данных диалога
+  MaterialStruct mat;
+  mat.type = dialog.selectedType(); 
+
+  switch (mat.type)
+  {
+  case Lambertian_t:
+  case Metal_t:
+  {
+    QColor qcolor = (mat.type == Lambertian_t)
+                        ? dialog.lambertianColor()
+                        : dialog.metalColor();
+    mat.color = Color(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
+    break;
+  }
+  case Transparent_t:
+    mat.refraction_index = dialog.refractionIndex();
+    break;
+  }
+
+  if (mat.type == Metal_t)
+  {
+    mat.fuzz = dialog.fuzz();
+  }
+
+  try
+  {
+
+    for (size_t object_id : objects)
+    {
+      _scene->set_material(object_id, mat);
+    }
+    _livetime_render(); // обновляем отображение
+  }
+  catch (const std::exception &e)
+  {
+    QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  }
 }
 
 void MainWindow::pop_up_closed_slot()

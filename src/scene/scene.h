@@ -4,6 +4,7 @@
 #include "drawer.h"
 #include "hittable_list.h"
 #include "material.h"
+#include "material_struct.h"
 
 #include <QSize>
 #include <iostream>
@@ -11,15 +12,13 @@
 class Scene
 {
 public:
-  Scene()
-  {
-    _default_material = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
-  }
+  Scene();
   ~Scene() {}
 
   HittableList make_default_scene();
   HittableList &get_objects();
 
+  void set_material(size_t id, MaterialStruct &mat_struct);
   void add_light(size_t id, double power, Color &color);
   void delete_object(size_t id);
 

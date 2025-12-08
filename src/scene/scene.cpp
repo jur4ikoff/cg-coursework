@@ -9,6 +9,11 @@
 #include "render.h"
 #include "sphere.h"
 
+Scene::Scene()
+{
+  _default_material = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
+}
+
 // Сделать эту функцию так, чтобы возвращалась сцена через параметр
 HittableList Scene::make_default_scene()
 {
@@ -23,18 +28,17 @@ HittableList Scene::make_default_scene()
   auto glass = make_shared<Transparent>(1.5);
   auto metal_mat = make_shared<Metal>(Color(0.8, 0.8, 0.8), 1);
   auto fog_color = make_shared<Color>(0.1, 0.1, 0.1);
-  auto nz_tex = make_shared<NoiseTexture>(1);
-  auto nz_mat = make_shared<Lambertian>(nz_tex);
+  // auto nz_tex = make_shared<NoiseTexture>(1);
+  // auto nz_mat = make_shared<Lambertian>(nz_tex);
 
-  auto noise = std::make_shared<Perlin>();
+  // auto noise = std::make_shared<Perlin>();
 
   // Граница — например, большой box
-  // auto boundary = make_shared<Quad>(Point3(0, 0, 0), vec3(400, 0, 400), vec3(400, 555, 400), red);
   // auto boundary = make_shared<Quad>(Point3(0, 0, 400), vec3(0, 0, -400), vec3(0, 555, 0), red);
-  auto boundary = box(Point3(-10, -10, 0), Point3(600, 600, 600), white);
+  // auto boundary = box(Point3(-10, -10, 0), Point3(600, 600, 600), white);
 
   // _objects.add(make_shared<ConstantFog>(boundary, 0.003, *fog_color));
-  // _objects.add(make_shared<Smoke>(boundary, 1.5, 0.005, *fog_color));
+  // _objects.add(make_shared<Smoke>(boundary, 3, 0.005, *fog_color));
   // _objects.add(make_shared<DynamicFog>(boundary, 0.01, noise, 0.5, *fog_color));
 
   _objects.add(make_shared<Cone>(Point3(450, 0, 350), 100, 200, white));
@@ -156,4 +160,30 @@ void Scene::delete_object(size_t id)
 HittableList &Scene::get_objects()
 {
   return _objects;
+}
+
+void Scene::set_material(size_t id, MaterialStruct &mat_struct)
+{
+  auto object = _objects.get_object_by_id(id);
+  if (!object)
+    throw std::invalid_argument("Нету такого объекта");
+
+  std::shared_ptr<Material> mat = nullptr;
+
+  switch (mat_struct.type)
+  {
+  case Lambertian_t:
+    mat = std::make_shared<Lambertian>(mat_struct.color);
+    break;
+  case Metal_t:
+    mat = std::make_shared<Metal>(mat_struct.color, mat_struct.fuzz);
+    break;
+  case Transparent_t:
+    mat = std::make_shared<Transparent>(mat_struct.refraction_index);
+    break;
+  default:
+    throw std::invalid_argument("Unknown material type");
+  }
+
+  object->mat = mat;
 }
