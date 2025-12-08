@@ -5,6 +5,7 @@
 #include "power_color_dialog.h"
 #include "material_dialog.h"
 #include "move_object_dialog.h"
+#include "rotate_object_dialog.h"
 #include "camera_add.h"
 
 #include "color.h"
@@ -322,7 +323,7 @@ void MainWindow::on_objectChangeMaterialButton_clicked()
 
   // Формируем MaterialStruct из данных диалога
   MaterialStruct mat;
-  mat.type = dialog.selectedType(); 
+  mat.type = dialog.selectedType();
 
   switch (mat.type)
   {
@@ -362,25 +363,64 @@ void MainWindow::on_objectChangeMaterialButton_clicked()
 
 void MainWindow::on_objectMoveButton_clicked()
 {
-    auto selected = get_selected(ui->objectListWidget);
-    if (selected.empty()) {
-        QMessageBox::warning(this, "Ошибка", "Выберите объект для перемещения.");
-        return;
+  auto selected = get_selected(ui->objectListWidget);
+  if (selected.empty())
+  {
+    QMessageBox::warning(this, "Ошибка", "Выберите объект для перемещения.");
+    return;
+  }
+
+  MoveObjectDialog dialog(this);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+
+  Point3 offset = dialog.offset();
+  // size_t object_id = selected[0];
+
+  try
+  {
+    for (size_t id : selected)
+    {
+      _scene->move_object(id, offset);
     }
+    _livetime_render();
+  }
+  catch (const std::exception &e)
+  {
+    QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  }
+}
 
-    MoveObjectDialog dialog(this);
-    if (dialog.exec() != QDialog::Accepted)
-        return;
+void MainWindow::on_objectRotateButton_clicked()
+{
+  auto selected = get_selected(ui->objectListWidget);
+  if (selected.empty())
+  {
+    QMessageBox::warning(this, "Ошибка", "Выберите объект для поворота.");
+    return;
+  }
 
-    Point3 offset = dialog.offset();
-    size_t object_id = selected[0];
+  RotateObjectDialog dialog(this);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
 
-    try {
-        _scene->move_object(object_id, offset);
-        _livetime_render();
-    } catch (const std::exception& e) {
-        QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  double ax = dialog.angleX();
+  double ay = dialog.angleY();
+  double az = dialog.angleZ();
+
+  Vec3 rotate_info{ax, ay, az};
+  try
+  {
+    for (size_t id : selected)
+    {
+      _scene->rotate_object(id, rotate_info);
     }
+    _livetime_render();
+  }
+  catch (const std::exception &e)
+  {
+    QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  }
 }
 
 void MainWindow::pop_up_closed_slot()

@@ -34,8 +34,9 @@ HittableList Scene::make_default_scene()
   // auto noise = std::make_shared<Perlin>();
 
   // Граница — например, большой box
-  // auto boundary = make_shared<Quad>(Point3(0, 0, 400), vec3(0, 0, -400), vec3(0, 555, 0), red);
   // auto boundary = box(Point3(-10, -10, 0), Point3(600, 600, 600), white);
+  auto test = box(Point3(400, 0, 100), Point3(500, 300, 200), white);
+  _objects.add(test);
 
   // _objects.add(make_shared<ConstantFog>(boundary, 0.003, *fog_color));
   // _objects.add(make_shared<Smoke>(boundary, 3, 0.005, *fog_color));
@@ -188,7 +189,7 @@ void Scene::set_material(size_t id, MaterialStruct &mat_struct)
   object->mat = mat;
 }
 
-void Scene::move_object(size_t id, Vec3 offset)
+void Scene::move_object(size_t id, Vec3 &offset)
 {
   auto object = _objects.get_object_by_id(id);
   if (!object)
@@ -199,5 +200,21 @@ void Scene::move_object(size_t id, Vec3 offset)
 
   std::cout << offset.x() << " " << offset.y() << " " << offset.z() << std::endl;
   auto new_object = std::make_shared<Shift>(object, offset);
+  _objects.add_element_instead_of_id(id, new_object);
+}
+
+void Scene::rotate_object(size_t id, Vec3 &rotate_info)
+{
+  auto object = _objects.get_object_by_id(id);
+  if (!object)
+    throw std::invalid_argument("Нету такого объекта");
+
+  if (rotate_info.x() == 0 && rotate_info.y() == 0 && rotate_info.z() == 0)
+    return;
+
+  std::shared_ptr<Hittable> new_object = std::make_shared<RotateX>(object, rotate_info.x());
+  new_object = std::make_shared<RotateY>(new_object, rotate_info.y());
+  new_object = std::make_shared<RotateZ>(new_object, rotate_info.z());
+  // auto new_object = std::make_shared<Rotate>(object, rotate_info);
   _objects.add_element_instead_of_id(id, new_object);
 }
