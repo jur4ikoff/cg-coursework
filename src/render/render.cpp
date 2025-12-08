@@ -50,3 +50,10 @@ void Render::render(const Hittable &world, ColorMatrix &color_matrix,
 
     pool.stop();
 }
+
+void Render::set_render_settings(RenderSettings &settings)
+{
+    samples_per_pixel = settings.samples_per_pixel;
+    max_depth = settings.max_depth;
+    background = settings.background;
+}

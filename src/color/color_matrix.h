@@ -10,7 +10,7 @@
 class ColorMatrix : public BaseMatrix
 {
 private:
-  std::vector<std::vector<color>> _data;
+  std::vector<std::vector<Color>> _data;
 
 public:
   // Конструкторы
@@ -25,29 +25,29 @@ public:
     _rows_count = rows_count;
     _columns_count = columns_count;
 
-    _data.resize(rows_count, std::vector<color>(columns_count));
+    _data.resize(rows_count, std::vector<Color>(columns_count));
   }
 
   ColorMatrix(size_type rows_count, size_type columns_count,
-              const color &default_color)
+              const Color &default_Color)
   {
     _rows_count = rows_count;
     _columns_count = columns_count;
 
-    _data.resize(rows_count, std::vector<color>(columns_count, default_color));
+    _data.resize(rows_count, std::vector<Color>(columns_count, default_Color));
   }
 
   ~ColorMatrix() {}
 
   // Доступ к элементам
-  color &at(size_type row, size_type column)
+  Color &at(size_type row, size_type column)
   {
     if (row >= _rows_count || column >= _columns_count)
       throw std::out_of_range("Index out of range");
     return _data[row][column];
   }
 
-  const color &at(size_type row, size_type column) const
+  const Color &at(size_type row, size_type column) const
   {
     if (row >= _rows_count || column >= _columns_count)
       throw std::out_of_range("Index out of range");
@@ -55,12 +55,12 @@ public:
   }
 
   // Оператор доступа
-  color &operator()(size_type row, size_type column)
+  Color &operator()(size_type row, size_type column)
   {
     return _data[row][column];
   }
 
-  const color &operator()(size_type row, size_type column) const
+  const Color &operator()(size_type row, size_type column) const
   {
     return _data[row][column];
   }
@@ -69,22 +69,22 @@ public:
 
   // Изменение размера
   void resize(size_type new_rows, size_type new_columns,
-              const color &default_color = color())
+              const Color &default_Color = Color())
   {
     _data.resize(new_rows);
     for (auto &row : _data)
-      row.resize(new_columns, default_color);
+      row.resize(new_columns, default_Color);
 
     _rows_count = new_rows;
     _columns_count = new_columns;
   }
 
   // Заполнение всей матрицы одним цветом
-  void fill(const color &color)
+  void fill(const Color &Color)
   {
     for (auto &row : _data)
       for (auto &cell : row)
-        cell = color;
+        cell = Color;
   }
 
   // Очистка матрицы
@@ -107,9 +107,9 @@ public:
   }
 
   // Получение строки (для итерации)
-  std::vector<color> &operator[](size_type row) { return _data[row]; }
+  std::vector<Color> &operator[](size_type row) { return _data[row]; }
 
-  const std::vector<color> &operator[](size_type row) const
+  const std::vector<Color> &operator[](size_type row) const
   {
     return _data[row];
   }
@@ -125,9 +125,9 @@ public:
     {
       for (size_type x = 0; x < _columns_count; ++x)
       {
-        const color &color = _data[y][x];
-        const QColor q_color = get_QColor(color);
-        image.setPixelColor(x, y, q_color);
+        const Color &Color = _data[y][x];
+        const QColor q_Color = get_QColor(Color);
+        image.setPixelColor(x, y, q_Color);
       }
     }
 

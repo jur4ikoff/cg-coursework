@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MaterialDialog</class>
+ <widget class="QDialog" name="MaterialDialog">
+  <property name="windowTitle">
+   <string>Создать материал</string>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>350</width>
+    <height>180</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Тип материала:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="typeComboBox">
+     <item>
+      <property name="text">
+       <string>Матовый</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Металл</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Прозрачный</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+
+   <!-- Матовый (Lambertian) -->
+   <item>
+    <widget class="QGroupBox" name="lambertianGroup">
+     <property name="title">
+      <string>Матовый материал</string>
+     </property>
+     <layout class="QHBoxLayout" name="lambertianLayout">
+      <item>
+       <widget class="QPushButton" name="lambertianColorButton">
+        <property name="text">
+         <string>Цвет</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lambertianColorPreview">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text"/>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
+   <!-- Металл -->
+   <item>
+    <widget class="QGroupBox" name="metalGroup">
+     <property name="title">
+      <string>Металл</string>
+     </property>
+     <layout class="QFormLayout" name="metalLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_metal_color">
+        <property name="text">
+         <string>Цвет:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="metalColorLayout">
+        <item>
+         <widget class="QPushButton" name="metalColorButton">
+          <property name="text">
+           <string>Цвет</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="metalColorPreview">
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="text"/>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_fuzz">
+        <property name="text">
+         <string>Шероховатость:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="fuzzSpinBox">
+        <property name="minimum">0.00</property>
+        <property name="maximum">1.00</property>
+        <property name="value">0.00</property>
+        <property name="singleStep">0.05</property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
+   <!-- Прозрачный -->
+   <item>
+    <widget class="QGroupBox" name="transparentGroup">
+     <property name="title">
+      <string>Прозрачный</string>
+     </property>
+     <layout class="QFormLayout" name="transparentLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_ior">
+        <property name="text">
+         <string>Коэф. преломления:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="iorSpinBox">
+        <property name="minimum">0.10</property>
+        <property name="maximum">5.00</property>
+        <property name="value">1.33</property>
+        <property name="singleStep">0.01</property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>MaterialDialog</receiver>
+   <slot>accept()</slot>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>MaterialDialog</receiver>
+   <slot>reject()</slot>
+  </connection>
+ </connections>
+</ui>

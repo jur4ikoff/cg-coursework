@@ -92,11 +92,7 @@ public:
     }
 };
 
-// point3 is just an alias for vec3, but useful for geometric clarity in the code.
-using point3 = Vec3;
-
-// e Utility Functions
-
+// Функции переопредления операторов
 inline std::ostream &operator<<(std::ostream &out, const Vec3 &other)
 {
     return out << other.e[0] << ' ' << other.e[1] << ' '

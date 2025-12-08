@@ -15,7 +15,7 @@ void RenderTask::execute(ColorMatrix &color_matrix, const Tile &tile,
     {
       if (cancel_running)
         break;
-      color pixel_color(0, 0, 0);
+      Color pixel_color(0, 0, 0);
       for (int sample = 0; sample < _camera.samples_per_pixel; sample++)
       {
         if (cancel_running)

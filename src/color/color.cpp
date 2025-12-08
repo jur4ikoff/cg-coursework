@@ -1,6 +1,6 @@
 #include "color.h"
 
-QColor get_QColor(const color &pixel_color)
+QColor get_QColor(const Color &pixel_color)
 {
     auto r = pixel_color.x();
     auto g = pixel_color.y();
@@ -25,13 +25,13 @@ QColor get_QColor(const color &pixel_color)
     return QColor(rbyte, gbyte, bbyte);
 }
 
-QRgb get_QRgb(const color &clr)
+QRgb get_QRgb(const Color &clr)
 {
     QRgb q_rgb_color = qRgb(clr.x(), clr.y(), clr.z());
     return q_rgb_color;
 }
 
-void write_color(std::ostream &out, const color &pixel_color)
+void write_color(std::ostream &out, const Color &pixel_color)
 {
     auto r = pixel_color.x();
     auto g = pixel_color.y();

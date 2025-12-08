@@ -9,22 +9,22 @@ class Texture
 public:
   virtual ~Texture() = default;
 
-  virtual color value(double u, double v, const point3 &p) const = 0;
+  virtual Color value(double u, double v, const Point3 &p) const = 0;
 };
 
 class SolidColor : public Texture
 {
 public:
-  SolidColor(const color &albedo) : albedo(albedo) {}
-  SolidColor(double red, double green, double blue) : SolidColor(color(red, green, blue)) {}
+  SolidColor(const Color &albedo) : albedo(albedo) {}
+  SolidColor(double red, double green, double blue) : SolidColor(Color(red, green, blue)) {}
 
-  color value(double u, double v, const point3 &p) const override
+  Color value(double u, double v, const Point3 &p) const override
   {
     return albedo;
   }
 
 private:
-  color albedo;
+  Color albedo;
 };
 
 class NoiseTexture : public Texture
@@ -32,9 +32,9 @@ class NoiseTexture : public Texture
 public:
   NoiseTexture(double scale) : scale(scale) {}
 
-  color value(double u, double v, const point3 &p) const override
+  Color value(double u, double v, const Point3 &p) const override
   {
-    return color(.5, .5, .5) * (1 + std::sin(scale * p.z() + 10 * noise.turb(p, 7)));
+    return Color(.5, .5, .5) * (1 + std::sin(scale * p.z() + 10 * noise.turb(p, 7)));
   }
 
 private:

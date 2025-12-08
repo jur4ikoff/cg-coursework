@@ -14,7 +14,7 @@
 #include "interval.h"
 #include "vec3.h"
 
-using color = Vec3;
+using Color = Vec3;
 
 inline double linear_to_gamma(double linear_component)
 {
@@ -25,8 +25,8 @@ inline double linear_to_gamma(double linear_component)
 }
 
 
-void write_color(std::ostream &out, const color &pixel_color);
-QColor get_QColor(const color &pixel_color);
-QRgb get_QRgb(const color &clr);
+void write_color(std::ostream &out, const Color &pixel_color);
+QColor get_QColor(const Color &pixel_color);
+QRgb get_QRgb(const Color &clr);
 
 #endif

@@ -2,13 +2,14 @@
 #define PYRAMID_H
 
 #include "hittable.h"
+#include "quad.h" 
 #include <algorithm>
 
 class Triangle : public Quad
 {
 public:
     // Конструктор: три вершины A, B, C
-    Triangle(const point3 &A, const point3 &B, const point3 &C, shared_ptr<Material> mat)
+    Triangle(const Point3 &A, const Point3 &B, const Point3 &C, shared_ptr<Material> mat)
         : Quad(A, B - A, C - A, mat)
     {
         // Quad уже вычислил normal, w, bbox и т.д.
@@ -30,7 +31,7 @@ public:
     }
 };
 
-inline shared_ptr<HittableList> pyramid(const point3 &base_center, double half_width, double height, shared_ptr<Material> mat)
+inline shared_ptr<HittableList> pyramid(const Point3 &base_center, double half_width, double height, shared_ptr<Material> mat)
 {
     auto sides = make_shared<HittableList>();
 
@@ -38,12 +39,12 @@ inline shared_ptr<HittableList> pyramid(const point3 &base_center, double half_w
     auto hw = half_width;
     auto h = height;
 
-    point3 c = base_center;
-    point3 bl(c.x() - hw, c.y(), c.z() - hw); // back-left
-    point3 br(c.x() + hw, c.y(), c.z() - hw); // back-right
-    point3 fr(c.x() + hw, c.y(), c.z() + hw); // front-right
-    point3 fl(c.x() - hw, c.y(), c.z() + hw); // front-left
-    point3 top(c.x(), c.y() + h, c.z());      // вершина
+    Point3 c = base_center;
+    Point3 bl(c.x() - hw, c.y(), c.z() - hw); // back-left
+    Point3 br(c.x() + hw, c.y(), c.z() - hw); // back-right
+    Point3 fr(c.x() + hw, c.y(), c.z() + hw); // front-right
+    Point3 fl(c.x() - hw, c.y(), c.z() + hw); // front-left
+    Point3 top(c.x(), c.y() + h, c.z());      // вершина
 
     // Основание (квадрат, направлено вниз)
     sides->add(make_shared<Quad>(bl, br - bl, fl - bl, mat));
@@ -59,11 +60,11 @@ inline shared_ptr<HittableList> pyramid(const point3 &base_center, double half_w
 
 // Создаёт пирамиду с произвольным четырёхугольным основанием и вершиной
 inline shared_ptr<HittableList> irregular_pyramid(
-    const point3 &v0,   // вершина 0 основания
-    const point3 &v1,   // вершина 1 основания
-    const point3 &v2,   // вершина 2 основания
-    const point3 &v3,   // вершина 3 основания
-    const point3 &apex, // вершина пирамиды
+    const Point3 &v0,   // вершина 0 основания
+    const Point3 &v1,   // вершина 1 основания
+    const Point3 &v2,   // вершина 2 основания
+    const Point3 &v3,   // вершина 3 основания
+    const Point3 &apex, // вершина пирамиды
     shared_ptr<Material> mat)
 {
     auto sides = make_shared<HittableList>();
@@ -83,17 +84,16 @@ inline shared_ptr<HittableList> irregular_pyramid(
 
 // Создаёт пирамиду с произвольным четырёхугольным основанием и вершиной
 inline shared_ptr<HittableList> triangle_pyramid(
-    const point3 &v0,   // вершина 0 основания
-    const point3 &v1,   // вершина 1 основания
-    const point3 &v2,   // вершина 2 основания
-    const point3 &apex, // вершина пирамиды
+    const Point3 &v0,   // вершина 0 основания
+    const Point3 &v1,   // вершина 1 основания
+    const Point3 &v2,   // вершина 2 основания
+    const Point3 &apex, // вершина пирамиды
     shared_ptr<Material> mat)
 {
     auto sides = make_shared<HittableList>();
 
     // Основание — Quad (может быть трапецией, ромбом, любым четырёхугольником)
     // Quad строится из точки v0 и векторов к v1 и v3
-    // ⚠️ Важно: основание должно быть планарным и выпуклым!
     sides->add(make_shared<Triangle>(v0, v1, v2, mat));
 
     // Боковые грани — треугольники
