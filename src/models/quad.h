@@ -31,6 +31,8 @@ public:
 
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
+        if (!is_visible)
+            return false;
         auto denom = dot(normal, r.direction());
 
         // No hit if the ray is parallel to the plane.

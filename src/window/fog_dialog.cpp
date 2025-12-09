@@ -1,60 +1,62 @@
-#include "fog_dialog.h"
-#include "ui_fog_dialog.h"
-#include <QColorDialog>
+// #include "fog_dialog.h"
+// #include "ui_fog_dialog.h"
+// #include <QColorDialog>
 
-FogDialog::FogDialog(const std::vector<size_t> &object_ids, QWidget *parent)
-    : QDialog(parent), ui(new Ui::FogDialog), _objectIds(object_ids)
-{
-    ui->setupUi(this);
+// FogDialog::FogDialog(QWidget* parent)
+//     : QDialog(parent)
+//     , ui(new Ui::FogDialog)
+// {
+//     ui->setupUi(this);
 
-    // Заполняем выпадающий список ID объектов
-    for (size_t id : _objectIds)
-    {
-        ui->objectComboBox->addItem(QString::number(id), static_cast<qulonglong>(id));
-    }
+//     _fogColor = Qt::white;
+//     ui->colorPreview->setStyleSheet("background-color: white;");
 
-    // Цвет по умолчанию — белый
-    _fogColor = Qt::white;
-    ui->colorPreview->setStyleSheet("background-color: white;");
+//     connect(ui->typeComboBox, &QComboBox::currentIndexChanged,
+//             this, &FogDialog::on_typeComboBox_currentIndexChanged);
+//     connect(ui->chooseColorButton, &QPushButton::clicked,
+//             this, &FogDialog::on_chooseColorButton_clicked);
 
-    connect(ui->chooseColorButton, &QPushButton::clicked,
-            this, &FogDialog::on_chooseColorButton_clicked);
-}
+//     updateVisibility();
+// }
 
-FogDialog::~FogDialog()
-{
-    delete ui;
-}
+// FogDialog::~FogDialog()
+// {
+//     delete ui;
+// }
 
-void FogDialog::on_chooseColorButton_clicked()
-{
-    QColor color = QColorDialog::getColor(_fogColor, this, "Цвет тумана");
-    if (color.isValid())
-    {
-        _fogColor = color;
-        ui->colorPreview->setStyleSheet(QString("background-color: %1;").arg(color.name()));
-    }
-}
+// void FogDialog::on_typeComboBox_currentIndexChanged(int)
+// {
+//     updateVisibility();
+// }
 
-size_t FogDialog::selectedObjectId() const
-{
-    int idx = ui->objectComboBox->currentIndex();
-    if (idx < 0 || idx >= static_cast<int>(_objectIds.size()))
-    {
-        throw std::runtime_error("No object selected");
-    }
-    return _objectIds[idx];
+// void FogDialog::updateVisibility()
+// {
+//     int type = ui->typeComboBox->currentIndex();
 
-    // Альтернатива, если используете setData:
-    // return ui->objectComboBox->currentData().toULongLong();
-}
+//     bool showScale = (type == Noisy || type == GroundHugging);
+//     bool showGround = (type == GroundHugging);
 
-double FogDialog::density() const
-{
-    return ui->densitySpinBox->value();
-}
+//     ui->scaleGroup->setVisible(showScale);
+//     ui->groundGroup->setVisible(showGround);
 
-QColor FogDialog::fogColor() const
-{
-    return _fogColor;
-}
+//     adjustSize();
+// }
+
+// void FogDialog::on_chooseColorButton_clicked()
+// {
+//     QColor c = QColorDialog::getColor(_fogColor, this, "Цвет тумана");
+//     if (c.isValid()) {
+//         _fogColor = c;
+//         ui->colorPreview->setStyleSheet(QString("background-color: %1;").arg(c.name()));
+//     }
+// }
+
+// FogDialog::FogType FogDialog::fogType() const
+// {
+//     return static_cast<FogType>(ui->typeComboBox->currentIndex());
+// }
+
+// double FogDialog::density() const { return ui->densitySpinBox->value(); }
+// QColor FogDialog::fogColor() const { return _fogColor; }
+// double FogDialog::scale() const { return ui->scaleSpinBox->value(); }
+// double FogDialog::groundFactor() const { return ui->groundFactorSpinBox->value(); }

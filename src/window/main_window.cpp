@@ -426,35 +426,82 @@ void MainWindow::on_objectRotateButton_clicked()
   }
 }
 
-void MainWindow::add_constant_fog()
+void MainWindow::on_objectChangeVisibilityButton_clicked()
 {
-  std::vector<size_t> object_ids = _scene->get_objects_ids();
-
-  if (object_ids.empty())
+  auto objects = get_selected(ui->objectListWidget);
+  if (objects.size() == 0)
   {
-    QMessageBox::warning(this, "Ошибка", "Нет объектов для привязки тумана.");
+    show_error("Ошибка", "Нужно выбрать хотя бы один объект");
     return;
   }
-
-  FogDialog dialog(object_ids, this);
-  if (dialog.exec() == QDialog::Accepted)
+  for (size_t id : objects)
   {
-    size_t obj_id = dialog.selectedObjectId();
-    double density = dialog.density();
-    QColor c = dialog.fogColor();
-    Color fog_color(c.redF(), c.greenF(), c.blueF());
-
-    try
-    {
-      _scene->add_fog(obj_id, density, fog_color);
-    }
-    catch (const std::exception &e)
-    {
-      QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
-    }
+    _scene->change_visibility(id);
   }
   _livetime_render();
-  update_objects_list();
+}
+
+void MainWindow::add_constant_fog()
+{
+  // std::vector<size_t> object_ids = _scene->get_objects_ids();
+
+  // if (object_ids.empty())
+  // {
+  //   QMessageBox::warning(this, "Ошибка", "Нет объектов для привязки тумана.");
+  //   return;
+  // }
+
+  // FogDialog dialog(object_ids, this);
+  // if (dialog.exec() == QDialog::Accepted)
+  // {
+  //   size_t obj_id = dialog.selectedObjectId();
+  //   double density = dialog.density();
+  //   QColor c = dialog.fogColor();
+  //   Color fog_color(c.redF(), c.greenF(), c.blueF());
+
+  //   try
+  //   {
+  //     _scene->add_fog(obj_id, density, fog_color);
+  //   }
+  //   catch (const std::exception &e)
+  //   {
+  //     QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  //   }
+  // }
+  // _livetime_render();
+  // update_objects_list();
+
+  // FogDialog dialog(this);
+  // if (dialog.exec() != QDialog::Accepted)
+  //   return;
+
+  // FogDialog::FogType type = dialog.fogType();
+  // double density = dialog.density();
+  // QColor qcolor = dialog.fogColor();
+  // Color color(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
+  // double scale = dialog.scale();
+  // double ground_factor = dialog.groundFactor();
+
+  // try
+  // {
+  //   switch (type)
+  //   {
+  //   case FogDialog::Basic:
+  //     _scene->add_basic_fog(density, color);
+  //     break;
+  //   case FogDialog::Noisy:
+  //     _scene->add_noisy_fog(density, color, scale);
+  //     break;
+  //   case FogDialog::GroundHugging:
+  //     _scene->add_ground_fog(density, color, scale, ground_factor);
+  //     break;
+  //   }
+  //   _livetime_render();
+  // }
+  // catch (const std::exception &e)
+  // {
+  //   QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  // }
 }
 
 void MainWindow::pop_up_closed_slot()

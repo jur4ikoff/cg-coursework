@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1168</width>
-    <height>693</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -58,7 +58,7 @@
           <property name="minimumSize">
            <size>
             <width>530</width>
-            <height>225</height>
+            <height>200</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -73,9 +73,9 @@
           <widget class="QPushButton" name="objectDeletebutton">
            <property name="geometry">
             <rect>
-             <x>360</x>
+             <x>330</x>
              <y>30</y>
-             <width>161</width>
+             <width>191</width>
              <height>27</height>
             </rect>
            </property>
@@ -88,8 +88,8 @@
             <rect>
              <x>10</x>
              <y>30</y>
-             <width>341</width>
-             <height>181</height>
+             <width>311</width>
+             <height>161</height>
             </rect>
            </property>
            <property name="selectionMode">
@@ -99,9 +99,9 @@
           <widget class="QPushButton" name="objectChangeMaterialButton">
            <property name="geometry">
             <rect>
-             <x>360</x>
-             <y>120</y>
-             <width>161</width>
+             <x>330</x>
+             <y>100</y>
+             <width>191</width>
              <height>27</height>
             </rect>
            </property>
@@ -109,25 +109,12 @@
             <string>Изменить материал</string>
            </property>
           </widget>
-          <widget class="QLabel" name="label_15">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>230</y>
-             <width>71</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Y</string>
-           </property>
-          </widget>
           <widget class="QPushButton" name="objectMakeEmitButton">
            <property name="geometry">
             <rect>
-             <x>360</x>
-             <y>150</y>
-             <width>161</width>
+             <x>330</x>
+             <y>120</y>
+             <width>191</width>
              <height>27</height>
             </rect>
            </property>
@@ -138,9 +125,9 @@
           <widget class="QPushButton" name="objectMoveButton">
            <property name="geometry">
             <rect>
-             <x>360</x>
-             <y>60</y>
-             <width>161</width>
+             <x>330</x>
+             <y>50</y>
+             <width>191</width>
              <height>27</height>
             </rect>
            </property>
@@ -151,9 +138,9 @@
           <widget class="QPushButton" name="objectRotateButton">
            <property name="geometry">
             <rect>
-             <x>360</x>
-             <y>90</y>
-             <width>161</width>
+             <x>330</x>
+             <y>70</y>
+             <width>191</width>
              <height>27</height>
             </rect>
            </property>
@@ -164,9 +151,9 @@
           <widget class="QPushButton" name="objectAddButton">
            <property name="geometry">
             <rect>
-             <x>360</x>
-             <y>180</y>
-             <width>161</width>
+             <x>330</x>
+             <y>160</y>
+             <width>191</width>
              <height>27</height>
             </rect>
            </property>
@@ -174,23 +161,20 @@
             <string>Добавить объект</string>
            </property>
           </widget>
+          <widget class="QPushButton" name="objectChangeVisibilityButton">
+           <property name="geometry">
+            <rect>
+             <x>330</x>
+             <y>140</y>
+             <width>191</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Переключить видимость</string>
+           </property>
+          </widget>
          </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>25</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item>
          <widget class="QGroupBox" name="cameraGroupBox">
@@ -203,13 +187,13 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>180</height>
+            <height>165</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>540</width>
-            <height>180</height>
+            <height>165</height>
            </size>
           </property>
           <property name="title">
@@ -221,7 +205,7 @@
              <x>10</x>
              <y>30</y>
              <width>281</width>
-             <height>131</height>
+             <height>121</height>
             </rect>
            </property>
           </widget>
@@ -229,7 +213,7 @@
            <property name="geometry">
             <rect>
              <x>300</x>
-             <y>120</y>
+             <y>110</y>
              <width>221</width>
              <height>41</height>
             </rect>
@@ -242,7 +226,7 @@
            <property name="geometry">
             <rect>
              <x>300</x>
-             <y>90</y>
+             <y>70</y>
              <width>221</width>
              <height>31</height>
             </rect>
@@ -255,9 +239,9 @@
            <property name="geometry">
             <rect>
              <x>300</x>
-             <y>60</y>
+             <y>50</y>
              <width>221</width>
-             <height>31</height>
+             <height>30</height>
             </rect>
            </property>
            <property name="text">
@@ -280,20 +264,78 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <widget class="QGroupBox" name="cameraGroupBox_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+          <property name="minimumSize">
            <size>
-            <width>20</width>
-            <height>25</height>
+            <width>0</width>
+            <height>120</height>
            </size>
           </property>
-         </spacer>
+          <property name="maximumSize">
+           <size>
+            <width>540</width>
+            <height>120</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Туман</string>
+          </property>
+          <widget class="QListWidget" name="cameraListWidget_2">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>30</y>
+             <width>281</width>
+             <height>81</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="cameraDeleteButton_2">
+           <property name="geometry">
+            <rect>
+             <x>300</x>
+             <y>80</y>
+             <width>221</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Удалить</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="cameraEditButton_2">
+           <property name="geometry">
+            <rect>
+             <x>300</x>
+             <y>50</y>
+             <width>221</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Изменить</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="CameraAddDialogButton_2">
+           <property name="geometry">
+            <rect>
+             <x>300</x>
+             <y>30</y>
+             <width>221</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Добавить</string>
+           </property>
+          </widget>
+         </widget>
         </item>
         <item>
          <widget class="QGroupBox" name="cameraGroupBox_2">
@@ -477,24 +519,6 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1168</width>
-     <height>33</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="Menu">
-    <property name="title">
-     <string>Добавить туман</string>
-    </property>
-    <addaction name="action_constant_fog"/>
-    <addaction name="action_random_fog"/>
-   </widget>
-   <addaction name="Menu"/>
-  </widget>
   <action name="action">
    <property name="text">
     <string>Тест</string>

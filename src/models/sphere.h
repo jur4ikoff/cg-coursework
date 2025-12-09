@@ -22,6 +22,9 @@ public:
     auto h = dot(r.direction(), oc);
     auto c = oc.length_squared() - radius * radius;
 
+    if (!is_visible)
+      return false;
+
     auto discriminant = h * h - a * c;
     if (discriminant < 0)
       return false;

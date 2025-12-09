@@ -26,6 +26,7 @@ public:
   void add_fog(size_t obj_id, double density, Color &fog_color);
   void add_light(size_t id, double power, Color &color);
   void delete_object(size_t id);
+  void change_visibility(size_t id);
 
   void add_sphere(const Point3 &center, double radius);
   void add_cylinder(const Point3 &center, double radius, double ymin, double ymax);
@@ -38,5 +39,6 @@ public:
 
 private:
   HittableList _objects;
+  std::vector<size_t> fog_ids;
   std::shared_ptr<Material> _default_material;
 };

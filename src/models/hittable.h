@@ -39,6 +39,7 @@ public:
 
     size_t id = 0;
     shared_ptr<Material> mat;
+    bool is_visible = true;
 };
 
 class Shift : public Hittable

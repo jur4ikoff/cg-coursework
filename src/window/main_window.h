@@ -52,13 +52,14 @@ private slots:
   void on_cameraDeleteButton_clicked();
   void on_cameraEditButton_clicked();
   void on_cameraSetButton_clicked();
-
+  
   void on_objectAddButton_clicked();
   void on_objectDeletebutton_clicked();
   void on_objectMakeEmitButton_clicked();
   void on_objectChangeMaterialButton_clicked();
   void on_objectMoveButton_clicked();
   void on_objectRotateButton_clicked();
+  void on_objectChangeVisibilityButton_clicked();
 
   void add_constant_fog();
 

@@ -24,16 +24,11 @@ public:
         _cur_max_id++;
     }
 
-    shared_ptr<Hittable> get_object_by_id(size_t id)
+    shared_ptr<Hittable> &get_object_by_id(size_t id)
     {
-        for (auto object : objects)
-        {
-            if (object->id == id)
-            {
-                return object;
-            }
-        }
-        return nullptr;
+        int index = find_element(id);
+        _check_index(index);
+        return objects[index];
     }
 
     // Функция вставялет элемент за место
@@ -63,6 +58,18 @@ public:
         {
             objects.erase(it);
         }
+    }
+
+    int find_element(size_t id)
+    {
+        for (size_t i = 0; i < objects.size(); i++)
+        {
+            if (objects[i]->id == id)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
@@ -101,6 +108,14 @@ public:
 private:
     Aaab bbox;
     size_t _cur_max_id = 0;
+
+    void _check_index(int index)
+    {
+        if (index >= objects.size() || index < 0)
+        {
+            throw std::invalid_argument("Такого объекта не существует");
+        }
+    }
 };
 
 #endif

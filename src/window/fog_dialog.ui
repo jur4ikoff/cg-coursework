@@ -9,69 +9,119 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>180</height>
+    <width>380</width>
+    <height>300</height>
    </rect>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_object">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label_type">
      <property name="text">
-      <string>Объект-эмиттер:</string>
+      <string>Тип тумана:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="objectComboBox"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_density">
-     <property name="text">
-      <string>Плотность:</string>
-     </property>
+   <item>
+    <widget class="QComboBox" name="typeComboBox">
+     <item><property name="text"><string>Обычный</string></property></item>
+     <item><property name="text"><string>Рандомный (с шумом)</string></property></item>
+     <item><property name="text"><string>Приземлённый</string></property></item>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QDoubleSpinBox" name="densitySpinBox">
-     <property name="minimum">0.00</property>
-     <property name="maximum">10.00</property>
-     <property name="value">0.10</property>
-     <property name="singleStep">0.01</property>
+
+   <!-- Эмиттер -->
+   <item>
+    <widget class="QGroupBox" name="emitterGroup">
+     <property name="title"><string>Объект-эмиттер</string></property>
+     <layout class="QFormLayout" name="formLayout_emitter">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_emitter"><text>Объект:</text></widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="emitterComboBox"/>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_color">
-     <property name="text">
-      <string>Цвет тумана:</string>
-     </property>
+
+   <!-- Общие параметры -->
+   <item>
+    <widget class="QGroupBox" name="commonGroup">
+     <property name="title"><string>Плотность и цвет</string></property>
+     <layout class="QFormLayout" name="formLayout_common">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_density"><text>Плотность:</text></widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="densitySpinBox">
+        <property name="minimum">0.00</property>
+        <property name="maximum">10.00</property>
+        <property name="value">0.10</property>
+        <property name="singleStep">0.01</property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_color"><text>Цвет:</text></widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="colorLayout">
+        <item>
+         <widget class="QPushButton" name="chooseColorButton"><text>Выбрать</text></widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="colorPreview">
+          <property name="minimumSize"><size><width>30</width><height>20</height></size></property>
+          <property name="frameShape"><enum>QFrame::Box</enum></property>
+          <property name="text"/>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="2" column="1">
-    <layout class="QHBoxLayout" name="colorLayout">
-     <item>
-      <widget class="QPushButton" name="chooseColorButton">
-       <property name="text">
-        <string>Выбрать</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="colorPreview">
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="text"/>
-      </widget>
-     </item>
-    </layout>
+
+   <!-- Параметры шума (для Рандомного и Приземлённого) -->
+   <item>
+    <widget class="QGroupBox" name="noiseGroup">
+     <property name="title"><string>Параметры шума</string></property>
+     <layout class="QFormLayout" name="formLayout_noise">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_scale"><text>Масштаб:</text></widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="scaleSpinBox">
+        <property name="minimum">0.01</property>
+        <property name="maximum">100.00</property>
+        <property name="value">5.00</property>
+        <property name="singleStep">0.5</property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+
+   <!-- Коэффициент приземления (только для Приземлённого) -->
+   <item>
+    <widget class="QGroupBox" name="groundGroup">
+     <property name="title"><string>Приземление</string></property>
+     <layout class="QFormLayout" name="formLayout_ground">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_groundFactor"><text>Коэф. приземления:</text></widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="groundFactorSpinBox">
+        <property name="minimum">0.00</property>
+        <property name="maximum">10.00</property>
+        <property name="value">2.00</property>
+        <property name="singleStep">0.1</property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
