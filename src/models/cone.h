@@ -26,6 +26,9 @@ public:
 
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
+        if (!is_visible)
+            return false;
+            
         // Переносим всё так, чтобы основание было в y=0
         double ox = r.origin().x() - cx;
         double oy = r.origin().y() - y_min;

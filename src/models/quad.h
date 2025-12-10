@@ -8,7 +8,7 @@ class Quad : public Hittable
 {
 public:
     Quad(const Point3 &Q, const Vec3 &u, const Vec3 &v, shared_ptr<Material> _mat)
-        : Q(Q), u(u), v(v) //, mat(mat)
+        : Q(Q), u(u), v(v)
     {
         mat = _mat;
         auto n = cross(u, v);
@@ -31,6 +31,8 @@ public:
 
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
+        if (!is_visible)
+            return false;
         auto denom = dot(normal, r.direction());
 
         // No hit if the ray is parallel to the plane.

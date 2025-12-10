@@ -14,7 +14,7 @@ public:
           radius(radius),
           y_min(std::fmin(y0, y1)),
           y_max(std::fmax(y0, y1))
-          // mat(mat)
+    // mat(mat)
     {
         // Ограничивающий AABB: цилиндр вписан в коробку
         auto r = radius;
@@ -28,8 +28,11 @@ public:
 
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
+        if (!is_visible)
+            return false;
+
         // Смещаем луч так, чтобы цилиндр был вдоль оси Y с центром в (0,*,0)
-        Ray shifted_ray(r.origin() - center, r.direction(), r.time());
+        Ray shifted_ray(r.origin() - center, r.direction());
 
         auto oc = shifted_ray.origin();
         auto rd = shifted_ray.direction();
@@ -160,7 +163,5 @@ private:
     // shared_ptr<Material> mat;
     Aaab bbox;
 };
-
-
 
 #endif

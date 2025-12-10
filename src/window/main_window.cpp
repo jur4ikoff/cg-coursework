@@ -6,6 +6,8 @@
 #include "material_dialog.h"
 #include "move_object_dialog.h"
 #include "rotate_object_dialog.h"
+#include "fog_dialog.h"
+
 #include "camera_add.h"
 
 #include "color.h"
@@ -53,7 +55,7 @@ void MainWindow::init_camera()
 {
   auto camera = std::make_shared<Camera>();
   camera->id = 0;
-  camera->vfov = 38;
+  camera->vfov = 37;
   camera->lookfrom = Point3(278, 278, -800);
   camera->lookat = Point3(278, 278, 0);
   camera->vup = Vec3(0, 1, 0);
@@ -423,6 +425,65 @@ void MainWindow::on_objectRotateButton_clicked()
   }
 }
 
+void MainWindow::on_objectChangeVisibilityButton_clicked()
+{
+  auto objects = get_selected(ui->objectListWidget);
+  if (objects.size() == 0)
+  {
+    show_error("Ошибка", "Нужно выбрать хотя бы один объект");
+    return;
+  }
+  for (size_t id : objects)
+  {
+    _scene->change_visibility(id);
+  }
+  _livetime_render();
+}
+
+void MainWindow::on_FogAddDialogButton_clicked()
+{
+  auto ids = _scene->get_objects_ids();
+  if (ids.size() <= 0)
+  {
+    QMessageBox::warning(this, "Ошибка", "Нет объектов для использования в качестве границы тумана.");
+    return;
+  }
+
+  FogDialog dialog(ids, this);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+
+  size_t boundary_id = dialog.selectedObjectId();
+  double density = dialog.density();
+  QColor qc = dialog.fogColor();
+  Color fogColor(qc.redF(), qc.greenF(), qc.blueF()); // предполагается, что Color принимает float в [0,1]
+
+  try
+  {
+    switch (dialog.selectedFogType())
+    {
+    case FogDialog::Constant:
+      qDebug() << "constant";
+      qDebug() << boundary_id << density;
+      _scene->add_constant_fog(boundary_id, density, fogColor);
+      break;
+    case FogDialog::Random:
+      _scene->add_smoke(boundary_id, density, dialog.scale(), fogColor);
+      break;
+    case FogDialog::GroundHugging:
+      _scene->add_ground_smoke(
+      boundary_id, density, dialog.scale(), dialog.heightFalloff(), fogColor);
+      break;
+    }
+    update_objects_list();
+    _livetime_render();
+  }
+  catch (const std::exception &e)
+  {
+    QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  }
+}
+
 void MainWindow::pop_up_closed_slot()
 {
   cancel_running = true;
@@ -586,7 +647,6 @@ void MainWindow::on_objectAddButton_clicked()
       break;
 
     case AddObjectDialog::Box:
-      qDebug() << "add box";
       _scene->add_box(dialog.boxPointA(), dialog.boxPointB());
       break;
 

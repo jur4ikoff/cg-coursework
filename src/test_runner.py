@@ -119,41 +119,40 @@ def calculate_coverage():
 
 
 def main():
-    # if DEBUG:
-    #     print(f"{GREEN}\n> ГЕНЕРАЦИЯ {FILE_PATH}{RESET}")
-    # test_executable_path: str = SCRIPT_DIR + "/build/tests.exe"
+    if DEBUG:
+        print(f"{GREEN}\n> ГЕНЕРАЦИЯ {FILE_PATH}{RESET}")
+    test_executable_path: str = SCRIPT_DIR + "/build/tests.exe"
 
-    # if DEBUG:
-    #     print(f"{GREEN}> ЗАПУСК ТЕСТОВ{RESET}")
-    # passed, failed, success, output = run_tests(test_executable_path)
+    if DEBUG:
+        print(f"{GREEN}> ЗАПУСК ТЕСТОВ{RESET}")
+    passed, failed, success, output = run_tests(test_executable_path)
 
-    # if not success or failed > 0:
-    #     if DEBUG:
-    #         print(f"{RED}ОШИБКА ТЕСТИРОВАНИЯ, ВЫВОД ЛОГОВ{RESET}")
-    #         print(output)
+    if not success or failed > 0:
+        if DEBUG:
+            print(f"{RED}ОШИБКА ТЕСТИРОВАНИЯ, ВЫВОД ЛОГОВ{RESET}")
+            print(output)
 
-    # if DEBUG:
-    #     print(f"{GREEN}> ЗАМЕР ПОКРЫТИЯ{RESET}")
+    if DEBUG:
+        print(f"{GREEN}> ЗАМЕР ПОКРЫТИЯ{RESET}")
 
-    # coverage = calculate_coverage()
+    coverage = calculate_coverage()
 
     timestamp = datetime.datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
     timestamp = timestamp[:-2] + ":" + timestamp[-2:]
 
-    # result = {
-    #     "timestamp": timestamp,
-    #     "coverage": coverage,
-    #     "passed": passed,
-    #     "failed": failed,
-    # }
-
-
     result = {
         "timestamp": timestamp,
-        "coverage": 0.5,
-        "passed": 1,
-        "failed": 0,
+        "coverage": coverage,
+        "passed": passed,
+        "failed": failed,
     }
+
+    # result = {
+    #     "timestamp": timestamp,
+    #     "coverage": 0.5,
+    #     "passed": 1,
+    #     "failed": 0,
+    # }
 
     with open(FILE_PATH, "w") as f:
         json.dump(result, f, indent=4)
@@ -163,9 +162,9 @@ def main():
         print(json.dumps(result, indent=4))
 
     # if success:
-        # sys.exit(0)
+    # sys.exit(0)
     # else:
-        # sys.exit(1)
+    # sys.exit(1)
     sys.exit(0)
 
 

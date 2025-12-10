@@ -39,6 +39,7 @@ public:
 
     size_t id = 0;
     shared_ptr<Material> mat;
+    bool is_visible = true;
 };
 
 class Shift : public Hittable
@@ -53,7 +54,7 @@ public:
     bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
     {
         // Move the ray backwards by the offset
-        Ray offset_r(r.origin() - offset, r.direction(), r.time());
+        Ray offset_r(r.origin() - offset, r.direction());
 
         // Determine whether an intersection exists along the offset ray (and if so, where)
         if (!object->hit(offset_r, ray_t, rec))
@@ -128,7 +129,7 @@ public:
             r.direction().y(),
             (sin_theta * r.direction().x()) + (cos_theta * r.direction().z()));
 
-        Ray rotated_r(origin, direction, r.time());
+        Ray rotated_r(origin, direction);
 
         // Determine whether an intersection exists in object space (and if so, where).
 
@@ -213,7 +214,7 @@ public:
             (-sin_theta * r.direction().x()) + (cos_theta * r.direction().y()),
             r.direction().z());
 
-        Ray rotated_r(origin, direction, r.time());
+        Ray rotated_r(origin, direction);
 
         // Проверяем пересечение в локальной системе
         if (!object->hit(rotated_r, ray_t, rec))
@@ -296,7 +297,7 @@ public:
             (cos_theta * r.direction().y()) + (sin_theta * r.direction().z()),
             (-sin_theta * r.direction().y()) + (cos_theta * r.direction().z()));
 
-        Ray rotated_r(origin, direction, r.time());
+        Ray rotated_r(origin, direction);
 
         // Проверяем пересечение в локальной системе
         if (!object->hit(rotated_r, ray_t, rec))

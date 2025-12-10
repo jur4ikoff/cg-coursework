@@ -21,8 +21,8 @@
 #define DEFAULT_WIDTH 1200
 #define DEFAULT_HEIGHT 800
 
-#define MIN_SCENE_WIDTH 600
-#define MIN_SCENE_HEIGHT 600
+#define MIN_SCENE_WIDTH 580
+#define MIN_SCENE_HEIGHT 580
 
 QT_BEGIN_NAMESPACE
 
@@ -59,6 +59,9 @@ private slots:
   void on_objectChangeMaterialButton_clicked();
   void on_objectMoveButton_clicked();
   void on_objectRotateButton_clicked();
+  void on_objectChangeVisibilityButton_clicked();
+
+  void on_FogAddDialogButton_clicked();
 
   void tile_render_finished_slot();
   void pop_up_closed_slot();

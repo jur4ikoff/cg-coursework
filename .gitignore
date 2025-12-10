@@ -41,3 +41,15 @@
 *.dwo
 
 build/
+
+
+*.DS_Store
+*.fdb*
+*.fls
+*.log
+*.toc
+*.aux
+*.out
+*.gz
+*.bbl
+*.blg

@@ -18,29 +18,27 @@ Scene::Scene()
 HittableList Scene::make_default_scene()
 {
 
-  auto white = make_shared<Lambertian>(Color(.73, .73, .73));
-  auto green = make_shared<Lambertian>(Color(.12, .45, .15));
-  auto light_blue = make_shared<Lambertian>(Color(.2, .56, 1));
-  auto red = make_shared<Lambertian>(Color(1, .27, .30));
+  auto white = make_shared<Lambertian>(Color(0.8, 0.8, 0.8));
+  auto green = make_shared<Lambertian>(Color(0.12, 0.45, 0.15));
+  auto light_blue = make_shared<Lambertian>(Color(0, 0.491, 1));
+  auto red = make_shared<Lambertian>(Color(1, 0, 0.237));
 
   auto light = make_shared<diffuse_light>(Color(5, 5, 5));
   auto cylinder_mat = make_shared<Lambertian>(Color(1, 0, 0));
   auto glass = make_shared<Transparent>(1.5);
   auto metal_mat = make_shared<Metal>(Color(0.8, 0.8, 0.8), 1);
-  auto fog_color = make_shared<Color>(0.1, 0.1, 0.1);
-  // auto nz_tex = make_shared<NoiseTexture>(1);
-  // auto nz_mat = make_shared<Lambertian>(nz_tex);
+  auto fog_color = make_shared<Color>(1, 1, 1);
 
-  // auto noise = std::make_shared<Perlin>();
 
   // Граница — например, большой box
   // auto boundary = box(Point3(-10, -10, 0), Point3(600, 600, 600), white);
-  auto test = box(Point3(400, 0, 100), Point3(500, 300, 200), white);
-  _objects.add(test);
+  auto test = box(Point3(0, 0, 0), Point3(600, 600, 600), white);
+  // _objects.add(test);
 
   // _objects.add(make_shared<ConstantFog>(boundary, 0.003, *fog_color));
-  // _objects.add(make_shared<Smoke>(boundary, 3, 0.005, *fog_color));
-  // _objects.add(make_shared<DynamicFog>(boundary, 0.01, noise, 0.5, *fog_color));
+  // _objects.add(make_shared<Smoke>(test, 2, 0.004, *fog_color));
+  _objects.add(make_shared<Smoke>(test, 1, 0.004, *fog_color));
+  // _objects.add(make_shared<GroundSmoke>(test, 3, 0.0025, 0.0028, *fog_color));
 
   _objects.add(make_shared<Cone>(Point3(450, 0, 350), 100, 200, white));
   _objects.add(make_shared<Cone>(Point3(100, 0, 100), 50, 100, red));
@@ -163,6 +161,11 @@ HittableList &Scene::get_objects()
   return _objects;
 }
 
+std::vector<size_t> Scene::get_objects_ids()
+{
+  return _objects.get_objects_ids();
+}
+
 void Scene::set_material(size_t id, MaterialStruct &mat_struct)
 {
   auto object = _objects.get_object_by_id(id);
@@ -215,6 +218,32 @@ void Scene::rotate_object(size_t id, Vec3 &rotate_info)
   std::shared_ptr<Hittable> new_object = std::make_shared<RotateX>(object, rotate_info.x());
   new_object = std::make_shared<RotateY>(new_object, rotate_info.y());
   new_object = std::make_shared<RotateZ>(new_object, rotate_info.z());
-  // auto new_object = std::make_shared<Rotate>(object, rotate_info);
   _objects.add_element_instead_of_id(id, new_object);
+}
+
+void Scene::add_constant_fog(size_t obj_id, double density, Color &fog_color)
+{
+  auto object = _objects.get_object_by_id(obj_id);
+  _objects.add(make_shared<ConstantFog>(object, density, fog_color));
+  _objects.delete_object(obj_id);
+}
+
+void Scene::add_smoke(size_t obj_id, double density, double scale, Color &fog_color)
+{
+  auto object = _objects.get_object_by_id(obj_id);
+  _objects.add(make_shared<Smoke>(object, density, scale, fog_color));
+  _objects.delete_object(obj_id);
+}
+
+void Scene::add_ground_smoke(size_t obj_id, double density, double scale, double height_falloff, Color &fog_color)
+{
+  auto object = _objects.get_object_by_id(obj_id);
+  _objects.add(make_shared<GroundSmoke>(object, density, scale, height_falloff, fog_color));
+  _objects.delete_object(obj_id);
+}
+
+void Scene::change_visibility(size_t id)
+{
+  shared_ptr<Hittable> &object = _objects.get_object_by_id(id);
+  object->is_visible = !object->is_visible;
 }
