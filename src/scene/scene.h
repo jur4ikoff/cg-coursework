@@ -23,7 +23,10 @@ public:
   void move_object(size_t id, Vec3 &offset);
   void rotate_object(size_t id, Vec3 &rotate_info);
 
-  void add_fog(size_t obj_id, double density, Color &fog_color);
+  void add_constant_fog(size_t obj_id, double density, Color &fog_color);
+  void add_smoke(size_t obj_id, double density, double scale, Color &fog_color);
+  void add_ground_smoke(size_t obj_id, double density, double scale, double height_falloff, Color &fog_color);
+
   void add_light(size_t id, double power, Color &color);
   void delete_object(size_t id);
   void change_visibility(size_t id);

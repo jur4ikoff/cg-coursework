@@ -1,39 +1,58 @@
-// #pragma once
+#pragma once
 
-// #include <QDialog>
-// #include <QColor>
+#include <QDialog>
+#include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QColor>
+#include <vector>
+#include <cstddef>
 
-// QT_BEGIN_NAMESPACE
-// namespace Ui { class FogDialog; }
-// QT_END_NAMESPACE
+class FogDialog : public QDialog
+{
+    Q_OBJECT
 
-// class FogDialog : public QDialog
-// {
-//     Q_OBJECT
+public:
+    enum FogType {
+        Constant,
+        Random,
+        GroundHugging
+    };
 
-// public:
-//     enum FogType {
-//         Basic,
-//         Noisy,
-//         GroundHugging
-//     };
+    explicit FogDialog(const std::vector<size_t>& objectIds, QWidget* parent = nullptr);
 
-//     explicit FogDialog(QWidget* parent = nullptr);
-//     ~FogDialog();
+    FogType selectedFogType() const;
+    double density() const;
+    double scale() const;
+    double heightFalloff() const;
+    size_t selectedObjectId() const;
+    QColor fogColor() const;
 
-//     FogType fogType() const;
-//     double density() const;
-//     QColor fogColor() const;
-//     double scale() const;          // для Noisy и GroundHugging
-//     double groundFactor() const;   // только для GroundHugging
+private slots:
+    void onFogTypeChanged(int index);
+    void onColorButtonClicked();
 
-// private slots:
-//     void on_typeComboBox_currentIndexChanged(int index);
-//     void on_chooseColorButton_clicked();
+private:
+    void setupUi();
+    void updateParametersVisibility();
 
-// private:
-//     void updateVisibility();
+    QComboBox* fogTypeCombo;
+    QComboBox* objectIdCombo;
+    QPushButton* colorButton;
 
-//     Ui::FogDialog* ui;
-//     QColor _fogColor;
-// };
+    // Все спинбоксы существуют всегда
+    QDoubleSpinBox* densitySpin;
+    QDoubleSpinBox* scaleSpin;
+    QDoubleSpinBox* heightFalloffSpin;
+
+    QGroupBox* parametersGroup;
+    QFormLayout* parametersLayout; // используем QFormLayout для удобства
+
+    std::vector<size_t> objectIds_;
+    QColor currentColor;
+};

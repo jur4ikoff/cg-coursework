@@ -47,7 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(&_futureWatcher, &QFutureWatcher<void>::finished, this,
           &MainWindow::tile_render_finished_slot);
-  connect(ui->action_constant_fog, &QAction::triggered, this, &MainWindow::add_constant_fog);
 
   set_scene();
 }
@@ -56,7 +55,7 @@ void MainWindow::init_camera()
 {
   auto camera = std::make_shared<Camera>();
   camera->id = 0;
-  camera->vfov = 38;
+  camera->vfov = 37;
   camera->lookfrom = Point3(278, 278, -800);
   camera->lookat = Point3(278, 278, 0);
   camera->vup = Vec3(0, 1, 0);
@@ -441,67 +440,48 @@ void MainWindow::on_objectChangeVisibilityButton_clicked()
   _livetime_render();
 }
 
-void MainWindow::add_constant_fog()
+void MainWindow::on_FogAddDialogButton_clicked()
 {
-  // std::vector<size_t> object_ids = _scene->get_objects_ids();
+  auto ids = _scene->get_objects_ids();
+  if (ids.size() <= 0)
+  {
+    QMessageBox::warning(this, "Ошибка", "Нет объектов для использования в качестве границы тумана.");
+    return;
+  }
 
-  // if (object_ids.empty())
-  // {
-  //   QMessageBox::warning(this, "Ошибка", "Нет объектов для привязки тумана.");
-  //   return;
-  // }
+  FogDialog dialog(ids, this);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
 
-  // FogDialog dialog(object_ids, this);
-  // if (dialog.exec() == QDialog::Accepted)
-  // {
-  //   size_t obj_id = dialog.selectedObjectId();
-  //   double density = dialog.density();
-  //   QColor c = dialog.fogColor();
-  //   Color fog_color(c.redF(), c.greenF(), c.blueF());
+  size_t boundary_id = dialog.selectedObjectId();
+  double density = dialog.density();
+  QColor qc = dialog.fogColor();
+  Color fogColor(qc.redF(), qc.greenF(), qc.blueF()); // предполагается, что Color принимает float в [0,1]
 
-  //   try
-  //   {
-  //     _scene->add_fog(obj_id, density, fog_color);
-  //   }
-  //   catch (const std::exception &e)
-  //   {
-  //     QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
-  //   }
-  // }
-  // _livetime_render();
-  // update_objects_list();
-
-  // FogDialog dialog(this);
-  // if (dialog.exec() != QDialog::Accepted)
-  //   return;
-
-  // FogDialog::FogType type = dialog.fogType();
-  // double density = dialog.density();
-  // QColor qcolor = dialog.fogColor();
-  // Color color(qcolor.redF(), qcolor.greenF(), qcolor.blueF());
-  // double scale = dialog.scale();
-  // double ground_factor = dialog.groundFactor();
-
-  // try
-  // {
-  //   switch (type)
-  //   {
-  //   case FogDialog::Basic:
-  //     _scene->add_basic_fog(density, color);
-  //     break;
-  //   case FogDialog::Noisy:
-  //     _scene->add_noisy_fog(density, color, scale);
-  //     break;
-  //   case FogDialog::GroundHugging:
-  //     _scene->add_ground_fog(density, color, scale, ground_factor);
-  //     break;
-  //   }
-  //   _livetime_render();
-  // }
-  // catch (const std::exception &e)
-  // {
-  //   QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
-  // }
+  try
+  {
+    switch (dialog.selectedFogType())
+    {
+    case FogDialog::Constant:
+      qDebug() << "constant";
+      qDebug() << boundary_id << density;
+      _scene->add_constant_fog(boundary_id, density, fogColor);
+      break;
+    case FogDialog::Random:
+      _scene->add_smoke(boundary_id, density, dialog.scale(), fogColor);
+      break;
+    case FogDialog::GroundHugging:
+      _scene->add_ground_smoke(
+      boundary_id, density, dialog.scale(), dialog.heightFalloff(), fogColor);
+      break;
+    }
+    update_objects_list();
+    _livetime_render();
+  }
+  catch (const std::exception &e)
+  {
+    QMessageBox::critical(this, "Ошибка", QString::fromStdString(e.what()));
+  }
 }
 
 void MainWindow::pop_up_closed_slot()
@@ -667,7 +647,6 @@ void MainWindow::on_objectAddButton_clicked()
       break;
 
     case AddObjectDialog::Box:
-      qDebug() << "add box";
       _scene->add_box(dialog.boxPointA(), dialog.boxPointB());
       break;
 

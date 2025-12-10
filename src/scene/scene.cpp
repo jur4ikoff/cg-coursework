@@ -223,10 +223,24 @@ void Scene::rotate_object(size_t id, Vec3 &rotate_info)
   _objects.add_element_instead_of_id(id, new_object);
 }
 
-void Scene::add_fog(size_t obj_id, double density, Color &fog_color)
+void Scene::add_constant_fog(size_t obj_id, double density, Color &fog_color)
 {
   auto object = _objects.get_object_by_id(obj_id);
   _objects.add(make_shared<ConstantFog>(object, density, fog_color));
+  _objects.delete_object(obj_id);
+}
+
+void Scene::add_smoke(size_t obj_id, double density, double scale, Color &fog_color)
+{
+  auto object = _objects.get_object_by_id(obj_id);
+  _objects.add(make_shared<Smoke>(object, density, scale, fog_color));
+  _objects.delete_object(obj_id);
+}
+
+void Scene::add_ground_smoke(size_t obj_id, double density, double scale, double height_falloff, Color &fog_color)
+{
+  auto object = _objects.get_object_by_id(obj_id);
+  _objects.add(make_shared<GroundSmoke>(object, density, scale, height_falloff, fog_color));
   _objects.delete_object(obj_id);
 }
 
