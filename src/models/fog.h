@@ -26,25 +26,27 @@ public:
     if (!is_visible)
       return false;
 
+    // нахождения вход и выхода из тумана
     if (!boundary->hit(r, Interval::universe, rec1))
       return false;
-
     if (!boundary->hit(r, Interval(rec1.t + 0.0001, infinity), rec2))
       return false;
 
+    // Ограничиваем отрезок тумана интервалом
     if (rec1.t < ray_t.min)
       rec1.t = ray_t.min;
     if (rec2.t > ray_t.max)
       rec2.t = ray_t.max;
-
     if (rec1.t >= rec2.t)
       return false;
-
     if (rec1.t < 0)
       rec1.t = 0;
 
+    // длина луча
     auto ray_length = r.direction().length();
+    // дистанция которая пройдена внутри тумана
     auto distance_inside_boundary = (rec2.t - rec1.t) * ray_length;
+    // Расстояние до точки рассеяния:
     auto hit_distance = neg_inv_density * std::log(random_double());
 
     if (hit_distance > distance_inside_boundary)
@@ -105,7 +107,6 @@ public:
       return false;
     if (!boundary->hit(r, Interval(rec1.t + 0.0001, infinity), rec2))
       return false;
-
     auto t0 = std::fmax(rec1.t, ray_t.min);
     auto t1 = std::fmin(rec2.t, ray_t.max);
     if (t0 >= t1)
@@ -114,8 +115,7 @@ public:
     auto ray_len = r.direction().length();
     auto dist = (t1 - t0) * ray_len;
 
-    const double base_density = 1.0;
-    auto hit_dist = -std::log(random_double()) / base_density;
+    auto hit_dist = -std::log(random_double()) / density;
     if (hit_dist > dist)
       return false;
 
@@ -124,12 +124,15 @@ public:
 
     // Гарантированно ненулевая плотность
     double raw = noise.noise(scale * p);
-    double noise_val = 0.2 + 0.8 * std::fabs(raw); // [0.2, 1.0]
+    double noise_val = 0.1 + 0.9 * std::fabs(raw); // [0.1, 1.0]
+    // double noise_val = std::fabs(raw); // [0.2, 1.0]
     double real_density = density * noise_val;
 
     // Принимаем, если real_density > случайного порога
-    // if (random_double() > real_density)
-    if (real_density < 1e-5 || random_double() > std::min(real_density, 1.0))
+    // if (real_density < 1e-5 || random_double() > std::min(real_density, 1.0))
+    // return false;
+
+    if (real_density < 1e-6 || random_double() > real_density)
       return false;
 
     rec.t = t;
@@ -214,15 +217,17 @@ public:
     auto dist = (t1 - t0) * ray_len;
 
     // Базовая модель экспоненциального затухания
-    const double base_density = 1.0;
+    // const double base_density = 1.0;
+    const double base_density = density;
     auto hit_dist = -std::log(random_double()) / base_density;
     if (hit_dist > dist)
       return false;
 
+    // Находим точку на луче
     auto t = t0 + hit_dist / ray_len;
     Point3 p = r.at(t);
 
-    // Текстура дыма с использованием шума Перлина
+    // Текстура с использованием шума Перлина
     double raw_noise = noise.noise(scale * p);
     double noise_val = 0.2 + 0.8 * std::fabs(raw_noise); // [0.2, 1.0]
 

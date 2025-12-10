@@ -103,6 +103,7 @@ private:
      */
     Ray get_ray(int i, int j) const
     {
+        // offset для Monte Carlo sampling. для антиальяскинга
         auto offset = sample_square();
         auto pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u) + ((j + offset.y()) * pixel_delta_v);
 
@@ -120,12 +121,16 @@ private:
         return Vec3(random_double() - 0.5, random_double() - 0.5, 0);
     }
 
+    /**
+     * @brief Возвращает случайную точку внутри круга радиуса radius, лежащего в плоскости XY и центрированного в начале координат (0,0,0)
+     */
     Vec3 sample_disk(double radius) const
     {
-        // Returns a random point in the unit (radius 0.5) disk centered at the origin.
         return radius * random_in_unit_disk();
     }
 
+    /// @brief Возвращает точку в дискре размытия
+    /// @return
     Point3 defocus_disk_sample() const
     {
         // Returns a random point in the Render defocus disk.
@@ -143,20 +148,22 @@ private:
             return Color(0, 0, 0);
 
         HitRecord rec;
-
         // Если луч ничего не пересекает, то возвращаем цвет пикселя
         if (!world.hit(r, Interval(0.001, infinity), rec))
             return background;
 
         Ray scattered;
         Color attenuation;
+        // Учёт излучения материала
         Color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
-
+        // Попытка рассеяния луча
         if (!rec.mat->scatter(r, rec, attenuation, scattered))
             return color_from_emission;
 
+        // Рекурсивный вызов для рассеянного луча
         Color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world, cancel_running);
 
+        // Эмиссия + рассеянный свет
         return color_from_emission + color_from_scatter;
     }
 };

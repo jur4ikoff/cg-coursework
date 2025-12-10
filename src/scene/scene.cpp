@@ -28,10 +28,7 @@ HittableList Scene::make_default_scene()
   auto glass = make_shared<Transparent>(1.5);
   auto metal_mat = make_shared<Metal>(Color(0.8, 0.8, 0.8), 1);
   auto fog_color = make_shared<Color>(1, 1, 1);
-  // auto nz_tex = make_shared<NoiseTexture>(1);
-  // auto nz_mat = make_shared<Lambertian>(nz_tex);
 
-  // auto noise = std::make_shared<Perlin>();
 
   // Граница — например, большой box
   // auto boundary = box(Point3(-10, -10, 0), Point3(600, 600, 600), white);
@@ -40,7 +37,8 @@ HittableList Scene::make_default_scene()
 
   // _objects.add(make_shared<ConstantFog>(boundary, 0.003, *fog_color));
   // _objects.add(make_shared<Smoke>(test, 2, 0.004, *fog_color));
-  // _objects.add(make_shared<GroundSmoke>(test, 3, 0.0025, 0.003, *fog_color));
+  _objects.add(make_shared<Smoke>(test, 1, 0.004, *fog_color));
+  // _objects.add(make_shared<GroundSmoke>(test, 3, 0.0025, 0.0028, *fog_color));
 
   _objects.add(make_shared<Cone>(Point3(450, 0, 350), 100, 200, white));
   _objects.add(make_shared<Cone>(Point3(100, 0, 100), 50, 100, red));

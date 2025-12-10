@@ -18,7 +18,7 @@ ready/report.pdf: report/report.pdf
 	mkdir -p ./ready
 	cp report/report.pdf $(REPORT_FINAL_PATH)
 
-ready/stud-unit-test-report.json:
+test:
 	@mkdir ready 2>/dev/null || true
 	@mkdir $(BUILD_DIR) 2>/dev/null || true
 	@cd $(BUILD_DIR) && $(CMAKE) -DENABLE_COVERAGE=ON ..
