@@ -8,7 +8,7 @@ class Quad : public Hittable
 {
 public:
     Quad(const Point3 &Q, const Vec3 &u, const Vec3 &v, shared_ptr<Material> _mat)
-        : Q(Q), u(u), v(v) //, mat(mat)
+        : Q(Q), u(u), v(v)
     {
         mat = _mat;
         auto n = cross(u, v);
