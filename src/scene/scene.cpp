@@ -18,10 +18,10 @@ Scene::Scene()
 HittableList Scene::make_default_scene()
 {
 
-  auto white = make_shared<Lambertian>(Color(.73, .73, .73));
-  auto green = make_shared<Lambertian>(Color(.12, .45, .15));
-  auto light_blue = make_shared<Lambertian>(Color(0, .491, 1));
-  auto red = make_shared<Lambertian>(Color(1, 0, .237));
+  auto white = make_shared<Lambertian>(Color(0.8, 0.8, 0.8));
+  auto green = make_shared<Lambertian>(Color(0.12, 0.45, 0.15));
+  auto light_blue = make_shared<Lambertian>(Color(0, 0.491, 1));
+  auto red = make_shared<Lambertian>(Color(1, 0, 0.237));
 
   auto light = make_shared<diffuse_light>(Color(5, 5, 5));
   auto cylinder_mat = make_shared<Lambertian>(Color(1, 0, 0));

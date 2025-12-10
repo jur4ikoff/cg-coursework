@@ -7,7 +7,7 @@ class Sphere : public Hittable
 {
 public:
   Sphere(const Point3 &static_center, double radius, shared_ptr<Material> _mat)
-      : center(static_center, Vec3(0, 0, 0)), radius(std::fmax(0, radius)) // , mat(mat)
+      : center(static_center), radius(std::fmax(0, radius)) // , mat(mat)
   {
     mat = _mat;
     auto rvec = Vec3(radius, radius, radius);
@@ -16,8 +16,10 @@ public:
 
   bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
   {
-    Point3 current_center = center.at(r.time());
-    Vec3 oc = current_center - r.origin();
+    // Point3 current_center = center.at(r.time());
+    // Vec3 oc = current_center - r.origin();
+    // Vec3 oc = r.origin();
+    Vec3 oc = center - r.origin();
     auto a = r.direction().length_squared();
     auto h = dot(r.direction(), oc);
     auto c = oc.length_squared() - radius * radius;
@@ -42,7 +44,8 @@ public:
 
     rec.t = root;
     rec.p = r.at(rec.t);
-    Vec3 outward_normal = (rec.p - current_center) / radius;
+    // Vec3 outward_normal = (rec.p - current_center) / radius;
+    Vec3 outward_normal = (rec.p - center) / radius;
     rec.set_face_normal(r, outward_normal);
     get_sphere_uv(outward_normal, rec.u, rec.v);
     rec.mat = mat;
@@ -53,7 +56,7 @@ public:
   Aaab bounding_box() const override { return bbox; }
 
 private:
-  Ray center;
+  Point3 center;
   double radius;
   // shared_ptr<Material> mat;
   Aaab bbox;

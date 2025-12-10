@@ -32,7 +32,7 @@ public:
             return false;
 
         // Смещаем луч так, чтобы цилиндр был вдоль оси Y с центром в (0,*,0)
-        Ray shifted_ray(r.origin() - center, r.direction(), r.time());
+        Ray shifted_ray(r.origin() - center, r.direction());
 
         auto oc = shifted_ray.origin();
         auto rd = shifted_ray.direction();
