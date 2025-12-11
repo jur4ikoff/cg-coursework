@@ -66,12 +66,12 @@ public:
 
   double get_density()
   {
-    return 1 / neg_inv_density;
+    return -1 / neg_inv_density;
   }
 
   void set_density(double density)
   {
-    neg_inv_density = 1 / density;
+    neg_inv_density = -1 / density;
   }
 
 private:
