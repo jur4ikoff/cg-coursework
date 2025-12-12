@@ -125,7 +125,6 @@ public:
     // Гарантированно ненулевая плотность
     double raw = noise.noise(scale * p);
     double noise_val = 0.1 + 0.9 * std::fabs(raw); // [0.1, 1.0]
-    // double noise_val = std::fabs(raw); // [0.2, 1.0]
     double real_density = density * noise_val;
 
     // Принимаем, если real_density > случайного порога
