@@ -1,1 +1,22 @@
-\renewcommand{\contentsname}{ПРИЛОЖЕНИЕ Б}
+\phantomsection\section*{ПРИЛОЖЕНИЕ Б}\addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ Б}
+
+\begin{lstlisting}[language=C++, caption={Реализация алгоритма рендера части карта}, captionpos=b, label=list:render-task]
+  for (int i = tile.i; i < tile.end_i; i++)
+  {
+    if (cancel_running)
+      break;
+    for (int j = tile.j; j < tile.end_j; j++)
+    {
+      if (cancel_running)
+        break;
+      Color pixel_color(0, 0, 0);
+      for (int sample = 0; sample < _camera.samples_per_pixel; sample++)
+      {
+        if (cancel_running)
+          break;
+        Ray r = _camera.get_ray(j, i);
+        pixel_color += _camera.ray_color(r, _camera.max_depth, world, cancel_running);
+      }
+      color_matrix.at(i, j) = _camera.pixel_samples_scale * pixel_color;
+    }
+\end{lstlisting}
