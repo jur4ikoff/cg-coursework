@@ -247,7 +247,7 @@ public:
 
     rec.t = t;
     rec.p = p;
-    rec.normal = Vec3(0, 1, 0); // нормаль вверх (по Y), можно и оставить (1,0,0), но логичнее по высоте
+    rec.normal = Vec3(0, 1, 0);
     rec.front_face = true;
     rec.mat = phase_function;
     return true;

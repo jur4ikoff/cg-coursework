@@ -30,17 +30,17 @@
       <widget class="QComboBox" name="fogTypeCombo">
        <item>
         <property name="text">
-         <string>Constant Fog</string>
+         <string>Постоянный туман</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Random Fog</string>
+         <string>Рандомный туман</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Ground-Hugging Fog</string>
+         <string>Наземный туман</string>
         </property>
        </item>
       </widget>
@@ -52,7 +52,7 @@
      <item>
       <widget class="QLabel" name="labelObjectId">
        <property name="text">
-        <string>Boundary Object ID:</string>
+        <string>Ограничивающий объем ID:</string>
        </property>
       </widget>
      </item>

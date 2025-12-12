@@ -21,7 +21,7 @@ void FogDialog::setupUi()
     auto* fogTypeLayout = new QHBoxLayout();
     fogTypeLayout->addWidget(new QLabel("Fog Type:"));
     fogTypeCombo = new QComboBox();
-    fogTypeCombo->addItems({"Constant Fog", "Random Fog", "Ground-Hugging Fog"});
+    fogTypeCombo->addItems({"Постоянный туман", "Неравномерный туман", "Наземный туман"});
     fogTypeLayout->addWidget(fogTypeCombo);
     mainLayout->addLayout(fogTypeLayout);
 
@@ -50,27 +50,27 @@ void FogDialog::setupUi()
 
     // Density
     densitySpin = new QDoubleSpinBox();
-    densitySpin->setRange(0.001, 10.0);
+    densitySpin->setRange(0.001, 20.0);
     densitySpin->setSingleStep(0.1);
-    densitySpin->setValue(0.5);
+    densitySpin->setValue(0.9);
     densitySpin->setDecimals(3);
-    parametersLayout->addRow("Density:", densitySpin);
+    parametersLayout->addRow("Плотность:", densitySpin);
 
     // Scale
     scaleSpin = new QDoubleSpinBox();
-    scaleSpin->setRange(0.0001, 1.0);
+    scaleSpin->setRange(0.00001, 4.0);
     scaleSpin->setSingleStep(0.001);
-    scaleSpin->setValue(0.02);
+    scaleSpin->setValue(0.0025);
     scaleSpin->setDecimals(4);
-    parametersLayout->addRow("Noise Scale:", scaleSpin);
+    parametersLayout->addRow("Масштаб шума:", scaleSpin);
 
     // Height Falloff
     heightFalloffSpin = new QDoubleSpinBox();
-    heightFalloffSpin->setRange(0.0, 0.1);
+    heightFalloffSpin->setRange(0.0, 0.3);
     heightFalloffSpin->setSingleStep(0.0001);
     heightFalloffSpin->setValue(0.001);
     heightFalloffSpin->setDecimals(5);
-    parametersLayout->addRow("Height Falloff:", heightFalloffSpin);
+    parametersLayout->addRow("Высотный фактор:", heightFalloffSpin);
 
     mainLayout->addWidget(parametersGroup);
 

@@ -18,9 +18,6 @@
 #include <QPixmap>
 #include <QWidget>
 
-#define DEFAULT_WIDTH 1200
-#define DEFAULT_HEIGHT 800
-
 #define MIN_SCENE_WIDTH 580
 #define MIN_SCENE_HEIGHT 580
 

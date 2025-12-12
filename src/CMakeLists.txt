@@ -59,9 +59,10 @@ qt_standard_project_setup()
 
 # file(GLOB_RECURSE DATA_STRUCTS "interval/*.cpp")
 file(GLOB_RECURSE UI_SRC "window/*.cpp" "qt_drawer/*.cpp")
+file(GLOB_RECURSE RESEARCH "research/*.cpp")
 file(GLOB_RECURSE COMMANDS "facade/*.cpp" "command/*.cpp" "managers/*.cpp")
 file(GLOB_RECURSE SOURCES "render/*.cpp" "drawer/*.cpp" "dev/*.cpp" "tasks/*.cpp" "scene/*.cpp" "threads/*.cpp" "raytraicer/*.cpp" "data_structs/*.cpp" "camera/*.cpp" "color/*.cpp" "models/*.cpp" "materials/*.cpp")
-file(GLOB_RECURSE APP_SOURCES  "main.cpp" ${SOURCES} ${UI_SRC} ${COMMANDS})
+file(GLOB_RECURSE APP_SOURCES  "main.cpp" ${SOURCES} ${UI_SRC} ${COMMANDS} ${RESEARCH})
 file(GLOB_RECURSE TEST_SOURCES  "tests/*.cpp" "color/*.cpp")
 
 list(FILTER TEST_SOURCES EXCLUDE REGEX "main\\.cpp$") # Удаляем main.cpp из тестовых источников
@@ -89,6 +90,7 @@ set(ALL_DIRS
     facade
     command
     managers
+    research
 )
 
 # 2. Передаём переменную в target_include_directories
