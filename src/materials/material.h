@@ -40,7 +40,10 @@ public:
     bool scatter(const Ray &r_in, const HitRecord &rec, Color &attenuation, Ray &scattered)
         const override
     {
-        auto scatter_direction = rec.normal + random_unit_vector();
+        // auto scatter_direction = rec.normal + random_unit_vector();
+        // auto scatter_direction = random_on_hemisphere(rec.normal);
+        // auto scatter_direction = random_cosine_direction_in_hemisphere(rec.normal);
+        auto scatter_direction = cosine_sample_hemisphere(rec.normal);
 
         // Ловим близость к нулю направления разброса
         if (scatter_direction.near_zero())
@@ -109,8 +112,6 @@ public:
     }
 
 private:
-    // Refractive index in vacuum or air, or the ratio of the material's refractive index over
-    // the refractive index of the enclosing media
     double refraction_index;
 
     static double reflectance(double cosine, double refraction_index)

@@ -218,8 +218,7 @@ public:
 
     // Базовая модель экспоненциального затухания
     // const double base_density = 1.0;
-    const double base_density = density;
-    auto hit_dist = -std::log(random_double()) / base_density;
+    auto hit_dist = -std::log(random_double()) / density;
     if (hit_dist > dist)
       return false;
 
@@ -240,6 +239,9 @@ public:
     double real_density = density * noise_val * height_factor;
 
     // Отсев: если плотность слишком мала или случайный порог не пройден — нет попадания
+    // Вы уже выбрали точку, предполагая худший (самый густой) случай.
+    // Но если в этой точке туман редкий, то рассеяние менее вероятно.
+    // Поэтому вы "отклоняете" эту точку с вероятностью 1 - real_density.
     if (real_density < 1e-5 || random_double() > std::min(real_density, 1.0))
       return false;
 

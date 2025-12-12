@@ -177,6 +177,41 @@ inline Vec3 random_unit_vector()
     }
 }
 
+inline Vec3 random_cosine_direction()
+{
+    auto r1 = random_double();
+    auto r2 = random_double();
+    auto z = std::sqrt(1 - r2);
+    auto phi = 2 * M_PI * r1;
+    auto x = std::cos(phi) * std::sqrt(r2);
+    auto y = std::sin(phi) * std::sqrt(r2);
+    return Vec3(x, y, z);
+}
+
+inline Vec3 cosine_sample_hemisphere(const Vec3 &n)
+{
+    // 1. Сэмпл в локальной системе (z = нормаль)
+    double r1 = random_double();
+    double r2 = random_double();
+    double cos_theta = std::sqrt(1 - r2);
+    double sin_theta = std::sqrt(r2);
+    double phi = 2 * M_PI * r1;
+
+    Vec3 local(
+        sin_theta * std::cos(phi),
+        sin_theta * std::sin(phi),
+        cos_theta);
+
+    // 2. Базис вокруг нормали n
+    Vec3 w = unit_vector(n);
+    Vec3 a = (std::fabs(w.x()) > 0.9) ? Vec3(0, 1, 0) : Vec3(1, 0, 0);
+    Vec3 u = unit_vector(cross(a, w));
+    Vec3 v = cross(w, u);
+
+    // 3. Преобразование в мировую систему
+    return local.x() * u + local.y() * v + local.z() * w;
+}
+
 inline Vec3 random_on_hemisphere(const Vec3 &normal)
 {
     Vec3 on_unit_sphere = random_unit_vector();
@@ -186,13 +221,16 @@ inline Vec3 random_on_hemisphere(const Vec3 &normal)
         return -on_unit_sphere;
 }
 
+// зеркальное отражение
 inline Vec3 reflect(const Vec3 &v, const Vec3 &n)
 {
     return v - 2 * dot(v, n) * n;
 }
 
+// Преломление закон снелиуса
 inline Vec3 refract(const Vec3 &uv, const Vec3 &n, double etai_over_etat)
 {
+    // Косинус угла падения
     auto cos_theta = std::fmin(dot(-uv, n), 1.0);
     Vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
     Vec3 r_out_parallel = -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) * n;
