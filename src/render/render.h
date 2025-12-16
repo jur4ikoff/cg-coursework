@@ -133,7 +133,6 @@ private:
     /// @return
     Point3 defocus_disk_sample() const
     {
-        // Returns a random point in the Render defocus disk.
         auto p = random_in_unit_disk();
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }

@@ -216,7 +216,6 @@ public:
     auto dist = (t1 - t0) * ray_len;
 
     // Базовая модель экспоненциального затухания
-    // const double base_density = 1.0;
     auto hit_dist = -std::log(random_double()) / density;
     if (hit_dist > dist)
       return false;
@@ -227,7 +226,8 @@ public:
 
     // Текстура с использованием шума Перлина
     double raw_noise = noise.noise(scale * p);
-    double noise_val = 0.2 + 0.8 * std::fabs(raw_noise); // [0.2, 1.0]
+    // double noise_val = 0.2 + 0.8 * std::fabs(raw_noise); // [0.2, 1.0]
+    double noise_val = 0.05 + 0.95 * std::fabs(raw_noise); // [0.2, 1.0]
 
     // Множитель по высоте: чем ниже y — тем больше плотность
     // Ограничиваем y снизу, чтобы избежать экспоненциального роста при y → -inf

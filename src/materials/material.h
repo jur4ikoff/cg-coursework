@@ -98,7 +98,11 @@ public:
         Vec3 unit_direction = unit_vector(r_in.direction());
         double cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
         double sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
-
+        
+        /*
+        Если ri * sin_theta > 1, то по закону Снеллиуса преломление невозможно (это условие полного внутреннего отражения).
+        В этом случае луч всегда отражается.
+        */
         bool cannot_refract = ri * sin_theta > 1.0;
         Vec3 direction;
 
