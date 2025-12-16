@@ -9,7 +9,7 @@ public:
     virtual ~Material() = default;
 
     // Светимость
-    virtual Color emitted(double u, double v, const Point3 &p) const
+    virtual Color emitted(const Point3 &p) const
     {
         return Color(0, 0, 0);
     }
@@ -50,7 +50,7 @@ public:
             scatter_direction = rec.normal;
 
         scattered = Ray(rec.p, scatter_direction);
-        attenuation = tex->value(rec.u, rec.v, rec.p);
+        attenuation = tex->value(rec.p);
         return true;
     }
 
@@ -140,9 +140,9 @@ public:
     {
     }
 
-    Color emitted(double u, double v, const Point3 &p) const override
+    Color emitted(const Point3 &p) const override
     {
-        return tex->value(u, v, p);
+        return tex->value(p);
     }
 
 private:
@@ -166,7 +166,7 @@ public:
         const override
     {
         scattered = Ray(rec.p, random_unit_vector());
-        attenuation = tex->value(rec.u, rec.v, rec.p);
+        attenuation = tex->value(rec.p);
         return true;
     }
 

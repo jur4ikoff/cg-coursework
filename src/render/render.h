@@ -154,7 +154,7 @@ private:
         Ray scattered;
         Color attenuation;
         // Учёт излучения материала
-        Color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+        Color color_from_emission = rec.mat->emitted(rec.p);
         // Попытка рассеяния луча
         if (!rec.mat->scatter(r, rec, attenuation, scattered))
             return color_from_emission;
