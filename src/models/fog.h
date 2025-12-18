@@ -227,12 +227,13 @@ public:
     // Текстура с использованием шума Перлина
     double raw_noise = noise.noise(scale * p);
     // double noise_val = 0.2 + 0.8 * std::fabs(raw_noise); // [0.2, 1.0]
-    double noise_val = 0.05 + 0.95 * std::fabs(raw_noise); // [0.2, 1.0]
+    double noise_val = 0.01 + 0.99 * std::fabs(raw_noise); // [0.2, 1.0]
 
     // Множитель по высоте: чем ниже y — тем больше плотность
     // Ограничиваем y снизу, чтобы избежать экспоненциального роста при y → -inf
     double y = p.y();
-    double height_factor = std::exp(-height_falloff * std::max(y, -10.0));
+    // double height_factor = std::exp(-height_falloff * std::max(y, -10.0));
+    double height_factor = std::exp(-height_falloff * std::max(y, -5.0));
 
     // Итоговая плотность
     double real_density = density * noise_val * height_factor;

@@ -37,8 +37,8 @@ HittableList Scene::make_default_scene()
   // _objects.add(test);
 
   // _objects.add(make_shared<ConstantFog>(test, 0.005, *fog_color));
-  // _objects.add(make_shared<Smoke>(test, 1.5, 0.01, *fog_color));
-  _objects.add(make_shared<GroundSmoke>(test, 5, 0.0025, 0.0028, *fog_color));
+  // _objects.add(make_shared<Smoke>(test, 2, 0.003, *fog_color));
+  _objects.add(make_shared<GroundSmoke>(test, 5, 0.003, 0.0032, *fog_color));
 // 
   _objects.add(make_shared<Cone>(Point3(450, 0, 350), 100, 200, white));
   _objects.add(make_shared<Cone>(Point3(100, 0, 100), 50, 100, red));

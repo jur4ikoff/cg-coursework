@@ -3,6 +3,7 @@ CMAKE = cmake
 MAKE = make
 MAIN = report
 LATEX = pdflatex
+TEX = $(wildcard *.tex) $(wildcard report/*.tex)
 
 REPORT_SOURCE_PATH = ./report
 REPORT_FINAL_PATH = ready/report.pdf
