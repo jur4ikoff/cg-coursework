@@ -2,15 +2,11 @@
 #include "ui_rotate_object_dialog.h"
 
 RotateObjectDialog::RotateObjectDialog(QWidget *parent)
-    : QDialog(parent), ui(new Ui::RotateObjectDialog)
-{
-    ui->setupUi(this);
+    : QDialog(parent), ui(new Ui::RotateObjectDialog) {
+  ui->setupUi(this);
 }
 
-RotateObjectDialog::~RotateObjectDialog()
-{
-    delete ui;
-}
+RotateObjectDialog::~RotateObjectDialog() { delete ui; }
 
 double RotateObjectDialog::angleX() const { return ui->xSpinBox->value(); }
 double RotateObjectDialog::angleY() const { return ui->ySpinBox->value(); }

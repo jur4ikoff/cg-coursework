@@ -5,8 +5,8 @@
 #include "qt_drawer.h"
 
 #include "facade.h"
-#include "scene.h"
 #include "render.h"
+#include "scene.h"
 
 #include "ui_main_window.h"
 #include <QApplication>
@@ -23,15 +23,13 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace Ui
-{
-  class MainWindow;
+namespace Ui {
+class MainWindow;
 }
 
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
   MainWindow(QWidget *parent = nullptr);

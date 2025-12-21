@@ -3,8 +3,7 @@
 
 #include "hittable.h"
 
-class Sphere : public Hittable
-{
+class Sphere : public Hittable {
 public:
   Sphere(const Point3 &static_center, double radius, shared_ptr<Material> _mat)
       : center(static_center), radius(std::fmax(0, radius)) // , mat(mat)
@@ -14,8 +13,7 @@ public:
     bbox = Aaab(static_center - rvec, static_center + rvec);
   }
 
-  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
-  {
+  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override {
     // Point3 current_center = center.at(r.time());
     // Vec3 oc = current_center - r.origin();
     // Vec3 oc = r.origin();
@@ -35,8 +33,7 @@ public:
 
     // Find the nearest root that lies in the acceptable range.
     auto root = (h - sqrtd) / a;
-    if (!ray_t.surrounds(root))
-    {
+    if (!ray_t.surrounds(root)) {
       root = (h + sqrtd) / a;
       if (!ray_t.surrounds(root))
         return false;
@@ -61,8 +58,7 @@ private:
   // shared_ptr<Material> mat;
   Aaab bbox;
 
-  static void get_sphere_uv(const Point3 &p, double &u, double &v)
-  {
+  static void get_sphere_uv(const Point3 &p, double &u, double &v) {
     // p: a given point on the sphere of radius one, centered at the origin.
     // u: returned value [0,1] of angle around the Y axis from X=-1.
     // v: returned value [0,1] of angle from Y=-1 to Y=+1.

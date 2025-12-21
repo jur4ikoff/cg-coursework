@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QColorDialog>
 #include <QDebug>
 #include <QInputDialog>
 #include <QMainWindow>
@@ -9,4 +10,3 @@
 #include <QPoint>
 #include <QPointF>
 #include <QVBoxLayout>
-#include <QColorDialog>

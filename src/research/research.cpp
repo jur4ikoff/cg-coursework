@@ -1,10 +1,10 @@
 #include "research.h"
 // #include "constants.h"
-#include "task.h"
 #include "camera.h"
-#include "render.h"
 #include "color_matrix.h"
+#include "render.h"
 #include "scene.h"
+#include "task.h"
 
 #include <chrono>
 #include <fstream>
@@ -13,8 +13,7 @@
 #include <memory>
 #include <stdexcept>
 
-static std::shared_ptr<Camera> init_camera()
-{
+static std::shared_ptr<Camera> init_camera() {
   auto camera = std::make_shared<Camera>();
   camera->id = 0;
   camera->vfov = 37;
@@ -27,11 +26,9 @@ static std::shared_ptr<Camera> init_camera()
   return camera;
 }
 
-void run_sample_count_exp(size_t start, size_t end, size_t step)
-{
+void run_sample_count_exp(size_t start, size_t end, size_t step) {
   std::ofstream file(SAMPLE_EXP);
-  if (!file.is_open())
-  {
+  if (!file.is_open()) {
     throw std::runtime_error("ОШИБКА!!! Файл не найден");
   }
 
@@ -48,27 +45,23 @@ void run_sample_count_exp(size_t start, size_t end, size_t step)
   std::cout << "samples_count;" << "time" << "\n";
   file << "samples_count;" << "time" << "\n";
 
-  for (size_t i = start; i <= end; i += step)
-  {
+  for (size_t i = start; i <= end; i += step) {
     render->samples_per_pixel = i;
     auto time_start = std::chrono::high_resolution_clock::now();
-    for (size_t j = 0; j < EXP_COUNT; j++)
-    {
+    for (size_t j = 0; j < EXP_COUNT; j++) {
       render->render(world, *color_matrix, flag, 8, nullptr);
     }
     auto time_end = std::chrono::high_resolution_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+        time_end - time_start);
     std::cout << i << ";" << duration.count() / EXP_COUNT << "\n";
     file << i << ";" << duration.count() / EXP_COUNT << "\n";
   }
 }
 
-void run_depth_exp(size_t start, size_t end, size_t step)
-{
+void run_depth_exp(size_t start, size_t end, size_t step) {
   std::ofstream file(DEPTH_EXP);
-  if (!file.is_open())
-  {
+  if (!file.is_open()) {
     throw std::runtime_error("ОШИБКА!!! Файл не найден");
   }
 
@@ -85,17 +78,15 @@ void run_depth_exp(size_t start, size_t end, size_t step)
   std::cout << "depth;" << "time" << "\n";
   file << "depth;" << "time" << "\n";
 
-  for (size_t i = start; i <= end; i += step)
-  {
+  for (size_t i = start; i <= end; i += step) {
     render->max_depth = i;
     auto time_start = std::chrono::high_resolution_clock::now();
-    for (size_t j = 0; j < EXP_COUNT; j++)
-    {
+    for (size_t j = 0; j < EXP_COUNT; j++) {
       render->render(world, *color_matrix, flag, 8, nullptr);
     }
     auto time_end = std::chrono::high_resolution_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+        time_end - time_start);
     std::cout << i << ";" << duration.count() / EXP_COUNT << "\n";
     file << i << ";" << duration.count() / EXP_COUNT << "\n";
   }

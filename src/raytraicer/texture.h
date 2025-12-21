@@ -1,40 +1,35 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "perlin.h"
 #include "color.h"
+#include "perlin.h"
 
-class Texture
-{
+class Texture {
 public:
   virtual ~Texture() = default;
 
   virtual Color value(const Point3 &p) const = 0;
 };
 
-class SolidColor : public Texture
-{
+class SolidColor : public Texture {
 public:
   SolidColor(const Color &albedo) : albedo(albedo) {}
-  SolidColor(double red, double green, double blue) : SolidColor(Color(red, green, blue)) {}
+  SolidColor(double red, double green, double blue)
+      : SolidColor(Color(red, green, blue)) {}
 
-  Color value(const Point3 &p) const override
-  {
-    return albedo;
-  }
+  Color value(const Point3 &p) const override { return albedo; }
 
 private:
   Color albedo;
 };
 
-class NoiseTexture : public Texture
-{
+class NoiseTexture : public Texture {
 public:
   NoiseTexture(double scale) : scale(scale) {}
 
-  Color value(const Point3 &p) const override
-  {
-    return Color(.5, .5, .5) * (1 + std::sin(scale * p.z() + 10 * noise.turb(p, 7)));
+  Color value(const Point3 &p) const override {
+    return Color(.5, .5, .5) *
+           (1 + std::sin(scale * p.z() + 10 * noise.turb(p, 7)));
   }
 
 private:
@@ -43,4 +38,3 @@ private:
 };
 
 #endif
-

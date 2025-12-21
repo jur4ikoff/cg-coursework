@@ -4,23 +4,19 @@
 #include "material.h"
 #include "texture.h"
 
-class ConstantFog : public Hittable
-{
+class ConstantFog : public Hittable {
 public:
-  ConstantFog(shared_ptr<Hittable> boundary, double density, shared_ptr<Texture> tex)
+  ConstantFog(shared_ptr<Hittable> boundary, double density,
+              shared_ptr<Texture> tex)
       : boundary(boundary), neg_inv_density(-1 / density),
-        phase_function(make_shared<isotropic>(tex))
-  {
-  }
+        phase_function(make_shared<isotropic>(tex)) {}
 
-  ConstantFog(shared_ptr<Hittable> boundary, double density, const Color &albedo)
+  ConstantFog(shared_ptr<Hittable> boundary, double density,
+              const Color &albedo)
       : boundary(boundary), neg_inv_density(-1 / density),
-        phase_function(make_shared<isotropic>(albedo))
-  {
-  }
+        phase_function(make_shared<isotropic>(albedo)) {}
 
-  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
-  {
+  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override {
     HitRecord rec1, rec2;
 
     if (!is_visible)
@@ -64,15 +60,9 @@ public:
 
   Aaab bounding_box() const override { return boundary->bounding_box(); }
 
-  double get_density()
-  {
-    return -1 / neg_inv_density;
-  }
+  double get_density() { return -1 / neg_inv_density; }
 
-  void set_density(double density)
-  {
-    neg_inv_density = -1 / density;
-  }
+  void set_density(double density) { neg_inv_density = -1 / density; }
 
 private:
   shared_ptr<Hittable> boundary;
@@ -80,25 +70,20 @@ private:
   shared_ptr<Material> phase_function;
 };
 
-class Smoke : public Hittable
-{
+class Smoke : public Hittable {
 public:
   // density — средняя плотность тумана (начните с 0.3–1.0)
   // scale — масштаб шума (меньше → крупнее облака; попробуйте 0.001–0.1)
-  Smoke(
-      shared_ptr<Hittable> boundary,
-      double density,
-      double scale,
-      shared_ptr<Material> phase) : boundary(boundary), density(density), scale(scale), phase_function(phase) {}
+  Smoke(shared_ptr<Hittable> boundary, double density, double scale,
+        shared_ptr<Material> phase)
+      : boundary(boundary), density(density), scale(scale),
+        phase_function(phase) {}
 
-  Smoke(
-      shared_ptr<Hittable> boundary,
-      double density,
-      double scale,
-      const Color &albedo) : Smoke(boundary, density, scale, make_shared<isotropic>(albedo)) {}
+  Smoke(shared_ptr<Hittable> boundary, double density, double scale,
+        const Color &albedo)
+      : Smoke(boundary, density, scale, make_shared<isotropic>(albedo)) {}
 
-  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
-  {
+  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override {
     HitRecord rec1, rec2;
 
     if (!is_visible)
@@ -142,30 +127,15 @@ public:
     return true;
   }
 
-  Aaab bounding_box() const override
-  {
-    return boundary->bounding_box();
-  }
+  Aaab bounding_box() const override { return boundary->bounding_box(); }
 
-  double get_density()
-  {
-    return density;
-  }
+  double get_density() { return density; }
 
-  void set_density(double _density)
-  {
-    density = _density;
-  }
+  void set_density(double _density) { density = _density; }
 
-  double get_scale()
-  {
-    return scale;
-  }
+  double get_scale() { return scale; }
 
-  void set_scale(double _scale)
-  {
-    scale = _scale;
-  }
+  void set_scale(double _scale) { scale = _scale; }
 
 private:
   shared_ptr<Hittable> boundary;
@@ -175,30 +145,21 @@ private:
   shared_ptr<Material> phase_function;
 };
 
-class GroundSmoke : public Hittable
-{
+class GroundSmoke : public Hittable {
 public:
-  GroundSmoke(
-      shared_ptr<Hittable> boundary,
-      double density,
-      double scale,
-      double height_falloff, // контролирует, насколько быстро дым исчезает с высотой
-      shared_ptr<Material> phase)
+  GroundSmoke(shared_ptr<Hittable> boundary, double density, double scale,
+              double height_falloff, // контролирует, насколько быстро дым
+                                     // исчезает с высотой
+              shared_ptr<Material> phase)
       : boundary(boundary), density(density), scale(scale),
-        height_falloff(height_falloff), phase_function(phase)
-  {
-  }
+        height_falloff(height_falloff), phase_function(phase) {}
 
-  GroundSmoke(
-      shared_ptr<Hittable> boundary,
-      double density,
-      double scale,
-      double height_falloff,
-      const Color &albedo)
-      : GroundSmoke(boundary, density, scale, height_falloff, make_shared<isotropic>(albedo)) {}
+  GroundSmoke(shared_ptr<Hittable> boundary, double density, double scale,
+              double height_falloff, const Color &albedo)
+      : GroundSmoke(boundary, density, scale, height_falloff,
+                    make_shared<isotropic>(albedo)) {}
 
-  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override
-  {
+  bool hit(const Ray &r, Interval ray_t, HitRecord &rec) const override {
     HitRecord rec1, rec2;
     if (!is_visible)
       return false;
@@ -238,8 +199,8 @@ public:
     // Итоговая плотность
     double real_density = density * noise_val * height_factor;
 
-    // Отсев: если плотность слишком мала или случайный порог не пройден — нет попадания
-    // Вы уже выбрали точку, предполагая худший (самый густой) случай.
+    // Отсев: если плотность слишком мала или случайный порог не пройден — нет
+    // попадания Вы уже выбрали точку, предполагая худший (самый густой) случай.
     // Но если в этой точке туман редкий, то рассеяние менее вероятно.
     // Поэтому вы "отклоняете" эту точку с вероятностью 1 - real_density.
     if (real_density < 1e-5 || random_double() > std::min(real_density, 1.0))
@@ -253,40 +214,19 @@ public:
     return true;
   }
 
-  Aaab bounding_box() const override
-  {
-    return boundary->bounding_box();
-  }
+  Aaab bounding_box() const override { return boundary->bounding_box(); }
 
-  double get_density()
-  {
-    return density;
-  }
+  double get_density() { return density; }
 
-  void set_density(double _density)
-  {
-    density = _density;
-  }
+  void set_density(double _density) { density = _density; }
 
-  double get_scale()
-  {
-    return scale;
-  }
+  double get_scale() { return scale; }
 
-  void set_scale(double _scale)
-  {
-    scale = _scale;
-  }
+  void set_scale(double _scale) { scale = _scale; }
 
-  double get_height_falloff()
-  {
-    return height_falloff;
-  }
+  double get_height_falloff() { return height_falloff; }
 
-  void set_height_falloff(double falloff)
-  {
-    height_falloff = falloff;
-  }
+  void set_height_falloff(double falloff) { height_falloff = falloff; }
 
 private:
   shared_ptr<Hittable> boundary;

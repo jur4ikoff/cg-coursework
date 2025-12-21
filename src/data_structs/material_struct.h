@@ -2,20 +2,14 @@
 
 #include "color.h"
 
-enum MaterialType
-{
-    Lambertian_t,
-    Metal_t,
-    Transparent_t
-};
+enum MaterialType { Lambertian_t, Metal_t, Transparent_t };
 
-struct MaterialStruct
-{
+struct MaterialStruct {
 
-    MaterialType type;
+  MaterialType type;
 
-    // Общие параметры
-    Color color;                   // для Lambertian, Metal
-    double fuzz = 0.0;             // для Metal
-    double refraction_index = 1.0; // для Transparent
+  // Общие параметры
+  Color color;                   // для Lambertian, Metal
+  double fuzz = 0.0;             // для Metal
+  double refraction_index = 1.0; // для Transparent
 };

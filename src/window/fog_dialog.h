@@ -1,58 +1,54 @@
 #pragma once
 
-#include <QDialog>
+#include <QColor>
 #include <QComboBox>
+#include <QDialog>
 #include <QDoubleSpinBox>
-#include <QGroupBox>
-#include <QVBoxLayout>
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QColor>
-#include <vector>
+#include <QVBoxLayout>
 #include <cstddef>
+#include <vector>
 
-class FogDialog : public QDialog
-{
-    Q_OBJECT
+class FogDialog : public QDialog {
+  Q_OBJECT
 
 public:
-    enum FogType {
-        Constant,
-        Random,
-        GroundHugging
-    };
+  enum FogType { Constant, Random, GroundHugging };
 
-    explicit FogDialog(const std::vector<size_t>& objectIds, QWidget* parent = nullptr);
+  explicit FogDialog(const std::vector<size_t> &objectIds,
+                     QWidget *parent = nullptr);
 
-    FogType selectedFogType() const;
-    double density() const;
-    double scale() const;
-    double heightFalloff() const;
-    size_t selectedObjectId() const;
-    QColor fogColor() const;
+  FogType selectedFogType() const;
+  double density() const;
+  double scale() const;
+  double heightFalloff() const;
+  size_t selectedObjectId() const;
+  QColor fogColor() const;
 
 private slots:
-    void onFogTypeChanged(int index);
-    void onColorButtonClicked();
+  void onFogTypeChanged(int index);
+  void onColorButtonClicked();
 
 private:
-    void setupUi();
-    void updateParametersVisibility();
+  void setupUi();
+  void updateParametersVisibility();
 
-    QComboBox* fogTypeCombo;
-    QComboBox* objectIdCombo;
-    QPushButton* colorButton;
+  QComboBox *fogTypeCombo;
+  QComboBox *objectIdCombo;
+  QPushButton *colorButton;
 
-    // Все спинбоксы существуют всегда
-    QDoubleSpinBox* densitySpin;
-    QDoubleSpinBox* scaleSpin;
-    QDoubleSpinBox* heightFalloffSpin;
+  // Все спинбоксы существуют всегда
+  QDoubleSpinBox *densitySpin;
+  QDoubleSpinBox *scaleSpin;
+  QDoubleSpinBox *heightFalloffSpin;
 
-    QGroupBox* parametersGroup;
-    QFormLayout* parametersLayout; // используем QFormLayout для удобства
+  QGroupBox *parametersGroup;
+  QFormLayout *parametersLayout; // используем QFormLayout для удобства
 
-    std::vector<size_t> objectIds_;
-    QColor currentColor;
+  std::vector<size_t> objectIds_;
+  QColor currentColor;
 };

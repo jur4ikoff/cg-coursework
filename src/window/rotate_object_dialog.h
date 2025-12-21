@@ -3,21 +3,22 @@
 #include <QDialog>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class RotateObjectDialog; }
+namespace Ui {
+class RotateObjectDialog;
+}
 QT_END_NAMESPACE
 
-class RotateObjectDialog : public QDialog
-{
-    Q_OBJECT
+class RotateObjectDialog : public QDialog {
+  Q_OBJECT
 
 public:
-    explicit RotateObjectDialog(QWidget *parent = nullptr);
-    ~RotateObjectDialog();
+  explicit RotateObjectDialog(QWidget *parent = nullptr);
+  ~RotateObjectDialog();
 
-    double angleX() const;
-    double angleY() const;
-    double angleZ() const;
+  double angleX() const;
+  double angleY() const;
+  double angleZ() const;
 
 private:
-    Ui::RotateObjectDialog *ui;
+  Ui::RotateObjectDialog *ui;
 };

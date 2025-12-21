@@ -2,16 +2,15 @@
 
 #include "render_manager.h"
 
-class BaseCommand
-{
+class BaseCommand {
 public:
-    BaseCommand() = default;
-    virtual ~BaseCommand() = 0;
+  BaseCommand() = default;
+  virtual ~BaseCommand() = 0;
 
-    void set_managers(std::shared_ptr<RenderManager> render_manager);
+  void set_managers(std::shared_ptr<RenderManager> render_manager);
 
-    virtual void execute() = 0;
+  virtual void execute() = 0;
 
 protected:
-    std::shared_ptr<RenderManager> _render_manager;
+  std::shared_ptr<RenderManager> _render_manager;
 };
