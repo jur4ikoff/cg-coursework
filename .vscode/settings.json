@@ -22,5 +22,6 @@
         "unordered_set": "cpp",
         "chrono": "cpp",
         "iostream": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/Users/ypopov2005/Programming/cg-coursework/src"
 }
